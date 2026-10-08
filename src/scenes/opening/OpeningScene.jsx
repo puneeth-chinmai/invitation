@@ -16,14 +16,15 @@ import Diya from '../../components/3d/Diya'
 import Particles from '../../components/3d/Particles'
 import TempleDoor from '../../components/3d/TempleDoor'
 
-
 /* =====================================================
    CAMERA
 ===================================================== */
-function CinematicCamera() {
+
+function CinematicCamera({ doorOpening }) {
   const { camera, size } = useThree()
 
   const startTime = useRef(null)
+  const doorTransitionStart = useRef(null)
 
   const isMobile = size.width < size.height
 
@@ -38,56 +39,159 @@ function CinematicCamera() {
       startTime.current
 
     /*
-      Same cinematic timing.
+      ---------------------------------------------------
+      NORMAL 13 SECOND INTRO
+      ---------------------------------------------------
     */
 
-    const progress =
-      THREE.MathUtils.smoothstep(
-        elapsed,
-        0,
-        13
+    if (!doorOpening) {
+      doorTransitionStart.current = null
+
+      const progress =
+        THREE.MathUtils.smoothstep(
+          elapsed,
+          0,
+          13
+        )
+
+      const start = new THREE.Vector3(
+        1.78,
+        1.80,
+        5.36
       )
 
+      const p1 = new THREE.Vector3(
+        1.65,
+        1.82,
+        3.4
+      )
+
+      const p2 = new THREE.Vector3(
+        0.9,
+        1.85,
+        1.8
+      )
+
+      const p3 = new THREE.Vector3(
+        0.35,
+        2.05,
+        0.6
+      )
+
+      const end = isMobile
+        ? new THREE.Vector3(
+          0,
+          2.45,
+          1.75
+        )
+        : new THREE.Vector3(
+          0,
+          2.25,
+          1.65
+        )
+
+      const curve =
+        new THREE.CatmullRomCurve3([
+          start,
+          p1,
+          p2,
+          p3,
+          end,
+        ])
+
+      const position =
+        curve.getPointAt(progress)
+
+      camera.position.copy(position)
+
+      camera.fov = isMobile ? 55 : 41
+      camera.updateProjectionMatrix()
+
+      const target = new THREE.Vector3(
+        0,
+        THREE.MathUtils.lerp(
+          0.95,
+          2.45,
+          progress
+        ),
+        THREE.MathUtils.lerp(
+          -1.0,
+          -5.8,
+          progress
+        )
+      )
+
+      camera.lookAt(target)
+
+      return
+    }
+
     /*
-      SAME CAMERA PATH AS LAPTOP.
+      ---------------------------------------------------
+      DOOR HAS BEEN TAPPED
+      ---------------------------------------------------
     */
 
-    const start = new THREE.Vector3(
-      1.78,
-      1.80,
-      5.36
-    )
+    if (doorTransitionStart.current === null) {
+      doorTransitionStart.current =
+        elapsed
+    }
 
-    const p1 = new THREE.Vector3(
-      1.65,
-      1.82,
-      3.4
-    )
-
-    const p2 = new THREE.Vector3(
-      0.9,
-      1.85,
-      1.8
-    )
-
-    const p3 = new THREE.Vector3(
-      0.35,
-      2.05,
-      0.6
-    )
+    const sinceDoorOpen =
+      elapsed -
+      doorTransitionStart.current
 
     /*
-      Final position.
+      First 1.5 seconds:
+      camera remains almost completely still.
 
-      Desktop remains exactly the same.
-
-      Mobile is only slightly higher and
-      slightly farther from the doorway.
-      This prevents the camera from feeling
-      glued to the door.
+      This allows the guest to actually see
+      the doors opening before the camera moves.
     */
 
-    const end = isMobile
+    if (sinceDoorOpen < 1.45) {
+      const holdPosition = isMobile
+        ? new THREE.Vector3(
+          0,
+          2.45,
+          1.75
+        )
+        : new THREE.Vector3(
+          0,
+          2.25,
+          1.65
+        )
+
+      camera.position.copy(holdPosition)
+
+      camera.fov = isMobile ? 55 : 41
+      camera.updateProjectionMatrix()
+
+      camera.lookAt(
+        new THREE.Vector3(
+          0,
+          2.4,
+          -5.8
+        )
+      )
+
+      return
+    }
+
+    /*
+      ---------------------------------------------------
+      CAMERA ENTERS THE TEMPLE
+      ---------------------------------------------------
+    */
+
+    const travelProgress =
+      THREE.MathUtils.smoothstep(
+        sinceDoorOpen,
+        1.45,
+        4.8
+      )
+
+    const enterStart = isMobile
       ? new THREE.Vector3(
         0,
         2.45,
@@ -99,57 +203,55 @@ function CinematicCamera() {
         1.65
       )
 
-    const points = [
-      start,
-      p1,
-      p2,
-      p3,
-      end,
-    ]
+    const enterMid1 = new THREE.Vector3(
+      0,
+      2.35,
+      -1.4
+    )
 
-    const curve =
-      new THREE.CatmullRomCurve3(
-        points
-      )
+    const enterMid2 = new THREE.Vector3(
+      0,
+      2.42,
+      -4.5
+    )
+
+    /*
+      Door is located around Z = -5.8.
+      Therefore the final camera position
+      is deliberately BEHIND the doorway.
+    */
+
+    const enterEnd = new THREE.Vector3(
+      0,
+      2.45,
+      -8.2
+    )
+
+    const enterCurve =
+      new THREE.CatmullRomCurve3([
+        enterStart,
+        enterMid1,
+        enterMid2,
+        enterEnd,
+      ])
 
     const position =
-      curve.getPointAt(progress)
+      enterCurve.getPointAt(
+        travelProgress
+      )
 
     camera.position.copy(position)
 
-    /*
-      IMPORTANT:
-
-      Lower vertical FOV prevents the huge
-      empty space above the temple and also
-      prevents the floor/diya from dominating
-      the bottom of the mobile screen.
-    */
-
-    camera.fov = isMobile
-      ? 55
-      : 41
-
+    camera.fov = isMobile ? 55 : 41
     camera.updateProjectionMatrix()
-
-    /*
-      Keep the camera aimed at the entrance.
-
-      DO NOT lower this target on mobile.
-      That was causing the floor/diya to appear.
-    */
 
     const target = new THREE.Vector3(
       0,
+      2.45,
       THREE.MathUtils.lerp(
-        0.95,
-        2.45,
-        progress
-      ),
-      THREE.MathUtils.lerp(
-        -1.0,
-        -5.8,
-        progress
+        -5.5,
+        -10.5,
+        travelProgress
       )
     )
 
@@ -174,12 +276,9 @@ function CinematicLighting() {
     const t =
       state.clock.getElapsedTime()
 
-    /*
-      --------------------------------
-      PHASE 1
-      DIYA
-      --------------------------------
-    */
+    /* --------------------------------
+       DIYA
+    -------------------------------- */
 
     const diyaPhase =
       THREE.MathUtils.smoothstep(
@@ -188,12 +287,9 @@ function CinematicLighting() {
         4
       )
 
-    /*
-      --------------------------------
-      PHASE 2
-      PILLARS
-      --------------------------------
-    */
+    /* --------------------------------
+       PILLARS
+    -------------------------------- */
 
     const pillarPhase =
       THREE.MathUtils.smoothstep(
@@ -202,12 +298,9 @@ function CinematicLighting() {
         7.0
       )
 
-    /*
-      --------------------------------
-      PHASE 3
-      DOOR
-      --------------------------------
-    */
+    /* --------------------------------
+       DOOR
+    -------------------------------- */
 
     const doorPhase =
       THREE.MathUtils.smoothstep(
@@ -216,11 +309,9 @@ function CinematicLighting() {
         11
       )
 
-    /*
-      --------------------------------
-      FINAL BRIGHTNESS
-      --------------------------------
-    */
+    /* --------------------------------
+       FINAL BRIGHTNESS
+    -------------------------------- */
 
     const finalPhase =
       THREE.MathUtils.smoothstep(
@@ -228,14 +319,6 @@ function CinematicLighting() {
         9,
         13
       )
-
-
-    /*
-      BASE AMBIENT
-
-      Starts very dark and continuously
-      becomes lighter.
-    */
 
     if (ambient.current) {
       ambient.current.intensity =
@@ -246,14 +329,6 @@ function CinematicLighting() {
         )
     }
 
-
-    /*
-      ENVIRONMENT
-
-      Becomes much more visible as
-      pillars emerge.
-    */
-
     if (hemisphere.current) {
       hemisphere.current.intensity =
         THREE.MathUtils.lerp(
@@ -262,13 +337,6 @@ function CinematicLighting() {
           pillarPhase
         )
     }
-
-
-    /*
-      ARCHITECTURE LIGHT
-
-      Stronger as the temple appears.
-    */
 
     if (architecture.current) {
       architecture.current.intensity =
@@ -279,11 +347,6 @@ function CinematicLighting() {
         )
     }
 
-
-    /*
-      WARM TEMPLE LIGHT
-    */
-
     if (warm.current) {
       warm.current.intensity =
         THREE.MathUtils.lerp(
@@ -292,15 +355,6 @@ function CinematicLighting() {
           doorPhase
         )
     }
-
-
-    /*
-      EXTRA LIGHT WHEN THE DOOR
-      BECOMES THE HERO.
-
-      This is intentionally stronger
-      than the previous version.
-    */
 
     if (doorLight.current) {
       doorLight.current.intensity =
@@ -314,14 +368,12 @@ function CinematicLighting() {
 
   return (
     <>
-      {/* Deep initial darkness */}
       <ambientLight
         ref={ambient}
         color="#3b2618"
         intensity={0.025}
       />
 
-      {/* Warm environmental light */}
       <hemisphereLight
         ref={hemisphere}
         color="#8a5932"
@@ -329,7 +381,6 @@ function CinematicLighting() {
         intensity={0.04}
       />
 
-      {/* Architectural reveal */}
       <directionalLight
         ref={architecture}
         position={[-4, 6, 4]}
@@ -338,7 +389,6 @@ function CinematicLighting() {
         castShadow
       />
 
-      {/* General temple warmth */}
       <pointLight
         ref={warm}
         position={[0, 3, -3]}
@@ -348,7 +398,6 @@ function CinematicLighting() {
         intensity={0.05}
       />
 
-      {/* Final hero-door illumination */}
       <pointLight
         ref={doorLight}
         position={[0, 3.8, -4.5]}
@@ -361,7 +410,6 @@ function CinematicLighting() {
   )
 }
 
-
 /* =====================================================
    FLOOR
 ===================================================== */
@@ -369,16 +417,10 @@ function CinematicLighting() {
 function TempleFloor() {
   return (
     <mesh
-      rotation={[
-        -Math.PI / 2,
-        0,
-        0,
-      ]}
+      rotation={[-Math.PI / 2, 0, 0]}
       receiveShadow
     >
-      <planeGeometry
-        args={[14, 18]}
-      />
+      <planeGeometry args={[14, 18]} />
 
       <meshStandardMaterial
         color="#30271f"
@@ -388,7 +430,6 @@ function TempleFloor() {
     </mesh>
   )
 }
-
 
 /* =====================================================
    PILLAR
@@ -404,10 +445,6 @@ function TemplePillar({
     const t =
       state.clock.getElapsedTime()
 
-    /*
-      Pillars reveal AFTER the diya.
-    */
-
     const reveal =
       THREE.MathUtils.smoothstep(
         t,
@@ -415,27 +452,25 @@ function TemplePillar({
         7
       )
 
-    if (pillarRef.current) {
-      pillarRef.current.traverse(
-        (child) => {
-          if (!child.material) return
+    if (!pillarRef.current) return
 
-          const materials =
-            Array.isArray(
-              child.material
-            )
-              ? child.material
-              : [child.material]
+    pillarRef.current.traverse(
+      (child) => {
+        if (!child.material) return
 
-          materials.forEach(
-            (material) => {
-              material.transparent = true
-              material.opacity = reveal
-            }
-          )
-        }
-      )
-    }
+        const materials =
+          Array.isArray(child.material)
+            ? child.material
+            : [child.material]
+
+        materials.forEach(
+          (material) => {
+            material.transparent = true
+            material.opacity = reveal
+          }
+        )
+      }
+    )
   })
 
   return (
@@ -444,18 +479,12 @@ function TemplePillar({
       position={position}
       scale={scale}
     >
-
-      {/* Main shaft */}
       <mesh
         castShadow
         receiveShadow
       >
         <boxGeometry
-          args={[
-            0.75,
-            4.2,
-            0.75,
-          ]}
+          args={[0.75, 4.2, 0.75]}
         />
 
         <meshStandardMaterial
@@ -466,21 +495,12 @@ function TemplePillar({
         />
       </mesh>
 
-      {/* Base */}
       <mesh
-        position={[
-          0,
-          -2.05,
-          0,
-        ]}
+        position={[0, -2.05, 0]}
         castShadow
       >
         <boxGeometry
-          args={[
-            1.15,
-            0.35,
-            1.15,
-          ]}
+          args={[1.15, 0.35, 1.15]}
         />
 
         <meshStandardMaterial
@@ -491,21 +511,12 @@ function TemplePillar({
         />
       </mesh>
 
-      {/* Capital */}
       <mesh
-        position={[
-          0,
-          2.1,
-          0,
-        ]}
+        position={[0, 2.1, 0]}
         castShadow
       >
         <boxGeometry
-          args={[
-            1.15,
-            0.35,
-            1.15,
-          ]}
+          args={[1.15, 0.35, 1.15]}
         />
 
         <meshStandardMaterial
@@ -516,20 +527,11 @@ function TemplePillar({
         />
       </mesh>
 
-      {/* Vertical carving */}
       <mesh
-        position={[
-          0,
-          0,
-          0.39,
-        ]}
+        position={[0, 0, 0.39]}
       >
         <boxGeometry
-          args={[
-            0.18,
-            3.5,
-            0.045,
-          ]}
+          args={[0.18, 3.5, 0.045]}
         />
 
         <meshStandardMaterial
@@ -540,20 +542,11 @@ function TemplePillar({
         />
       </mesh>
 
-      {/* Upper band */}
       <mesh
-        position={[
-          0,
-          1.45,
-          0,
-        ]}
+        position={[0, 1.45, 0]}
       >
         <boxGeometry
-          args={[
-            0.88,
-            0.12,
-            0.88,
-          ]}
+          args={[0.88, 0.12, 0.88]}
         />
 
         <meshStandardMaterial
@@ -564,20 +557,11 @@ function TemplePillar({
         />
       </mesh>
 
-      {/* Lower band */}
       <mesh
-        position={[
-          0,
-          -1.45,
-          0,
-        ]}
+        position={[0, -1.45, 0]}
       >
         <boxGeometry
-          args={[
-            0.88,
-            0.12,
-            0.88,
-          ]}
+          args={[0.88, 0.12, 0.88]}
         />
 
         <meshStandardMaterial
@@ -587,11 +571,9 @@ function TemplePillar({
           opacity={0}
         />
       </mesh>
-
     </group>
   )
 }
-
 
 /* =====================================================
    TEMPLE STRUCTURE
@@ -600,53 +582,36 @@ function TemplePillar({
 function TempleStructure() {
   return (
     <group>
-
-      {/* FRONT LEFT */}
       <TemplePillar
-        position={[
-          -2.15,
-          2.1,
-          -1.8,
-        ]}
+        position={[-2.15, 2.1, -1.8]}
       />
 
-      {/* FRONT RIGHT */}
       <TemplePillar
-        position={[
-          2.15,
-          2.1,
-          -1.8,
-        ]}
+        position={[2.15, 2.1, -1.8]}
       />
 
-      {/* REAR LEFT */}
       <TemplePillar
-        position={[
-          -2.55,
-          2.0,
-          -4.5,
-        ]}
+        position={[-2.55, 2.0, -4.5]}
         scale={0.82}
       />
 
-      {/* REAR RIGHT */}
       <TemplePillar
-        position={[
-          2.55,
-          2.0,
-          -4.5,
-        ]}
+        position={[2.55, 2.0, -4.5]}
         scale={0.82}
       />
-
     </group>
   )
 }
 
+/* =====================================================
+   MOBILE UPPER ARCHITECTURE
+===================================================== */
+
 function TempleUpperArchitecture() {
   const { size } = useThree()
 
-  const isMobile = size.width < size.height
+  const isMobile =
+    size.width < size.height
 
   if (!isMobile) {
     return null
@@ -654,11 +619,6 @@ function TempleUpperArchitecture() {
 
   return (
     <group position={[0, 0, -5.8]}>
-
-      {/* =========================================
-          LARGE UPPER TEMPLE BEAM
-          ========================================= */}
-
       <mesh
         position={[0, 5.55, 0]}
         castShadow
@@ -674,10 +634,6 @@ function TempleUpperArchitecture() {
           metalness={0.05}
         />
       </mesh>
-
-      {/* =========================================
-          STEPPED TEMPLE BANDS
-          ========================================= */}
 
       <mesh
         position={[0, 5.95, 0]}
@@ -721,13 +677,8 @@ function TempleUpperArchitecture() {
         />
       </mesh>
 
-      {/* =========================================
-          CENTRAL TEMPLE PEDIMENT
-          ========================================= */}
-
       <mesh
         position={[0, 6.65, 0]}
-        rotation={[0, 0, 0]}
         castShadow
       >
         <coneGeometry
@@ -739,10 +690,6 @@ function TempleUpperArchitecture() {
           roughness={0.8}
         />
       </mesh>
-
-      {/* =========================================
-          CENTRAL DECORATIVE PANEL
-          ========================================= */}
 
       <mesh
         position={[0, 6.55, -0.36]}
@@ -757,10 +704,6 @@ function TempleUpperArchitecture() {
           roughness={0.68}
         />
       </mesh>
-
-      {/* =========================================
-          SMALL CENTRAL TEMPLE FINIAL
-          ========================================= */}
 
       <mesh
         position={[0, 7.35, 0]}
@@ -792,10 +735,6 @@ function TempleUpperArchitecture() {
         />
       </mesh>
 
-      {/* =========================================
-          SIDE ARCHITECTURAL BLOCKS
-          ========================================= */}
-
       <mesh
         position={[-3.65, 5.85, 0]}
         castShadow
@@ -824,10 +763,6 @@ function TempleUpperArchitecture() {
         />
       </mesh>
 
-      {/* =========================================
-          SMALL SIDE CAPS
-          ========================================= */}
-
       <mesh
         position={[-3.65, 6.82, 0]}
         castShadow
@@ -855,28 +790,22 @@ function TempleUpperArchitecture() {
           roughness={0.72}
         />
       </mesh>
-
     </group>
   )
 }
+
 /* =====================================================
-   TEXT
+   TAP INSTRUCTION
 ===================================================== */
 
-function TapInstruction({
-  visible,
-}) {
+function TapInstruction({ visible }) {
   return (
     <div
       style={{
         position: 'absolute',
-
         left: '50%',
-
         bottom: '9%',
-
-        transform:
-          'translateX(-50%)',
+        transform: 'translateX(-50%)',
 
         color: '#f3dfbd',
 
@@ -886,27 +815,19 @@ function TapInstruction({
         fontSize:
           'clamp(14px, 2vw, 21px)',
 
-        letterSpacing:
-          '0.16em',
-
-        textTransform:
-          'uppercase',
-
-        whiteSpace:
-          'nowrap',
+        letterSpacing: '0.16em',
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap',
 
         textShadow:
           '0 2px 18px rgba(0,0,0,0.95)',
 
-        opacity:
-          visible ? 1 : 0,
+        opacity: visible ? 1 : 0,
 
         transition:
-          'opacity 1.4s ease',
+          'opacity 0.8s ease',
 
-        pointerEvents:
-          'none',
-
+        pointerEvents: 'none',
         zIndex: 20,
       }}
     >
@@ -915,7 +836,6 @@ function TapInstruction({
   )
 }
 
-
 /* =====================================================
    TEXT TIMER
 ===================================================== */
@@ -923,24 +843,20 @@ function TapInstruction({
 function InstructionController({
   onComplete,
 }) {
-  const called =
-    useRef(false)
+  const called = useRef(false)
 
   useFrame((state) => {
     if (
-      state.clock.getElapsedTime() >=
-      13 &&
+      state.clock.getElapsedTime() >= 13 &&
       !called.current
     ) {
       called.current = true
-
       onComplete()
     }
   })
 
   return null
 }
-
 
 /* =====================================================
    MAIN SCENE
@@ -952,39 +868,41 @@ export default function OpeningScene() {
     setShowInstruction,
   ] = useState(false)
 
+  const [
+    doorOpening,
+    setDoorOpening,
+  ] = useState(false)
+
+  const handleDoorOpen = () => {
+    setDoorOpening(true)
+    setShowInstruction(false)
+  }
+
   return (
     <div className="opening-scene">
-
       <Canvas
         shadows
-
         camera={{
           position: [
             1.78,
-            1.80,
+            1.8,
             5.36,
           ],
-
           fov: 41,
-
           near: 0.1,
-
           far: 30,
         }}
-
         gl={{
           antialias: true,
-
           powerPreference:
             'high-performance',
         }}
-
         dpr={[1, 1.5]}
       >
-
         <Suspense fallback={null}>
-
-          <CinematicCamera />
+          <CinematicCamera
+            doorOpening={doorOpening}
+          />
 
           <CinematicLighting />
 
@@ -994,7 +912,9 @@ export default function OpeningScene() {
 
           <TempleUpperArchitecture />
 
-          <TempleDoor />
+          <TempleDoor
+            onOpen={handleDoorOpen}
+          />
 
           <Diya />
 
@@ -1005,15 +925,12 @@ export default function OpeningScene() {
               setShowInstruction(true)
             }
           />
-
         </Suspense>
-
       </Canvas>
 
       <TapInstruction
         visible={showInstruction}
       />
-
     </div>
   )
 }
