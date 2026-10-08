@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #020100;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.opening-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #020100;
+}
+
+.opening-scene canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
