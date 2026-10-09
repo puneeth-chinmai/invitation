@@ -114,7 +114,7 @@ export default function CalendarShareHub() {
             onClick={() => setSelectedEventKey('reception')}
           >
             <span className="picker-tab-name">Reception</span>
-            <span className="picker-tab-time">28 Nov · 7:00 PM</span>
+            <span className="picker-tab-time">28 Nov · 7:30 PM</span>
           </button>
 
           <button
@@ -125,7 +125,7 @@ export default function CalendarShareHub() {
             onClick={() => setSelectedEventKey('muhurtam')}
           >
             <span className="picker-tab-name">Muhurtam</span>
-            <span className="picker-tab-time">29 Nov · 9:00 AM</span>
+            <span className="picker-tab-time">29 Nov · 8:00 AM</span>
           </button>
         </div>
 

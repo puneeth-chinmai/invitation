@@ -14,10 +14,10 @@ export const WEDDING_EVENTS = {
     id: 'reception',
     name: 'Reception',
     title: 'Puneeth & Chinmai — Wedding Reception',
-    // 28 November 2026, 7:00 PM IST = 13:30:00 UTC
-    startUtc: '20261128T133000Z',
+    // 28 November 2026, 7:30 PM IST = 14:00:00 UTC
+    startUtc: '20261128T140000Z',
     displayDate: 'Saturday, 28 November 2026',
-    displayTime: '7:00 PM onwards',
+    displayTime: '7:30 PM onwards',
     location: 'Gayatri Kalyana Mantapa, Chikkamagaluru, Karnataka, India',
     description:
       'Wedding Reception of Puneeth & Chinmai. Join us with family and friends for an evening of joy, blessings, and celebrations.',
@@ -26,10 +26,10 @@ export const WEDDING_EVENTS = {
     id: 'muhurtam',
     name: 'Muhurtam',
     title: 'Puneeth & Chinmai — Wedding Muhurtam',
-    // 29 November 2026, 9:00 AM IST = 03:30:00 UTC
-    startUtc: '20261129T033000Z',
+    // 29 November 2026, 8:00 AM IST = 02:30:00 UTC
+    startUtc: '20261129T023000Z',
     displayDate: 'Sunday, 29 November 2026',
-    displayTime: '9:00 AM',
+    displayTime: '8:00 AM',
     location: 'Gayatri Kalyana Mantapa, Chikkamagaluru, Karnataka, India',
     description:
       'Sacred Wedding Muhurtam of Puneeth & Chinmai. Your auspicious presence and blessings are cordially requested.',

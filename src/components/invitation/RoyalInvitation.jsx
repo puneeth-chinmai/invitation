@@ -581,7 +581,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
                 <div className="invitation-event-block">
                   <h3 className="invitation-event-title">RECEPTION</h3>
                   <p className="invitation-event-date">28 NOVEMBER 2026</p>
-                  <p className="invitation-event-time">7:00 PM ONWARDS</p>
+                  <p className="invitation-event-time">7:30 PM ONWARDS</p>
                 </div>
 
                 {/* Small Ornamental Separator */}
@@ -604,7 +604,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
                 <div className="invitation-event-block">
                   <h3 className="invitation-event-title">MUHURTAM</h3>
                   <p className="invitation-event-date">29 NOVEMBER 2026</p>
-                  <p className="invitation-event-time">9:00 AM</p>
+                  <p className="invitation-event-time">8:00 AM</p>
                 </div>
 
                 {/* Small Ornamental Separator */}

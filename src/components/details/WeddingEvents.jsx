@@ -5,8 +5,8 @@ import { CalendarLineIcon, ClockLineIcon, DelicateDivider } from './DetailsIcons
  * WeddingEvents
  *
  * Editorial-style event cards for:
- * 1. Reception — Saturday, 28 November 2026 · 7:00 PM onwards
- * 2. Muhurtam — Sunday, 29 November 2026 · 9:00 AM
+ * 1. Reception — Saturday, 28 November 2026 · 7:30 PM onwards
+ * 2. Muhurtam — Sunday, 29 November 2026 · 8:00 AM
  *
  * Restrained typography, delicate antique-gold dividers, and zero emojis.
  */
@@ -43,7 +43,7 @@ export default function WeddingEvents() {
               <ClockLineIcon size={15} color="#8c5d1e" />
             </span>
             <div className="event-detail-text">
-              <span className="event-primary-info">7:00 PM Onwards</span>
+              <span className="event-primary-info">7:30 PM Onwards</span>
               <span className="event-secondary-info">Dinner and Celebrations</span>
             </div>
           </div>
@@ -72,7 +72,7 @@ export default function WeddingEvents() {
               <ClockLineIcon size={15} color="#8c5d1e" />
             </span>
             <div className="event-detail-text">
-              <span className="event-primary-info">9:00 AM</span>
+              <span className="event-primary-info">8:00 AM</span>
               <span className="event-secondary-info">Sacred Wedding Rituals</span>
             </div>
           </div>

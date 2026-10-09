@@ -5,7 +5,7 @@ import { DelicateDivider } from './DetailsIcons'
  * WeddingCountdown
  *
  * Bespoke royal wedding countdown to the sacred Muhurtam ceremony:
- * Target: 29 November 2026 at 9:00 AM IST (Asia/Kolkata, UTC+05:30).
+ * Target: 29 November 2026 at 8:00 AM IST (Asia/Kolkata, UTC+05:30).
  *
  * Features:
  *   - Elegant deep-maroon serif typography
@@ -14,8 +14,8 @@ import { DelicateDivider } from './DetailsIcons'
  *   - Isolated 1-second update cycle preventing full-page re-renders
  */
 
-// Target timestamp: 29 Nov 2026, 09:00:00 AM IST (UTC+05:30)
-const MUHURTAM_TIMESTAMP = new Date('2026-11-29T09:00:00+05:30').getTime()
+// Target timestamp: 29 Nov 2026, 08:00:00 AM IST (UTC+05:30)
+const MUHURTAM_TIMESTAMP = new Date('2026-11-29T08:00:00+05:30').getTime()
 
 function calculateTimeLeft() {
   const now = Date.now()
@@ -104,7 +104,7 @@ export default function WeddingCountdown() {
 
       <div className="countdown-target-footer">
         <span className="target-schedule-text">
-          Auspicious Muhurtam · Sunday, 29 November 2026 · 9:00 AM IST
+          Auspicious Muhurtam · Sunday, 29 November 2026 · 8:00 AM IST
         </span>
       </div>
     </section>
