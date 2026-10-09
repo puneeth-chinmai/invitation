@@ -23,20 +23,9 @@
   overflow: hidden;
   z-index: 50;
   user-select: none;
-  animation: stageFadeIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   padding: max(12px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
 }
 
-@keyframes stageFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
 /* Viewport Filigree Frame */
 .stage-filigree-frame {
@@ -91,8 +80,9 @@
 /* The Horizontal Cylindrical Scroll Roll */
 .closed-scroll-unit {
   position: relative;
-  width: min(88vw, 360px);
-  height: clamp(72px, 16vw, 86px);
+  width: min(84vw, 350px);
+  max-width: calc(100vw - 28px);
+  height: clamp(66px, 15vw, 84px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,9 +93,9 @@
 /* Layered Cylindrical Parchment Core Wrapped around Rosewood Rod */
 .closed-parchment-cylinder {
   position: relative;
-  width: 100%;
+  flex: 1;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 6px;
   background:
     radial-gradient(ellipse at 50% 32%, rgba(255, 255, 255, 0.65) 0%, transparent 68%),
     linear-gradient(
@@ -216,20 +206,20 @@
 }
 
 .scroll-finial-wrapper.closed-roller-finial {
-  position: absolute;
-  top: 50%;
+  position: relative !important;
+  flex-shrink: 0;
   height: 100%;
-  width: clamp(34px, 7.8vw, 44px);
+  width: clamp(26px, 6.4vw, 36px);
   z-index: 6;
-  filter: drop-shadow(0 6px 14px rgba(35, 14, 4, 0.55)) drop-shadow(0 2px 5px rgba(35, 14, 4, 0.35));
+  filter: drop-shadow(0 5px 12px rgba(35, 14, 4, 0.5)) drop-shadow(0 2px 4px rgba(35, 14, 4, 0.3));
 }
 .scroll-finial-wrapper.closed-roller-finial.left {
-  left: clamp(-30px, -6.8vw, -38px);
-  transform: translateY(-50%) !important;
+  margin-right: -4px;
+  transform: none !important;
 }
 .scroll-finial-wrapper.closed-roller-finial.right {
-  right: clamp(-30px, -6.8vw, -38px);
-  transform: translateY(-50%) scaleX(-1) !important;
+  margin-left: -4px;
+  transform: scaleX(-1) !important;
 }
 
 .scroll-finial-svg {
@@ -322,6 +312,8 @@
 /* Braided Silk & Gold Cord — Dynamically Lengthens from top anchor */
 .hanging-braided-cord {
   width: 3.5px;
+  height: calc(36px + var(--drag-y, 0px));
+  transition: var(--drag-cord-transition, none);
   background: repeating-linear-gradient(
     180deg,
     #6d141e 0px,
@@ -341,6 +333,7 @@
 .hanging-tag-movable {
   position: absolute;
   left: 50%;
+  top: calc(36px + var(--drag-y, 0px));
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -513,8 +506,62 @@
   margin: auto;
   user-select: text;
   z-index: 10;
-  filter: drop-shadow(0 20px 40px rgba(45, 22, 6, 0.35)) drop-shadow(0 4px 10px rgba(45, 22, 6, 0.2));
 }
+
+.opened-invitation-assembly.is-opening {
+  filter: none; /* Disable expensive drop-shadow re-rasterization during motion */
+}
+
+.opened-invitation-assembly.is-opening .physical-parchment-sheet {
+  animation: smoothParchmentUnroll 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+  will-change: max-height;
+}
+
+.opened-invitation-assembly.is-opening .invitation-text-content {
+  animation: smoothContentReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s forwards;
+  opacity: 0;
+  transform: translateY(14px);
+  will-change: opacity, transform;
+}
+
+.opened-invitation-assembly.is-opened {
+  filter: drop-shadow(0 20px 40px rgba(45, 22, 6, 0.35)) drop-shadow(0 4px 10px rgba(45, 22, 6, 0.2));
+  transition: filter 0.45s ease;
+}
+
+.opened-invitation-assembly.is-opened .physical-parchment-sheet {
+  max-height: calc(100dvh - 105px);
+  overflow-y: auto;
+}
+
+.opened-invitation-assembly.is-opened .invitation-text-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes smoothParchmentUnroll {
+  0% {
+    max-height: 0px;
+    opacity: 0.9;
+  }
+  100% {
+    max-height: min(720px, calc(100dvh - 105px));
+    opacity: 1;
+  }
+}
+
+@keyframes smoothContentReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Heavy Cylindrical Lacquered Rosewood & Brass Roller Bars */
 .physical-roller-bar {
@@ -653,7 +700,6 @@
   max-height: calc(100dvh - 105px);
   scrollbar-width: thin;
   scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
-  transition: max-height 0.3s ease;
   z-index: 4;
 
   /* Asymmetrical Antique Deckled Edge Contour */

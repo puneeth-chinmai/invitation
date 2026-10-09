@@ -24,153 +24,129 @@ import './RoyalInvitation.css'
 export default function RoyalInvitation({ onComplete }) {
   // Scroll states: 'closed' | 'opening' | 'opened'
   const [scrollState, setScrollState] = useState('closed')
-  const [unrollProgress, setUnrollProgress] = useState(0) // 0 to 1
-
-  // Pull interaction state
-  const [dragY, setDragY] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [tagDetached, setTagDetached] = useState(false)
 
+  const scrollUnitRef = useRef(null)
   const dragStartYRef = useRef(0)
   const currentDragYRef = useRef(0)
   const isTriggeredRef = useRef(false)
-  const animFrameRef = useRef(null)
+  const isDraggingRef = useRef(false)
+  const openTimeoutRef = useRef(null)
+  const unrollTimerRef = useRef(null)
 
   // Trigger opening sequence
   const triggerUnroll = useCallback(() => {
     if (isTriggeredRef.current || scrollState !== 'closed') return
     isTriggeredRef.current = true
 
-    // 1. Subtle haptic vibration where supported
+    // Subtle haptic vibration where supported
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate(40)
-      } catch {
-        // Silent fallback
-      }
+      } catch {}
     }
 
-    // 2. Tag detaches with gentle drop & fade
+    // Tag detaches with gentle drop & fade
     setTagDetached(true)
 
-    // 3. Begin physical vertical unrolling
-    setTimeout(() => {
+    // Begin hardware-accelerated CSS unroll
+    openTimeoutRef.current = setTimeout(() => {
       setScrollState('opening')
-      const startTime = performance.now()
-      const duration = 2000 // 2.0 seconds physical unrolling
 
-      const animate = (now) => {
-        const elapsed = now - startTime
-        const rawProgress = Math.min(1, elapsed / duration)
-
-        // Smooth cubic-bezier deceleration
-        const eased = 1 - Math.pow(1 - rawProgress, 3)
-        setUnrollProgress(eased)
-
-        if (rawProgress < 1) {
-          animFrameRef.current = requestAnimationFrame(animate)
-        } else {
-          setScrollState('opened')
-          setUnrollProgress(1)
-          if (onComplete) onComplete()
-        }
-      }
-
-      animFrameRef.current = requestAnimationFrame(animate)
-    }, 240)
+      // Commit opened state after 1.8s animation completes
+      unrollTimerRef.current = setTimeout(() => {
+        setScrollState('opened')
+        if (onComplete) onComplete()
+      }, 1800)
+    }, 220)
   }, [scrollState, onComplete])
 
   // =====================================================
-  // POINTER EVENTS: DRAG-TO-EXTEND PULL TAG
+  // POINTER EVENTS: ZERO-LAG DRAG-TO-EXTEND PULL TAG
   // =====================================================
 
   const handlePointerDown = (e) => {
     if (scrollState !== 'closed' || isTriggeredRef.current) return
     try {
       e.currentTarget.setPointerCapture(e.pointerId)
-    } catch {
-      // Fallback
-    }
+    } catch {}
+    isDraggingRef.current = true
     setIsDragging(true)
     dragStartYRef.current = e.clientY
     currentDragYRef.current = 0
+    if (scrollUnitRef.current) {
+      scrollUnitRef.current.style.setProperty('--drag-cord-transition', 'none')
+    }
   }
 
   const handlePointerMove = (e) => {
-    if (!isDragging || isTriggeredRef.current) return
+    if (!isDraggingRef.current || isTriggeredRef.current) return
     const deltaY = e.clientY - dragStartYRef.current
 
     // Only allow downward pulling, clamped to 75px max
     if (deltaY > 0) {
       const clamped = Math.min(deltaY, 75)
       currentDragYRef.current = clamped
-      setDragY(clamped)
+      if (scrollUnitRef.current) {
+        scrollUnitRef.current.style.setProperty('--drag-y', `${clamped}px`)
+      }
     } else {
       currentDragYRef.current = 0
-      setDragY(0)
+      if (scrollUnitRef.current) {
+        scrollUnitRef.current.style.setProperty('--drag-y', '0px')
+      }
     }
   }
 
   const handlePointerUp = (e) => {
-    if (!isDragging) return
+    if (!isDraggingRef.current) return
+    isDraggingRef.current = false
+    setIsDragging(false)
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {
-      // Fallback
-    }
-    setIsDragging(false)
+    } catch {}
 
     // Pull threshold: 46px
     if (currentDragYRef.current >= 46) {
       triggerUnroll()
     } else {
       // Spring smoothly back to resting position
-      setDragY(0)
       currentDragYRef.current = 0
+      if (scrollUnitRef.current) {
+        scrollUnitRef.current.style.setProperty(
+          '--drag-cord-transition',
+          'height 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+        )
+        scrollUnitRef.current.style.setProperty('--drag-y', '0px')
+      }
     }
   }
 
   const handlePointerCancel = (e) => {
-    if (!isDragging) return
+    if (!isDraggingRef.current) return
+    isDraggingRef.current = false
+    setIsDragging(false)
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {
-      // Fallback
-    }
-    setIsDragging(false)
-    setDragY(0)
+    } catch {}
     currentDragYRef.current = 0
+    if (scrollUnitRef.current) {
+      scrollUnitRef.current.style.setProperty(
+        '--drag-cord-transition',
+        'height 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+      )
+      scrollUnitRef.current.style.setProperty('--drag-y', '0px')
+    }
   }
 
-  // Cleanup animation frame on unmount
+  // Cleanup timers on unmount
   useEffect(() => {
     return () => {
-      if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current)
-      }
+      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current)
+      if (unrollTimerRef.current) clearTimeout(unrollTimerRef.current)
     }
   }, [])
-
-  // Content fade-in calculation during unrolling
-  const contentOpacity =
-    scrollState === 'opened'
-      ? 1
-      : scrollState === 'opening'
-        ? Math.max(0, (unrollProgress - 0.38) / 0.62)
-        : 0
-
-  const contentTranslateY =
-    scrollState === 'opened' ? 0 : (1 - contentOpacity) * 16
-
-  const parchmentMaxHeight =
-    scrollState === 'opened'
-      ? 'calc(100dvh - 105px)'
-      : scrollState === 'opening'
-        ? `${unrollProgress * 590}px`
-        : '0px'
-
-  // Dynamic cord length: base 36px + downward drag distance
-  const cordHeight = 36 + dragY
 
   return (
     <div className="royal-invitation-stage">
@@ -190,7 +166,7 @@ export default function RoyalInvitation({ onComplete }) {
       {scrollState === 'closed' ? (
         <div className="closed-scroll-wrapper">
           {/* Horizontal Cylindrical Scroll Roll */}
-          <div className="closed-scroll-unit">
+          <div className="closed-scroll-unit" ref={scrollUnitRef}>
             {/* Left Handcrafted Turned Finial */}
             <ScrollFinial side="left" className="closed-roller-finial" />
 
@@ -220,21 +196,12 @@ export default function RoyalInvitation({ onComplete }) {
               <div className="tag-mounting-grommet" />
 
               {/* Braided Silk Cord — Length dynamically extends with drag */}
-              <div
-                className="hanging-braided-cord"
-                style={{
-                  height: `${cordHeight}px`,
-                  transition: isDragging
-                    ? 'none'
-                    : 'height 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                }}
-              />
+              <div className="hanging-braided-cord" />
 
               {/* Movable Tag Assembly attached to the bottom of the extending cord */}
               <div
                 className={`hanging-tag-movable ${!isDragging && !tagDetached ? 'swaying' : ''} ${isDragging ? 'dragging' : ''}`}
                 style={{
-                  top: `${cordHeight}px`,
                   transform: tagDetached
                     ? 'translateX(-50%) translateY(40px) scale(0.92)'
                     : 'translateX(-50%)',
@@ -284,7 +251,11 @@ export default function RoyalInvitation({ onComplete }) {
         /* ===================================================
            OPENED ROYAL INVITATION SCROLL (ANTIQUE ARTIFACT)
         =================================================== */
-        <div className="opened-invitation-assembly">
+        <div
+          className={`opened-invitation-assembly ${
+            scrollState === 'opening' ? 'is-opening' : 'is-opened'
+          }`}
+        >
           {/* Top Antique Royal Lacquered Rosewood Roller Bar */}
           <div className="physical-roller-bar top">
             <ScrollFinial side="left" className="bar-finial" />
@@ -298,13 +269,7 @@ export default function RoyalInvitation({ onComplete }) {
           </div>
 
           {/* Handcrafted Deckled Parchment Document Sheet */}
-          <div
-            className="physical-parchment-sheet"
-            style={{
-              maxHeight: parchmentMaxHeight,
-              height: scrollState === 'opening' ? parchmentMaxHeight : 'auto',
-            }}
-          >
+          <div className="physical-parchment-sheet">
             {/* Inner paper curling shadows where paper rolls into the rods */}
             <div className="parchment-inner-curl-top" />
 
@@ -317,15 +282,8 @@ export default function RoyalInvitation({ onComplete }) {
               <LotusCornerFiligree className="br" />
 
               {/* Real Selectable HTML Content */}
-              <div
-                className="invitation-text-content"
-                style={{
-                  opacity: contentOpacity,
-                  transform: `translateY(${contentTranslateY}px)`,
-                  transition:
-                    scrollState === 'opened' ? 'opacity 0.4s ease' : 'none',
-                }}
-              >
+              <div className="invitation-text-content">
+
                 {/* 1. Top Blessing */}
                 <div className="invitation-blessing-block">
                   <img
