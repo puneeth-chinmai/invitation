@@ -1,61 +1,66 @@
 import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
+import doorLeftUrl from '../../assets/images/door_left.jpg'
+import doorRightUrl from '../../assets/images/door_right.jpg'
+import doorLeftNormUrl from '../../assets/images/door_left_norm.png'
+import doorRightNormUrl from '../../assets/images/door_right_norm.png'
+import templeFrameUrl from '../../assets/images/temple_frame.png'
 
 /* =========================================================
    MATERIAL HELPERS
 ========================================================= */
 
-function createWoodMaterial(color) {
+function createWoodMaterial(color = '#2c170b') {
   return new THREE.MeshPhysicalMaterial({
     color,
-    metalness: 0.05,
-    roughness: 0.58,
-    clearcoat: 0.28,
-    clearcoatRoughness: 0.3,
+    metalness: 0.04,
+    roughness: 0.52,
+    clearcoat: 0.35,
+    clearcoatRoughness: 0.25,
     transparent: true,
     opacity: 1,
   })
 }
 
-function createDarkWoodMaterial(color = '#120804') {
+function createDarkWoodMaterial(color = '#150a05') {
   return new THREE.MeshPhysicalMaterial({
     color,
     metalness: 0.03,
-    roughness: 0.7,
-    clearcoat: 0.16,
+    roughness: 0.65,
+    clearcoat: 0.22,
     transparent: true,
     opacity: 1,
   })
 }
 
-function createStoneMaterial(color = '#514238') {
+function createStoneMaterial(color = '#382b22') {
   return new THREE.MeshStandardMaterial({
     color,
-    roughness: 0.8,
+    roughness: 0.85,
     metalness: 0.04,
-    transparent: true,
+    transparent: false,
     opacity: 1,
   })
 }
 
-function createBrassMaterial(color = '#a86d32') {
+function createBrassMaterial(color = '#c88e38') {
   return new THREE.MeshPhysicalMaterial({
     color,
-    metalness: 0.92,
-    roughness: 0.24,
-    clearcoat: 0.38,
-    clearcoatRoughness: 0.18,
-    transparent: true,
+    metalness: 0.94,
+    roughness: 0.22,
+    clearcoat: 0.42,
+    clearcoatRoughness: 0.2,
+    transparent: false,
     opacity: 1,
   })
 }
 
-function createDarkBrassMaterial(color = '#68401d') {
+function createDarkBrassMaterial(color = '#6d411b') {
   return new THREE.MeshPhysicalMaterial({
     color,
     metalness: 0.88,
-    roughness: 0.3,
+    roughness: 0.32,
     clearcoat: 0.25,
     transparent: true,
     opacity: 1,
@@ -495,27 +500,27 @@ export default function TempleDoor({ onOpen }) {
   const [opening, setOpening] = useState(false)
 
   const stone = useMemo(
-    () => createStoneMaterial('#514238'),
+    () => createStoneMaterial('#352920'),
     []
   )
 
   const darkStone = useMemo(
-    () => createStoneMaterial('#392b23'),
+    () => createStoneMaterial('#231a14'),
     []
   )
 
   const stoneLight = useMemo(
-    () => createStoneMaterial('#675344'),
+    () => createStoneMaterial('#4a3a2d'),
     []
   )
 
   const wood = useMemo(
-    () => createWoodMaterial('#321a0d'),
+    () => createWoodMaterial('#2c170b'),
     []
   )
 
   const darkWood = useMemo(
-    () => createDarkWoodMaterial('#120704'),
+    () => createDarkWoodMaterial('#150a05'),
     []
   )
 
@@ -528,23 +533,97 @@ export default function TempleDoor({ onOpen }) {
     materials.
   */
   const backingMaterial = useMemo(
-    () => createDarkWoodMaterial('#120704'),
+    () => createDarkWoodMaterial('#100603'),
     []
   )
 
   const seamMaterial = useMemo(
-    () => createDarkBrassMaterial('#68401d'),
+    () => createDarkBrassMaterial('#6d411b'),
     []
   )
 
   const brass = useMemo(
-    () => createBrassMaterial('#a86d32'),
+    () => createBrassMaterial('#c88e38'),
     []
   )
 
   const darkBrass = useMemo(
-    () => createDarkBrassMaterial('#68401d'),
+    () => createDarkBrassMaterial('#6d411b'),
     []
+  )
+
+  const { doorLeftTex, doorRightTex, doorLeftNorm, doorRightNorm, frameTex } = useMemo(() => {
+    const loader = new THREE.TextureLoader()
+    const left = loader.load(doorLeftUrl)
+    left.colorSpace = THREE.SRGBColorSpace
+    const right = loader.load(doorRightUrl)
+    right.colorSpace = THREE.SRGBColorSpace
+    const leftNorm = loader.load(doorLeftNormUrl)
+    const rightNorm = loader.load(doorRightNormUrl)
+    const frame = loader.load(templeFrameUrl)
+    frame.colorSpace = THREE.SRGBColorSpace
+    return {
+      doorLeftTex: left,
+      doorRightTex: right,
+      doorLeftNorm: leftNorm,
+      doorRightNorm: rightNorm,
+      frameTex: frame,
+    }
+  }, [])
+
+  const doorLeftMaterial = useMemo(
+    () =>
+      new THREE.MeshPhysicalMaterial({
+        map: doorLeftTex,
+        normalMap: doorLeftNorm,
+        normalScale: new THREE.Vector2(0.18, 0.18),
+        metalness: 0.14,
+        roughness: 0.38,
+        clearcoat: 0.28,
+        clearcoatRoughness: 0.22,
+        transparent: true,
+        opacity: 1,
+      }),
+    [doorLeftTex, doorLeftNorm]
+  )
+
+  const doorRightMaterial = useMemo(
+    () =>
+      new THREE.MeshPhysicalMaterial({
+        map: doorRightTex,
+        normalMap: doorRightNorm,
+        normalScale: new THREE.Vector2(0.18, 0.18),
+        metalness: 0.14,
+        roughness: 0.38,
+        clearcoat: 0.28,
+        clearcoatRoughness: 0.22,
+        transparent: true,
+        opacity: 1,
+      }),
+    [doorRightTex, doorRightNorm]
+  )
+
+  const frameMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        map: frameTex,
+        transparent: true,
+        alphaTest: 0.05,
+        roughness: 0.72,
+        metalness: 0.04,
+        opacity: 1,
+      }),
+    [frameTex]
+  )
+
+  const leftDoorMaterials = useMemo(
+    () => [darkWood, darkWood, darkWood, darkWood, doorLeftMaterial, doorLeftMaterial],
+    [darkWood, doorLeftMaterial]
+  )
+
+  const rightDoorMaterials = useMemo(
+    () => [darkWood, darkWood, darkWood, darkWood, doorRightMaterial, doorRightMaterial],
+    [darkWood, doorRightMaterial]
   )
 
   /* =======================================================
@@ -596,7 +675,7 @@ export default function TempleDoor({ onOpen }) {
     )
 
     doorRef.current.traverse((child) => {
-      if (!child.material) return
+      if (!child.material || child.userData?.isThreshold) return
 
       const materials = Array.isArray(child.material)
         ? child.material
@@ -605,7 +684,6 @@ export default function TempleDoor({ onOpen }) {
       materials.forEach((material) => {
         material.transparent = true
         material.opacity = reveal
-        material.needsUpdate = true
       })
     })
 
@@ -627,33 +705,23 @@ export default function TempleDoor({ onOpen }) {
     }
 
     /* -----------------------------------------------
-       LEFT DOOR
+       LEFT & RIGHT DOORS SWING INWARD INTO CHAMBER
+       Left rotates around +Y (swings inward into -Z)
+       Right rotates around -Y (swings inward into -Z)
     ----------------------------------------------- */
+
+    const swing = Math.sin(openProgress * Math.PI * 0.5) * (Math.PI * 0.40)
 
     if (leftDoorRef.current) {
-      leftDoorRef.current.rotation.y =
-        THREE.MathUtils.lerp(
-          0,
-          Math.PI * 0.46,
-          openProgress
-        )
+      leftDoorRef.current.rotation.y = swing
     }
-
-    /* -----------------------------------------------
-       RIGHT DOOR
-    ----------------------------------------------- */
 
     if (rightDoorRef.current) {
-      rightDoorRef.current.rotation.y =
-        THREE.MathUtils.lerp(
-          0,
-          -Math.PI * 0.46,
-          openProgress
-        )
+      rightDoorRef.current.rotation.y = -swing
     }
 
     /* -----------------------------------------------
-       INTERIOR LIGHT
+       INTERIOR LIGHT (AMBER TO CHAMPAGNE BLOOM)
     ----------------------------------------------- */
 
     if (innerLightRef.current) {
@@ -665,79 +733,26 @@ export default function TempleDoor({ onOpen }) {
         )
 
       innerLightRef.current.intensity =
-        revealLight * 2.2 +
-        openProgress * 5.0
+        revealLight * 1.5 + openProgress * 5.5
+
+      // Light color shifts from warm amber to soft champagne-ivory
+      const amber = new THREE.Color('#f59e38')
+      const champagne = new THREE.Color('#fcf6ed')
+      innerLightRef.current.color.copy(amber).lerp(champagne, openProgress)
     }
 
     /* -----------------------------------------------
-       REMOVE FIXED CENTER GEOMETRY
+       REMOVE FIXED BACKING ON OPEN
     ----------------------------------------------- */
-
-    /*
-      This is the important fix.
-
-      Previously the door leaves opened but the
-      fixed backing remained behind them.
-
-      That created the dark vertical patch in the
-      center of the doorway.
-
-      Now the backing fades away as soon as the
-      doors start opening.
-    */
 
     if (doorBackingRef.current) {
       const backingFade =
-        1 - openProgress
+        Math.max(0, 1 - openProgress * 4.0)
 
       doorBackingRef.current.material.opacity =
         reveal * backingFade
 
       doorBackingRef.current.material.needsUpdate =
-        true
-    }
-
-    /*
-      Remove the central brass seam as well.
-
-      Without this, a thin vertical strip would
-      remain exactly between the opened doors.
-    */
-
-    if (centralSeamRef.current) {
-      const seamFade =
-        1 - openProgress
-
-      centralSeamRef.current.material.opacity =
-        reveal * seamFade
-
-      centralSeamRef.current.material.needsUpdate =
-        true
-    }
-
-    /* -----------------------------------------------
-       TEMPORARY CENTER GLOW
-    ----------------------------------------------- */
-
-    /*
-      The orange plane is useful while the door is
-      closed because it makes the door feel alive.
-
-      Once the doors open, however, the actual
-      interior point light should take over.
-
-      Therefore the artificial glow disappears
-      together with the door backing.
-    */
-
-    if (innerGlowRef.current) {
-      const glowFade =
-        1 - openProgress
-
-      innerGlowRef.current.material.opacity =
-        reveal * glowFade
-
-      innerGlowRef.current.material.needsUpdate =
         true
     }
   })
@@ -747,363 +762,69 @@ export default function TempleDoor({ onOpen }) {
       ref={doorRef}
       position={[0, 0, -5.8]}
     >
-
       {/* =================================================
-          DEEP RECESS
+          TEMPLE PORTAL FRAME (REFERENCE ARTWORK)
       ================================================= */}
 
       <mesh
-        position={[0, 2.5, -0.65]}
-        material={darkStone}
+        position={[0, 2.558, 0.005]}
+        material={frameMaterial}
       >
-        <boxGeometry
-          args={[6, 5.75, 0.35]}
-        />
+        <planeGeometry args={[6.768, 7.412]} />
       </mesh>
 
       {/* =================================================
-          INTERIOR GLOW
-      ================================================= */}
-
-      <mesh
-        ref={innerGlowRef}
-        position={[0, 2.45, -0.82]}
-      >
-        <planeGeometry
-          args={[4.25, 4.9]}
-        />
-
-        <meshBasicMaterial
-          color="#f1a04e"
-          transparent
-          opacity={0}
-          depthWrite={false}
-        />
-      </mesh>
-
-      {/* =================================================
-          INNER STONE FRAME
-      ================================================= */}
-
-      <mesh
-        position={[-2.55, 2.45, -0.2]}
-        material={stone}
-      >
-        <boxGeometry
-          args={[0.38, 5.15, 0.72]}
-        />
-      </mesh>
-
-      <mesh
-        position={[2.55, 2.45, -0.2]}
-        material={stone}
-      >
-        <boxGeometry
-          args={[0.38, 5.15, 0.72]}
-        />
-      </mesh>
-
-      {/* =================================================
-          SIDE PILASTERS
-      ================================================= */}
-
-      <TemplePilaster
-        position={[-2.92, 2.45, 0]}
-      />
-
-      <TemplePilaster
-        position={[2.92, 2.45, 0]}
-      />
-
-      {/* =================================================
-          OUTER STEPPED FRAME
-      ================================================= */}
-
-      <mesh
-        position={[-3.28, 2.5, -0.05]}
-        material={darkStone}
-      >
-        <boxGeometry
-          args={[0.2, 5.8, 0.82]}
-        />
-      </mesh>
-
-      <mesh
-        position={[3.28, 2.5, -0.05]}
-        material={darkStone}
-      >
-        <boxGeometry
-          args={[0.2, 5.8, 0.82]}
-        />
-      </mesh>
-
-      <mesh
-        position={[-3.42, 2.5, -0.12]}
-        material={stone}
-      >
-        <boxGeometry
-          args={[0.12, 5.55, 0.9]}
-        />
-      </mesh>
-
-      <mesh
-        position={[3.42, 2.5, -0.12]}
-        material={stone}
-      >
-        <boxGeometry
-          args={[0.12, 5.55, 0.9]}
-        />
-      </mesh>
-
-      {/* =================================================
-          CORNICE
-      ================================================= */}
-
-      <TempleCornice
-        stone={stone}
-        darkStone={darkStone}
-        stoneLight={stoneLight}
-      />
-
-      {/* =================================================
-          CENTRAL LOTUS CREST
-      ================================================= */}
-
-      <LotusMedallion
-        position={[0, 5.56, 0.52]}
-        scale={1.25}
-      />
-
-      {/* =================================================
-          BRACKETS
-      ================================================= */}
-
-      <TempleBracket
-        position={[-2.3, 4.85, 0.15]}
-      />
-
-      <TempleBracket
-        position={[2.3, 4.85, 0.15]}
-        flip
-      />
-
-      <TempleBracket
-        position={[-2.85, 5.0, 0.05]}
-      />
-
-      <TempleBracket
-        position={[2.85, 5.0, 0.05]}
-        flip
-      />
-
-      {/* =================================================
-          BELLS
-      ================================================= */}
-
-      <TempleBell
-        position={[-2.55, 4.38, 0.5]}
-        scale={0.7}
-      />
-
-      <TempleBell
-        position={[2.55, 4.38, 0.5]}
-        scale={0.7}
-      />
-
-      {/* =================================================
-          SIDE LOTUS
-      ================================================= */}
-
-      <LotusMedallion
-        position={[-2.58, 3.75, 0.48]}
-        scale={0.45}
-      />
-
-      <LotusMedallion
-        position={[2.58, 3.75, 0.48]}
-        scale={0.45}
-      />
-
-      {/* =================================================
-          DOOR BACKING
-
-          IMPORTANT:
-          This is now independently controlled.
-
-          It fades away when the doors open,
-          exposing the actual temple interior.
+          THIN DOOR BACKING (FADES ON FIRST TOUCH)
       ================================================= */}
 
       <mesh
         ref={doorBackingRef}
-        position={[0, 2.45, -0.28]}
+        position={[0, 2.45, -0.05]}
         material={backingMaterial}
       >
         <boxGeometry
-          args={[4.35, 5.05, 0.3]}
+          args={[3.88, 4.85, 0.02]}
         />
       </mesh>
 
       {/* =================================================
-          LEFT DOOR HINGE PIVOT
+          LEFT DOOR HINGE PIVOT (OUTER HINGE AXIS)
       ================================================= */}
 
       <group
         ref={leftDoorRef}
-        position={[-2.105, 2.45, 0]}
+        position={[-1.93, 2.45, 0.04]}
         onPointerDown={handleOpen}
       >
-        <group position={[1.025, 0, 0]}>
-
-          {/* Main leaf */}
-          <mesh material={wood}>
+        <group position={[0.965, 0, 0]}>
+          <mesh material={leftDoorMaterials}>
             <boxGeometry
-              args={[2.05, 4.85, 0.34]}
+              args={[1.93, 4.85, 0.12]}
             />
           </mesh>
-
-          {/* Dark outer frame */}
-          <mesh
-            position={[0, 0, 0.2]}
-            material={darkWood}
-          >
-            <boxGeometry
-              args={[1.9, 4.7, 0.055]}
-            />
-          </mesh>
-
-          <DoorPanel
-            y={1.55}
-            wood={wood}
-            brass={brass}
-          />
-
-          <DoorPanel
-            y={0.05}
-            wood={wood}
-            brass={brass}
-          />
-
-          <DoorPanel
-            y={-1.45}
-            wood={wood}
-            brass={brass}
-          />
-
-          <LotusMedallion
-            position={[0, 1.55, 0.31]}
-            scale={0.58}
-          />
-
-          <LotusMedallion
-            position={[0, -1.45, 0.31]}
-            scale={0.58}
-          />
-
-          <DoorStuds brass={brass} />
-
-          <DoorHingeSet
-            side="left"
-            brass={brass}
-            darkBrass={darkBrass}
-          />
-
-          <DoorHandle
-            position={[0.76, 0, 0.36]}
-            brass={brass}
-            darkBrass={darkBrass}
-          />
         </group>
       </group>
 
       {/* =================================================
-          RIGHT DOOR HINGE PIVOT
+          RIGHT DOOR HINGE PIVOT (OUTER HINGE AXIS)
       ================================================= */}
 
       <group
         ref={rightDoorRef}
-        position={[2.105, 2.45, 0]}
+        position={[1.93, 2.45, 0.04]}
         onPointerDown={handleOpen}
       >
-        <group position={[-1.025, 0, 0]}>
-
-          {/* Main leaf */}
-          <mesh material={wood}>
+        <group position={[-0.965, 0, 0]}>
+          <mesh material={rightDoorMaterials}>
             <boxGeometry
-              args={[2.05, 4.85, 0.34]}
+              args={[1.93, 4.85, 0.12]}
             />
           </mesh>
-
-          {/* Dark outer frame */}
-          <mesh
-            position={[0, 0, 0.2]}
-            material={darkWood}
-          >
-            <boxGeometry
-              args={[1.9, 4.7, 0.055]}
-            />
-          </mesh>
-
-          <DoorPanel
-            y={1.55}
-            wood={wood}
-            brass={brass}
-          />
-
-          <DoorPanel
-            y={0.05}
-            wood={wood}
-            brass={brass}
-          />
-
-          <DoorPanel
-            y={-1.45}
-            wood={wood}
-            brass={brass}
-          />
-
-          <LotusMedallion
-            position={[0, 1.55, 0.31]}
-            scale={0.58}
-          />
-
-          <LotusMedallion
-            position={[0, -1.45, 0.31]}
-            scale={0.58}
-          />
-
-          <DoorStuds brass={brass} />
-
-          <DoorHingeSet
-            side="right"
-            brass={brass}
-            darkBrass={darkBrass}
-          />
-
-          <DoorHandle
-            position={[-0.76, 0, 0.36]}
-            brass={brass}
-            darkBrass={darkBrass}
-          />
         </group>
       </group>
 
-      {/* =================================================
-          CENTRAL SEAM
-
-          This is now independently controlled and
-          disappears as the doors open.
-      ================================================= */}
-
-      <mesh
-        ref={centralSeamRef}
-        position={[0, 2.45, 0.25]}
-        material={seamMaterial}
-      >
-        <boxGeometry
-          args={[0.09, 4.85, 0.07]}
-        />
-      </mesh>
+      {/* Central seam reference (preserved for animation lifecycle) */}
+      <group ref={centralSeamRef} />
 
       {/* =================================================
           THRESHOLD
@@ -1112,7 +833,8 @@ export default function TempleDoor({ onOpen }) {
       ================================================= */}
 
       <mesh
-        position={[0, -0.16, -0.12]}
+        userData={{ isThreshold: true }}
+        position={[0, -0.145, -0.12]}
         material={stone}
       >
         <boxGeometry
@@ -1121,7 +843,8 @@ export default function TempleDoor({ onOpen }) {
       </mesh>
 
       <mesh
-        position={[0, 0.04, 0.32]}
+        userData={{ isThreshold: true }}
+        position={[0, 0.055, 0.32]}
         material={brass}
       >
         <boxGeometry
