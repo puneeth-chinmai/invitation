@@ -1438,7 +1438,7 @@ function IvoryEnvironmentLayer({ doorOpening, sinceDoorOpen }) {
    MAIN SCENE
 ===================================================== */
 
-export default function OpeningScene() {
+export default function OpeningScene({ onComplete }) {
   const [
     showInstruction,
     setShowInstruction,
@@ -1476,6 +1476,17 @@ export default function OpeningScene() {
     animId = requestAnimationFrame(update)
     return () => cancelAnimationFrame(animId)
   }, [doorOpening, doorOpenTimestamp])
+
+  const completedCalledRef = useRef(false)
+  useEffect(() => {
+    if (!onComplete) return
+    // "Puneeth & Chinmai are getting married" finishes revealing at 19.3s
+    // Hold the completed composition for ~3.5s so the guest appreciates it before signaling completion
+    if (sinceDoorOpen >= 22.8 && !completedCalledRef.current) {
+      completedCalledRef.current = true
+      onComplete()
+    }
+  }, [sinceDoorOpen, onComplete])
 
   return (
     <div className="opening-scene">

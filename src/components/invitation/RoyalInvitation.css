@@ -1,0 +1,981 @@
+/* =====================================================
+   ROYAL INVITATION — ANCIENT CRAFTSMANSHIP & STYLING
+   Authentic royal Indian scroll with deckled parchment,
+   dimensional lacquered rollers, and extending pull tag.
+===================================================== */
+
+/* -----------------------------------------------------
+   1. FULL VIEWPORT STAGE
+----------------------------------------------------- */
+
+.royal-invitation-stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: radial-gradient(ellipse at 50% 38%, #FFFDF9 0%, #FAF4E6 45%, #F4EAD6 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 50;
+  user-select: none;
+  animation: stageFadeIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  padding: max(12px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
+}
+
+@keyframes stageFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Viewport Filigree Frame */
+.stage-filigree-frame {
+  position: absolute;
+  inset: clamp(8px, 2vw, 16px);
+  border: 1px solid rgba(196, 150, 76, 0.2);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.stage-corner-motif {
+  position: absolute;
+  color: rgba(196, 150, 76, 0.4);
+  font-size: 13px;
+  pointer-events: none;
+  z-index: 1;
+}
+.stage-corner-motif.tl { top: clamp(6px, 1.8vw, 14px); left: clamp(6px, 1.8vw, 14px); }
+.stage-corner-motif.tr { top: clamp(6px, 1.8vw, 14px); right: clamp(6px, 1.8vw, 14px); }
+.stage-corner-motif.bl { bottom: clamp(6px, 1.8vw, 14px); left: clamp(6px, 1.8vw, 14px); }
+.stage-corner-motif.br { bottom: clamp(6px, 1.8vw, 14px); right: clamp(6px, 1.8vw, 14px); }
+
+/* Ambient Warm Light Glow */
+.stage-light-glow {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 540px);
+  height: min(92vw, 540px);
+  background: radial-gradient(circle, rgba(255, 238, 202, 0.5) 0%, rgba(255, 238, 202, 0) 65%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* -----------------------------------------------------
+   2. CLOSED SCROLL ASSEMBLY (HERO ARTIFACT)
+----------------------------------------------------- */
+
+.closed-scroll-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: -2.5vh;
+  z-index: 10;
+  overflow: visible;
+}
+
+/* The Horizontal Cylindrical Scroll Roll */
+.closed-scroll-unit {
+  position: relative;
+  width: min(88vw, 360px);
+  height: clamp(72px, 16vw, 86px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+/* Layered Cylindrical Parchment Core Wrapped around Rosewood Rod */
+.closed-parchment-cylinder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background:
+    radial-gradient(ellipse at 50% 32%, rgba(255, 255, 255, 0.65) 0%, transparent 68%),
+    linear-gradient(
+      180deg,
+      #6e4e2c 0%,
+      #a07e4d 5%,
+      #deb982 14%,
+      #FFFDF7 32%,
+      #F8EED9 48%,
+      #ECD9B5 66%,
+      #caa46f 80%,
+      #865d2f 92%,
+      #3a200a 100%
+    );
+  box-shadow:
+    0 20px 42px rgba(40, 18, 5, 0.42),
+    0 5px 14px rgba(40, 18, 5, 0.25),
+    inset 0 2.5px 5px rgba(255, 255, 255, 0.75),
+    inset 0 -3.5px 6px rgba(25, 10, 2, 0.7);
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Natural Parchment Fibers & Deckled Aging Grain */
+.closed-parchment-cylinder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 24px,
+      rgba(140, 95, 45, 0.08) 25px,
+      transparent 27px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(140, 95, 45, 0.05) 19px,
+      transparent 21px
+    );
+  pointer-events: none;
+}
+
+/* Exposed Rosewood Rod Ends inside cylinder */
+.cylinder-wood-core-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, #2b0b0f 0%, #4a151b 30%, #682028 50%, #20070a 100%);
+  z-index: 2;
+}
+.cylinder-wood-core-edge.left { left: 0; }
+.cylinder-wood-core-edge.right { right: 0; }
+
+/* Realistic Wrapped Parchment Seam & Overlap */
+.parchment-wrap-seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 64%;
+  height: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(70, 35, 10, 0.5) 100%
+  );
+  box-shadow: 0 1px 2px rgba(35, 15, 3, 0.4);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Carved Indian Royal Ornamental Bands */
+.scroll-ornamental-band {
+  display: block;
+}
+
+.scroll-ornamental-band.closed-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(18px, 4.2vw, 22px);
+  z-index: 4;
+  filter: drop-shadow(0 0 6px rgba(20, 5, 2, 0.55)) drop-shadow(0 2px 4px rgba(20, 5, 2, 0.4));
+}
+.scroll-ornamental-band.closed-band.left {
+  left: 11%;
+}
+.scroll-ornamental-band.closed-band.right {
+  right: 11%;
+}
+
+.ornamental-band-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Handcrafted Turned Roller Finials (Multi-Tier Brass & Rosewood) */
+.scroll-finial-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.scroll-finial-wrapper.closed-roller-finial {
+  position: absolute;
+  top: 50%;
+  height: 100%;
+  width: clamp(34px, 7.8vw, 44px);
+  z-index: 6;
+  filter: drop-shadow(0 6px 14px rgba(35, 14, 4, 0.55)) drop-shadow(0 2px 5px rgba(35, 14, 4, 0.35));
+}
+.scroll-finial-wrapper.closed-roller-finial.left {
+  left: clamp(-30px, -6.8vw, -38px);
+  transform: translateY(-50%) !important;
+}
+.scroll-finial-wrapper.closed-roller-finial.right {
+  right: clamp(-30px, -6.8vw, -38px);
+  transform: translateY(-50%) scaleX(-1) !important;
+}
+
+.scroll-finial-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Central Embossed Royal Ganesha Seal */
+.embossed-royal-seal-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(52px, 13vw, 64px);
+  height: clamp(52px, 13vw, 64px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  filter: drop-shadow(0 6px 18px rgba(35, 14, 4, 0.65)) drop-shadow(0 2px 6px rgba(35, 14, 4, 0.45));
+}
+
+.embossed-seal-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.seal-inner-icon-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 62%;
+  height: 62%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seal-ganesha-emblem-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.7)) drop-shadow(0 -1px 1.5px rgba(45, 18, 4, 0.8));
+}
+
+/* Realistic Ground Shadow under closed scroll */
+.closed-scroll-shadow {
+  width: min(80vw, 320px);
+  height: 18px;
+  margin-top: 10px;
+  background: radial-gradient(ellipse at center, rgba(50, 24, 6, 0.38) 0%, rgba(50, 24, 6, 0) 72%);
+  border-radius: 50%;
+  filter: blur(2.5px);
+  pointer-events: none;
+}
+
+/* -----------------------------------------------------
+   3. HANGING ROYAL PULL TAG (DYNAMIC EXTENSION BUG FIX)
+----------------------------------------------------- */
+
+/* Fixed Attachment Anchor on the Scroll */
+.tag-attachment-anchor {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 20;
+  overflow: visible;
+  margin-top: -6px;
+}
+
+/* Fixed Brass Grommet / Mounting Ring at attachment point */
+.tag-mounting-grommet {
+  width: 14px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff7d4 0%, #d8ac4e 45%, #7a4f15 100%);
+  border: 1px solid rgba(255, 235, 170, 0.8);
+  box-shadow: 0 2px 4px rgba(35, 16, 5, 0.45);
+  z-index: 2;
+}
+
+/* Braided Silk & Gold Cord — Dynamically Lengthens from top anchor */
+.hanging-braided-cord {
+  width: 3.5px;
+  background: repeating-linear-gradient(
+    180deg,
+    #6d141e 0px,
+    #6d141e 5px,
+    #d4a74a 5px,
+    #d4a74a 9px
+  );
+  box-shadow:
+    1px 0 2px rgba(40, 18, 5, 0.3),
+    -1px 0 2px rgba(40, 18, 5, 0.3);
+  border-radius: 2px;
+  transform-origin: top center;
+  z-index: 1;
+}
+
+/* Draggable Tag Assembly Hanging at the bottom of the cord */
+.hanging-tag-movable {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: top center;
+  will-change: top, transform;
+}
+
+.hanging-tag-movable.swaying {
+  animation: naturalTagSway 5.4s ease-in-out infinite;
+}
+
+.hanging-tag-movable.dragging {
+  cursor: grabbing;
+  animation: none !important;
+}
+
+@keyframes naturalTagSway {
+  0%, 100% {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-50%) rotate(1.2deg);
+  }
+  75% {
+    transform: translateX(-50%) rotate(-1.2deg);
+  }
+}
+
+/* The Hanging Royal Tag Card */
+.hanging-tag-card {
+  position: relative;
+  width: clamp(146px, 38vw, 176px);
+  padding: 10px 14px 9px 14px;
+  background: linear-gradient(180deg, #FFFDF8 0%, #FAF3E2 45%, #EEDFBF 100%);
+  border: 1.5px solid rgba(196, 150, 76, 0.8);
+  border-radius: 6px;
+  box-shadow:
+    0 10px 24px rgba(50, 25, 8, 0.3),
+    0 2px 6px rgba(50, 25, 8, 0.18),
+    inset 0 1px 2px rgba(255, 255, 255, 0.85),
+    inset 0 0 0 1px rgba(109, 22, 32, 0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.hanging-tag-card:focus-visible {
+  box-shadow: 0 0 0 2px #b88628, 0 10px 24px rgba(50, 25, 8, 0.35);
+}
+
+/* Top Eyelet on the Tag Card */
+.tag-eyelet {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff6d6 0%, #d8ac4e 45%, #7a4f15 100%);
+  box-shadow: 0 2px 4px rgba(35, 16, 5, 0.4);
+  border: 1px solid rgba(255, 235, 170, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tag-eyelet::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #331505;
+}
+
+/* Tag Instructions */
+.tag-arrow-indicator {
+  font-size: 11px;
+  line-height: 1;
+  color: #c4964c;
+  margin-bottom: 3px;
+  animation: arrowNudge 1.8s ease-in-out infinite;
+}
+
+@keyframes arrowNudge {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 1;
+  }
+}
+
+.tag-main-instruction {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 2.8vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6d1620;
+  margin: 0;
+  line-height: 1.25;
+  text-shadow: 0 1px 8px rgba(212, 160, 68, 0.2);
+}
+
+.tag-sub-instruction {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: clamp(11px, 2.7vw, 13px);
+  font-style: italic;
+  font-weight: 400;
+  color: #7a5426;
+  margin: 2px 0 0 0;
+  line-height: 1.2;
+}
+
+/* Ornamental Bottom Tassel */
+.tag-bottom-tassel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -2px;
+}
+
+.tassel-brass-cap {
+  width: 10px;
+  height: 7px;
+  border-radius: 2px 2px 5px 5px;
+  background: linear-gradient(180deg, #fce09c 0%, #b88628 50%, #6e4612 100%);
+  box-shadow: 0 1px 3px rgba(35, 18, 6, 0.4);
+}
+
+.tassel-silk-fringe {
+  width: 8px;
+  height: 19px;
+  background: repeating-linear-gradient(
+    90deg,
+    #6d141e 0px,
+    #6d141e 2px,
+    #b88628 2px,
+    #b88628 3px
+  );
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 2px 5px rgba(35, 16, 5, 0.35);
+}
+
+/* -----------------------------------------------------
+   4. OPENED ROYAL INVITATION (ANTIQUE PARCHMENT ARTIFACT)
+----------------------------------------------------- */
+
+.opened-invitation-assembly {
+  position: relative;
+  width: min(92vw, 470px);
+  max-width: 470px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  margin: auto;
+  user-select: text;
+  z-index: 10;
+  filter: drop-shadow(0 20px 40px rgba(45, 22, 6, 0.35)) drop-shadow(0 4px 10px rgba(45, 22, 6, 0.2));
+}
+
+/* Heavy Cylindrical Lacquered Rosewood & Brass Roller Bars */
+.physical-roller-bar {
+  position: relative;
+  width: 100%;
+  height: clamp(28px, 6vw, 34px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 8;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.physical-roller-bar.top {
+  box-shadow: 0 8px 18px rgba(35, 14, 4, 0.45);
+}
+
+.physical-roller-bar.bottom {
+  box-shadow: 0 -4px 12px rgba(35, 14, 4, 0.35), 0 8px 20px rgba(35, 14, 4, 0.45);
+}
+
+/* Core Cylindrical Rosewood Body of the Roller Bar */
+.roller-body-core {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    #3b1509 0%,
+    #5c2311 12%,
+    #8d3a1c 26%,
+    #FFF3DF 32%,
+    #7c3116 40%,
+    #43160a 65%,
+    #1f0803 88%,
+    #0a0201 100%
+  );
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.42),
+    inset 0 -1.5px 3px rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.physical-roller-bar.top .roller-body-core {
+  border-bottom: 1px solid rgba(196, 150, 76, 0.45);
+}
+
+.physical-roller-bar.bottom .roller-body-core {
+  border-top: 1px solid rgba(196, 150, 76, 0.45);
+}
+
+/* Longitudinal Hardwood Grain Overlay */
+.roller-wood-grain-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(255, 210, 160, 0.05) 3px,
+    transparent 4px
+  );
+  pointer-events: none;
+}
+
+/* Carved Indian Royal Ornamental Bands on Roller Bar */
+.scroll-ornamental-band.bar-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(14px, 3.2vw, 18px);
+  z-index: 3;
+  filter: drop-shadow(0 0 4px rgba(15, 4, 1, 0.55));
+}
+.scroll-ornamental-band.bar-band.left {
+  left: 9%;
+}
+.scroll-ornamental-band.bar-band.right {
+  right: 9%;
+}
+
+/* Central Antique Gold Filigree Sleeve on Roller Bar */
+.roller-centerpiece-filigree {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(48px, 11vw, 68px);
+  height: 65%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  filter: drop-shadow(0 1px 3px rgba(35, 14, 4, 0.4));
+}
+
+.centerpiece-filigree-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Sculpted Finials on Open Roller Bar Ends */
+.scroll-finial-wrapper.bar-finial {
+  height: 132%;
+  width: clamp(18px, 4.2vw, 24px);
+  z-index: 4;
+  filter: drop-shadow(0 4px 8px rgba(30, 10, 3, 0.55)) drop-shadow(0 1px 3px rgba(30, 10, 3, 0.35));
+}
+.scroll-finial-wrapper.bar-finial.left {
+  margin-left: clamp(-14px, -3vw, -18px);
+}
+.scroll-finial-wrapper.bar-finial.right {
+  margin-right: clamp(-14px, -3vw, -18px);
+}
+
+/* Handcrafted Deckled Parchment Document Sheet */
+.physical-parchment-sheet {
+  position: relative;
+  width: 96%;
+  background-color: #FAF4E6;
+  background-image:
+    radial-gradient(ellipse at 50% 30%, #FFFDF9 0%, #FAF3DE 48%, #F2E3C2 82%, #E9CE9D 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(160, 120, 65, 0.04) 41px, transparent 42px),
+    repeating-linear-gradient(90deg, transparent, transparent 48px, rgba(160, 120, 65, 0.03) 49px, transparent 50px);
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  max-height: calc(100dvh - 105px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+  transition: max-height 0.3s ease;
+  z-index: 4;
+
+  /* Asymmetrical Antique Deckled Edge Contour */
+  clip-path: polygon(
+    0% 0.7%,
+    14% 0.2%,
+    32% 0.8%,
+    52% 0.2%,
+    74% 0.6%,
+    90% 0.2%,
+    100% 0.5%,
+    99.3% 14%,
+    99.8% 28%,
+    99.2% 44%,
+    99.7% 58%,
+    99.1% 72%,
+    99.8% 86%,
+    99.3% 96%,
+    100% 99.4%,
+    88% 99.7%,
+    68% 99.2%,
+    48% 99.8%,
+    28% 99.3%,
+    12% 99.7%,
+    0% 99.3%,
+    0.6% 86%,
+    0.2% 70%,
+    0.7% 54%,
+    0.2% 38%,
+    0.8% 22%,
+    0.2% 10%
+  );
+}
+
+.physical-parchment-sheet::-webkit-scrollbar {
+  width: 4px;
+}
+.physical-parchment-sheet::-webkit-scrollbar-track {
+  background: transparent;
+}
+.physical-parchment-sheet::-webkit-scrollbar-thumb {
+  background: rgba(196, 150, 76, 0.45);
+  border-radius: 4px;
+}
+
+/* Natural Rolling Contact Shadows where Paper Wraps into the Rods */
+.parchment-inner-curl-top {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(180deg, rgba(40, 16, 4, 0.32) 0%, rgba(40, 16, 4, 0.12) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.parchment-inner-curl-bottom {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(0deg, rgba(40, 16, 4, 0.32) 0%, rgba(40, 16, 4, 0.12) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Framed Decorative Card Area with Royal Inset Borders */
+.parchment-ornamental-border {
+  position: relative;
+  margin: clamp(10px, 2.5vw, 15px);
+  padding: clamp(18px, 4.5vw, 26px) clamp(14px, 3.8vw, 22px);
+  border: 1.5px solid rgba(196, 150, 76, 0.7);
+  box-sizing: border-box;
+}
+
+.parchment-ornamental-border::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(109, 22, 32, 0.3);
+  pointer-events: none;
+}
+
+/* Corner Filigree SVG Flourishes */
+.border-corner-flourish {
+  position: absolute;
+  width: clamp(28px, 6.5vw, 36px);
+  height: clamp(28px, 6.5vw, 36px);
+  color: #b88628;
+  pointer-events: none;
+  z-index: 2;
+}
+.border-corner-flourish.tl { top: 4px; left: 4px; }
+.border-corner-flourish.tr { top: 4px; right: 4px; transform: scaleX(-1); }
+.border-corner-flourish.bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+.border-corner-flourish.br { bottom: 4px; right: 4px; transform: scale(-1); }
+
+/* -----------------------------------------------------
+   5. INVITATION TYPOGRAPHY & LAYOUT (SELECTABLE HTML)
+----------------------------------------------------- */
+
+.invitation-text-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* 1. Top Blessing */
+.invitation-blessing-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: clamp(14px, 3vh, 18px);
+}
+
+.invitation-ganesha-emblem {
+  width: clamp(46px, 11vw, 58px);
+  height: auto;
+  max-height: 66px;
+  object-fit: contain;
+  margin-bottom: 7px;
+  filter: drop-shadow(0 2px 7px rgba(212, 160, 68, 0.28));
+}
+
+.invitation-blessing-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 2.7vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6d1620;
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* 2. Heading Section */
+.invitation-heading-block {
+  margin-bottom: clamp(14px, 3vh, 20px);
+  max-width: 390px;
+}
+
+.invitation-main-heading {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(15px, 4vw, 19px);
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #966826;
+  margin: 0 0 7px 0;
+  text-shadow: 0 1px 8px rgba(212, 160, 68, 0.2);
+}
+
+.invitation-celebrating-intro {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: clamp(14px, 3.7vw, 17px);
+  font-style: italic;
+  font-weight: 400;
+  color: #462d19;
+  line-height: 1.45;
+  margin: 0;
+  padding: 0 6px;
+}
+
+/* 3. Centerpiece Couple Names */
+.invitation-names-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: clamp(14px, 3vh, 20px);
+}
+
+.invitation-groom-name,
+.invitation-bride-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 7.8vw, 44px);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: #2b1406;
+  line-height: 1.15;
+  margin: 0;
+  text-shadow: 0 1px 10px rgba(184, 134, 40, 0.16);
+}
+
+.invitation-name-ampersand {
+  font-family: 'Cormorant Garamond', 'Great Vibes', serif;
+  font-size: clamp(24px, 6vw, 34px);
+  font-style: italic;
+  color: #b88628;
+  margin: clamp(1px, 0.6vh, 4px) 0;
+  line-height: 1;
+}
+
+.invitation-blessing-closing-note {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: clamp(13px, 3.4vw, 16px);
+  font-style: italic;
+  color: #5a3b1e;
+  line-height: 1.4;
+  margin: 9px 0 0 0;
+  max-width: 330px;
+}
+
+/* Ornamental Filigree Divider */
+.invitation-filigree-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #b88628;
+  font-size: 11px;
+  width: 80%;
+  margin: clamp(10px, 2.2vh, 16px) auto;
+  opacity: 0.85;
+}
+
+.invitation-divider-line {
+  flex: 1;
+  max-width: 55px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #b88628, transparent);
+}
+
+/* 4. Event Blocks (Reception & Muhurtam) */
+.invitation-event-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: clamp(5px, 1vh, 8px) 0;
+}
+
+.invitation-event-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 3.4vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6d1620;
+  margin: 0 0 4px 0;
+}
+
+.invitation-event-date {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 3.8vw, 17px);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: #301a0c;
+  margin: 0 0 3px 0;
+}
+
+.invitation-event-time {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12px, 3.2vw, 14px);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  color: #704d22;
+  margin: 0;
+}
+
+/* 5. Venue Block */
+.invitation-venue-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: clamp(6px, 1.4vh, 10px);
+  margin-bottom: 6px;
+}
+
+.invitation-venue-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 3.4vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6d1620;
+  margin: 0 0 5px 0;
+}
+
+.invitation-venue-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 3.8vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #241004;
+  margin: 0 0 3px 0;
+  line-height: 1.3;
+}
+
+.invitation-venue-city {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12px, 3.2vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #543618;
+  margin: 0;
+}
+
+/* Bottom Lotus Emblem */
+.invitation-base-lotus {
+  margin-top: clamp(10px, 2.2vh, 16px);
+  color: #b88628;
+  font-size: 15px;
+  opacity: 0.75;
+}
+
+/* -----------------------------------------------------
+   6. REDUCED MOTION SUPPORT
+----------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .royal-invitation-stage {
+    animation: none !important;
+  }
+  .hanging-tag-movable.swaying {
+    animation: none !important;
+  }
+  .tag-arrow-indicator {
+    animation: none !important;
+  }
+}
