@@ -1,0 +1,1192 @@
+/* =====================================================
+   OUR JOURNEY: FROM THEN TO FOREVER
+   Premium Interactive Relationship Map
+   Warm ivory parchment, deep maroon typography,
+   antique-gold continuous winding route, and compact
+   photo waypoint markers.
+===================================================== */
+
+/* -----------------------------------------------------
+   1. VIEWPORT & AMBIENT PARCHMENT CANVAS
+----------------------------------------------------- */
+
+.journey-viewport {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: radial-gradient(ellipse at 50% 18%, #FFFDF9 0%, #FAF4E6 42%, #F4EAD6 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  z-index: 20;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+}
+
+.journey-viewport::-webkit-scrollbar {
+  width: 5px;
+}
+.journey-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+.journey-viewport::-webkit-scrollbar-thumb {
+  background: rgba(196, 150, 76, 0.45);
+  border-radius: 4px;
+}
+
+/* Subtle Parchment Texture Layer */
+.journey-parchment-overlay {
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(196, 150, 76, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(109, 22, 32, 0.03) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Viewport Filigree Frame */
+.journey-filigree-frame {
+  position: fixed;
+  inset: clamp(8px, 2vw, 16px);
+  border: 1px solid rgba(196, 150, 76, 0.25);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.journey-corner-motif {
+  position: fixed;
+  color: rgba(196, 150, 76, 0.45);
+  font-size: 13px;
+  pointer-events: none;
+  z-index: 2;
+  user-select: none;
+}
+.journey-corner-motif.tl { top: clamp(6px, 1.8vw, 14px); left: clamp(6px, 1.8vw, 14px); }
+.journey-corner-motif.tr { top: clamp(6px, 1.8vw, 14px); right: clamp(6px, 1.8vw, 14px); }
+.journey-corner-motif.bl { bottom: clamp(6px, 1.8vw, 14px); left: clamp(6px, 1.8vw, 14px); }
+.journey-corner-motif.br { bottom: clamp(6px, 1.8vw, 14px); right: clamp(6px, 1.8vw, 14px); }
+
+/* Ambient Warm Light Pool */
+.journey-light-glow {
+  position: fixed;
+  top: 28%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(94vw, 760px);
+  height: min(94vw, 760px);
+  background: radial-gradient(circle, rgba(255, 238, 202, 0.55) 0%, rgba(255, 238, 202, 0) 68%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Main Content Container */
+.journey-content-container {
+  position: relative;
+  width: 100%;
+  max-width: min(96vw, 920px);
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding-top: max(74px, calc(env(safe-area-inset-top, 10px) + 56px));
+  padding-bottom: max(48px, env(safe-area-inset-bottom, 32px));
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3.5vw, 32px);
+  z-index: 3;
+}
+
+/* -----------------------------------------------------
+   2. SECTION INTRO & VINTAGE MAP HEADER
+----------------------------------------------------- */
+
+.journey-intro-header {
+  text-align: center;
+  position: relative;
+  padding: 6px 14px 10px;
+}
+
+.journey-header-compass {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 2px 6px rgba(184, 134, 40, 0.2));
+}
+
+.journey-kannada-subtitle {
+  display: inline-block;
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(14px, 3.2vw, 17px);
+  font-weight: 500;
+  color: #8c6527;
+  letter-spacing: 0.16em;
+  margin-bottom: 4px;
+}
+
+.journey-main-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(26px, 6vw, 38px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #6d1620;
+  margin: 2px 0;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+.journey-sub-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(17px, 3.8vw, 21px);
+  font-style: italic;
+  font-weight: 500;
+  color: #6a441e;
+  letter-spacing: 0.08em;
+  margin: 2px 0 8px;
+}
+
+.journey-intro-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(14px, 3.2vw, 16px);
+  font-style: italic;
+  color: #5c3d26;
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.5;
+  opacity: 0.92;
+}
+
+/* -----------------------------------------------------
+   3. RELATIONSHIP MAP CANVAS CONTAINER
+----------------------------------------------------- */
+
+.journey-relationship-map {
+  position: relative;
+  width: 100%;
+  margin-top: 6px;
+  min-height: 800px;
+}
+
+/* Background SVG Canvas */
+.map-svg-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Route Origin Start Marker */
+.map-route-start {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 24px;
+  z-index: 3;
+}
+
+.start-seal-inner {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 252, 245, 0.94);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(196, 150, 76, 0.45);
+  border-radius: 20px;
+  padding: 6px 14px;
+  box-shadow: 0 4px 12px rgba(45, 22, 6, 0.08);
+}
+
+.start-seal-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #8c6527;
+  text-transform: uppercase;
+}
+
+/* Stream of Milestone Rows */
+.map-milestones-stream {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 7vw, 76px);
+  z-index: 3;
+  padding: 8px 0 20px;
+}
+
+/* Individual Milestone Row */
+.map-milestone-row {
+  position: relative;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.map-milestone-row.row-left {
+  justify-content: flex-start;
+  padding-left: clamp(10px, 4vw, 80px);
+}
+
+.map-milestone-row.row-right {
+  justify-content: flex-end;
+  padding-right: clamp(10px, 4vw, 80px);
+}
+
+.map-waypoint-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Midpoint Decorator */
+.map-midpoint-decor {
+  display: flex;
+  justify-content: center;
+  opacity: 0.75;
+  margin: -12px 0;
+}
+
+/* -----------------------------------------------------
+   4. COMPACT EVENT MARKER (BEZEL + TYPOGRAPHIC PLAQUE)
+----------------------------------------------------- */
+
+.map-event-marker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(10px, 2.5vw, 16px);
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: min(90vw, 360px);
+}
+
+.map-event-marker.align-left {
+  flex-direction: row;
+}
+
+.map-event-marker.align-right {
+  flex-direction: row-reverse;
+}
+
+.map-event-marker:hover {
+  transform: translateY(-3px);
+}
+
+.map-event-marker:focus-visible {
+  outline: 2px solid #b88628;
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* --- Photo Bezel Container (Waypoint Anchor) --- */
+.marker-bezel-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.marker-bezel-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(223, 182, 109, 0.45) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.map-event-marker:hover .marker-bezel-glow {
+  opacity: 1;
+}
+
+.marker-photo-bezel {
+  position: relative;
+  width: clamp(66px, 14vw, 78px);
+  height: clamp(66px, 14vw, 78px);
+  border-radius: 50%;
+  background: #FFFDF9;
+  border: 2px solid #b88628;
+  box-shadow:
+    0 0 0 3px rgba(255, 253, 248, 0.95),
+    0 0 0 4.5px rgba(184, 134, 40, 0.45),
+    0 6px 18px rgba(45, 22, 6, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.map-event-marker:hover .marker-photo-bezel {
+  border-color: #6d1620;
+  box-shadow:
+    0 0 0 3px rgba(255, 253, 248, 0.95),
+    0 0 0 5px rgba(109, 22, 32, 0.5),
+    0 8px 22px rgba(109, 22, 32, 0.2);
+}
+
+/* Bezel Cardinal Notches */
+.bezel-notch {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #b88628;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.bezel-notch.n { top: -2.5px; left: calc(50% - 2.5px); }
+.bezel-notch.s { bottom: -2.5px; left: calc(50% - 2.5px); }
+.bezel-notch.e { right: -2.5px; top: calc(50% - 2.5px); }
+.bezel-notch.w { left: -2.5px; top: calc(50% - 2.5px); }
+
+/* Bezel Thumbnail Photo */
+.marker-thumbnail-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.06);
+  transition: transform 0.3s ease;
+}
+
+.map-event-marker:hover .marker-thumbnail-img {
+  transform: scale(1.06);
+}
+
+/* Bezel Empty Placeholder */
+.marker-empty-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFFBF2 0%, #F5EBD7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c6527;
+}
+
+/* Bezel Video Container */
+.marker-video-thumb {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.marker-video-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(22, 10, 6, 0.72);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF8E7;
+  border: 1px solid #c4964c;
+}
+
+/* Step Number Pill */
+.marker-step-pill {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(109, 22, 32, 0.4);
+  border: 1px solid rgba(255, 235, 170, 0.5);
+  z-index: 4;
+}
+
+/* Media Count Badge */
+.marker-media-badge {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(22, 10, 6, 0.88);
+  backdrop-filter: blur(4px);
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(196, 150, 76, 0.55);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  z-index: 4;
+}
+
+/* --- Attached Typographic Plaque --- */
+.marker-plaque {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(255, 253, 248, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(196, 150, 76, 0.4);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow:
+    0 6px 18px rgba(45, 22, 6, 0.08),
+    0 1px 3px rgba(45, 22, 6, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 140px;
+  max-width: 210px;
+  text-align: left;
+}
+
+.map-event-marker.align-right .marker-plaque {
+  text-align: right;
+}
+
+.map-event-marker:hover .marker-plaque {
+  border-color: rgba(184, 134, 40, 0.7);
+  box-shadow: 0 8px 24px rgba(45, 22, 6, 0.12);
+}
+
+.marker-plaque-category {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #8c6527;
+  text-transform: uppercase;
+}
+
+.marker-plaque-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6d1620;
+}
+
+.map-event-marker.align-right .marker-plaque-date {
+  justify-content: flex-end;
+}
+
+.plaque-gem {
+  font-size: 9px;
+  color: #b88628;
+}
+
+.marker-plaque-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12.5px, 2.8vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #6d1620;
+  margin: 1px 0;
+  line-height: 1.3;
+}
+
+.marker-plaque-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #6a441e;
+  opacity: 0.9;
+}
+
+.map-event-marker.align-right .marker-plaque-location {
+  justify-content: flex-end;
+}
+
+.marker-action-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #6d1620;
+  margin-top: 2px;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.map-event-marker:hover .marker-action-prompt {
+  color: #871f2c;
+}
+
+.map-event-marker:hover .prompt-arrow {
+  transform: translateX(3px);
+}
+
+.prompt-arrow {
+  transition: transform 0.2s ease;
+}
+
+/* Milestone Highlight (e.g. Engagement) */
+.map-event-marker.is-milestone-highlight .marker-photo-bezel {
+  border-color: #6d1620;
+  box-shadow:
+    0 0 0 3px rgba(255, 253, 248, 0.95),
+    0 0 0 5px rgba(184, 134, 40, 0.7),
+    0 8px 24px rgba(109, 22, 32, 0.25);
+}
+
+.map-event-marker.is-milestone-highlight .marker-plaque {
+  border-color: rgba(184, 134, 40, 0.6);
+  background: rgba(255, 250, 242, 0.96);
+}
+
+/* -----------------------------------------------------
+   5. WEDDING-DAY DESTINATION TERMINAL
+----------------------------------------------------- */
+
+.map-destination-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.map-destination-terminal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+}
+
+/* Junction Terminal Pin */
+.terminal-junction-pin {
+  display: flex;
+  justify-content: center;
+  margin-bottom: -16px;
+  position: relative;
+  z-index: 4;
+}
+
+.terminal-pin-ring {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFF8E7 0%, #F5E6CA 65%, #DFB66D 100%);
+  border: 2px solid #b88628;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(184, 134, 40, 0.45);
+}
+
+.terminal-pin-core {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #6d1620;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Medallion Card */
+.terminal-medallion-box {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 25%, #FFFDF9 0%, #FAF1DF 50%, #F3E2C4 100%);
+  border: 2px solid #b88628;
+  border-radius: 12px;
+  padding: clamp(26px, 5vw, 36px) clamp(16px, 4vw, 28px);
+  box-shadow:
+    0 16px 44px rgba(184, 134, 40, 0.22),
+    0 4px 12px rgba(109, 22, 32, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  overflow: hidden;
+}
+
+.terminal-ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130%;
+  height: 130%;
+  background: radial-gradient(circle, rgba(223, 182, 109, 0.25) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.terminal-kannada-seal {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(14px, 3vw, 16px);
+  font-weight: 600;
+  color: #8c6527;
+  letter-spacing: 0.16em;
+  margin-bottom: 6px;
+}
+
+.terminal-date-ribbon {
+  display: inline-block;
+  background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11.5px, 2.6vw, 13.5px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 5px 16px;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(109, 22, 32, 0.35);
+  margin-bottom: 10px;
+}
+
+.terminal-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(20px, 4.8vw, 28px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #6d1620;
+  margin: 4px 0;
+  text-transform: uppercase;
+}
+
+.terminal-divider {
+  margin: 8px auto !important;
+}
+
+.terminal-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 3.8vw, 19px);
+  font-style: italic;
+  font-weight: 500;
+  color: #5c3d26;
+  margin: 6px auto 0;
+  max-width: 360px;
+}
+
+.terminal-coordinates {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #8c6527;
+  margin-top: 10px;
+  opacity: 0.85;
+}
+
+/* -----------------------------------------------------
+   6. MOBILE OPTIMIZATIONS (< 768px)
+----------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .journey-content-container {
+    max-width: 100vw;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .map-milestones-stream {
+    gap: 40px;
+  }
+
+  .map-milestone-row.row-left {
+    padding-left: 6px;
+  }
+
+  .map-milestone-row.row-right {
+    padding-right: 6px;
+  }
+
+  .map-event-marker {
+    max-width: 290px;
+    gap: 10px;
+  }
+
+  .marker-plaque {
+    padding: 6px 10px;
+    min-width: 130px;
+    max-width: 185px;
+  }
+
+  .marker-plaque-title {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .map-milestone-row.row-left {
+    padding-left: 2px;
+  }
+  .map-milestone-row.row-right {
+    padding-right: 2px;
+  }
+  .map-event-marker {
+    max-width: 260px;
+    gap: 8px;
+  }
+  .marker-photo-bezel {
+    width: 60px;
+    height: 60px;
+  }
+  .marker-plaque {
+    padding: 5px 8px;
+    min-width: 115px;
+    max-width: 165px;
+  }
+  .marker-plaque-title {
+    font-size: 11px;
+  }
+}
+
+/* -----------------------------------------------------
+   7. EVENT GALLERY MODAL & FULLSCREEN LIGHTBOX
+----------------------------------------------------- */
+
+.gallery-modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(22, 10, 6, 0.84);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 16px)) max(12px, env(safe-area-inset-right, 12px)) max(16px, env(safe-area-inset-bottom, 16px)) max(12px, env(safe-area-inset-left, 12px));
+  box-sizing: border-box;
+  animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.gallery-modal-window {
+  position: relative;
+  width: 100%;
+  max-width: min(94vw, 780px);
+  max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px);
+  background: radial-gradient(ellipse at 50% 15%, #FFFDF9 0%, #FAF4E6 50%, #F5ECDD 100%);
+  border: 2px solid #b88628;
+  border-radius: 10px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 4px 12px rgba(109, 22, 32, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Modal Header Bar */
+.gallery-modal-header {
+  position: relative;
+  padding: 16px 20px 14px;
+  background: rgba(255, 252, 245, 0.96);
+  border-bottom: 1px solid rgba(196, 150, 76, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+.gallery-header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.gallery-modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(17px, 4vw, 22px);
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.08em;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.gallery-modal-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(13px, 3vw, 15px);
+  color: #6a441e;
+  flex-wrap: wrap;
+}
+
+.gallery-close-btn {
+  background: rgba(109, 22, 32, 0.08);
+  border: 1px solid rgba(196, 150, 76, 0.4);
+  color: #6d1620;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gallery-close-btn:hover {
+  background: #6d1620;
+  color: #FFF8E7;
+  transform: rotate(90deg);
+}
+
+/* Modal Scrollable Body */
+.gallery-modal-body {
+  padding: 18px 20px 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+}
+
+.gallery-modal-body::-webkit-scrollbar {
+  width: 5px;
+}
+.gallery-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(196, 150, 76, 0.45);
+  border-radius: 4px;
+}
+
+.gallery-description-box {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(196, 150, 76, 0.25);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(15px, 3.4vw, 17px);
+  font-style: italic;
+  color: #5c3d26;
+  line-height: 1.55;
+}
+
+/* Gallery Grid */
+.gallery-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 540px) {
+  .gallery-media-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Individual Gallery Item Card */
+.gallery-media-item {
+  position: relative;
+  background: #FFFDF9;
+  border: 1.5px solid rgba(196, 150, 76, 0.35);
+  border-radius: 6px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(45, 22, 6, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gallery-media-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(45, 22, 6, 0.12);
+  border-color: rgba(184, 134, 40, 0.6);
+}
+
+.gallery-photo-thumb-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #f7f0e3;
+}
+
+.gallery-photo-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.gallery-photo-thumb-wrapper:hover .gallery-photo-thumb {
+  transform: scale(1.04);
+}
+
+.gallery-zoom-hint {
+  position: absolute;
+  inset: 0;
+  background: rgba(22, 10, 6, 0.35);
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.gallery-photo-thumb-wrapper:hover .gallery-zoom-hint {
+  opacity: 1;
+}
+
+/* Native Video Item Container */
+.gallery-video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gallery-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+
+.gallery-item-caption {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #6a441e;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0 4px;
+}
+
+.gallery-item-order-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 600;
+  color: #8c6527;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Empty Placeholder in Gallery */
+.card-empty-placeholder {
+  position: relative;
+  width: 100%;
+  background: radial-gradient(circle at 50% 50%, #FFFBF2 0%, #F5EBD7 100%);
+  border: 1.5px dashed rgba(196, 150, 76, 0.45);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.placeholder-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #8c6527;
+  text-transform: uppercase;
+}
+
+.placeholder-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #6a441e;
+  opacity: 0.8;
+}
+
+/* -----------------------------------------------------
+   8. LIGHTBOX FULLSCREEN PHOTO VIEWER
+----------------------------------------------------- */
+
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(12, 5, 3, 0.96);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: max(16px, env(safe-area-inset-top, 16px)) max(16px, env(safe-area-inset-right, 16px)) max(16px, env(safe-area-inset-bottom, 16px)) max(16px, env(safe-area-inset-left, 16px));
+  box-sizing: border-box;
+  animation: modalFadeIn 0.25s ease forwards;
+}
+
+.lightbox-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  color: #FFF8E7;
+  z-index: 10;
+}
+
+.lightbox-counter {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #dfb66d;
+}
+
+.lightbox-close-btn {
+  background: transparent;
+  border: 1px solid rgba(196, 150, 76, 0.5);
+  color: #FFF8E7;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lightbox-close-btn:hover {
+  background: #6d1620;
+  border-color: #dfb66d;
+}
+
+.lightbox-stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.lightbox-main-img {
+  max-width: 100%;
+  max-height: 80vh;
+  max-height: 80dvh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(196, 150, 76, 0.3);
+}
+
+.lightbox-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(22, 10, 6, 0.7);
+  border: 1px solid rgba(196, 150, 76, 0.5);
+  color: #FFF8E7;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox-nav-btn:hover {
+  background: #6d1620;
+  border-color: #dfb66d;
+}
+
+.lightbox-nav-btn.prev { left: 8px; }
+.lightbox-nav-btn.next { right: 8px; }
+
+.lightbox-bottom-bar {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 8px 16px;
+}
+
+.lightbox-caption {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(14px, 3.2vw, 16px);
+  font-style: italic;
+  color: #FFF8E7;
+  margin: 0;
+}
+
+/* -----------------------------------------------------
+   9. ACCESSIBILITY & REDUCED MOTION
+----------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

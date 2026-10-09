@@ -1,0 +1,723 @@
+/* ==========================================================================
+   EVENT ALBUM & GUEST-FACING GALLERY STYLES
+   Compact Responsive Media Carousel for Puneeth & Chinmai's Wedding Website
+   ========================================================================== */
+
+/* -----------------------------------------------------
+   1. ALBUM MODAL OVERLAY & ROOT CONTAINER
+----------------------------------------------------- */
+
+.royal-album-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(14, 6, 3, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999; /* Higher than global navbar (z-index: 100) and other layers */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(8px, env(safe-area-inset-top, 8px))
+    max(8px, env(safe-area-inset-right, 8px))
+    max(8px, env(safe-area-inset-bottom, 8px))
+    max(8px, env(safe-area-inset-left, 8px));
+  box-sizing: border-box;
+  animation: albumFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes albumFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.royal-album-window {
+  position: relative;
+  width: 100%;
+  max-width: min(94vw, 760px);
+  max-height: calc(100vh - 16px);
+  max-height: calc(100dvh - 16px);
+  background: radial-gradient(ellipse at 50% 12%, #FFFDF9 0%, #FAF4E6 55%, #F4EAD6 100%);
+  border: 2px solid #b88628;
+  border-radius: 8px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 2px 10px rgba(109, 22, 32, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: albumSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes albumSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* -----------------------------------------------------
+   2. TOP BAR & NAVIGATION
+----------------------------------------------------- */
+
+.royal-album-top-bar {
+  position: relative;
+  padding: 10px 14px;
+  background: rgba(255, 252, 245, 0.98);
+  border-bottom: 1px solid rgba(196, 150, 76, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.royal-album-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(109, 22, 32, 0.08);
+  border: 1px solid rgba(196, 150, 76, 0.5);
+  color: #6d1620;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-album-back-btn:hover {
+  background: #6d1620;
+  color: #FFF8E7;
+  border-color: #dfb66d;
+}
+
+.royal-album-close-btn {
+  background: rgba(109, 22, 32, 0.06);
+  border: 1px solid rgba(196, 150, 76, 0.45);
+  color: #6d1620;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-album-close-btn:hover {
+  background: #6d1620;
+  color: #FFF8E7;
+  border-color: #dfb66d;
+  transform: rotate(90deg);
+}
+
+/* -----------------------------------------------------
+   3. COMPACT EVENT DETAILS HEADER
+----------------------------------------------------- */
+
+.royal-album-compact-header {
+  padding: 8px 14px 4px;
+  text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-bottom: 1px solid rgba(196, 150, 76, 0.18);
+}
+
+.royal-album-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: #8c6527;
+  letter-spacing: 0.06em;
+}
+
+.royal-kicker-date {
+  font-weight: 600;
+  color: #6d1620;
+}
+
+.royal-kicker-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #6a441e;
+}
+
+.royal-kicker-pill {
+  background: rgba(196, 150, 76, 0.15);
+  border: 1px solid rgba(196, 150, 76, 0.35);
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  color: #8c6527;
+}
+
+.royal-album-compact-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(16px, 3.6vw, 21px);
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.05em;
+  margin: 1px 0 0;
+  line-height: 1.25;
+}
+
+.royal-album-compact-desc {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(196, 150, 76, 0.25);
+  border-radius: 5px;
+  padding: 5px 12px;
+  max-width: 620px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 3px;
+}
+
+.royal-album-compact-desc p {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13.5px;
+  font-style: italic;
+  color: #5c3d26;
+  line-height: 1.4;
+}
+
+/* -----------------------------------------------------
+   4. SINGLE MAIN CAROUSEL VIEWER
+----------------------------------------------------- */
+
+.royal-carousel-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px 12px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  gap: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+}
+
+.royal-carousel-section::-webkit-scrollbar {
+  width: 4px;
+}
+
+.royal-carousel-section::-webkit-scrollbar-thumb {
+  background: rgba(196, 150, 76, 0.45);
+  border-radius: 3px;
+}
+
+.royal-carousel-stage {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Chevron Navigation Buttons */
+.royal-carousel-nav-btn {
+  background: rgba(22, 10, 6, 0.75);
+  border: 1.5px solid rgba(196, 150, 76, 0.6);
+  color: #FFF8E7;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-carousel-nav-btn:hover {
+  background: #6d1620;
+  border-color: #dfb66d;
+  transform: scale(1.08);
+}
+
+@media (max-width: 500px) {
+  .royal-carousel-nav-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 19px;
+  }
+}
+
+/* Central Media Viewer Frame */
+.royal-carousel-viewer-frame {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: clamp(230px, 46vh, 420px);
+  background: #FAF4E8;
+  border: 1.5px solid #dfb66d;
+  border-radius: 6px;
+  box-shadow:
+    0 6px 20px rgba(35, 15, 6, 0.12),
+    inset 0 0 0 1px rgba(184, 134, 40, 0.25);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Photo Viewer Container */
+.royal-carousel-photo-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-in;
+  position: relative;
+  background: #FAF4E8;
+}
+
+.royal-carousel-photo {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.royal-carousel-photo-container:hover .royal-carousel-photo {
+  transform: scale(1.015);
+}
+
+.royal-carousel-zoom-pill {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(18, 8, 4, 0.75);
+  border: 1px solid rgba(223, 182, 109, 0.6);
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  opacity: 0.9;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.royal-carousel-photo-container:hover .royal-carousel-zoom-pill {
+  opacity: 1;
+  background: rgba(109, 22, 32, 0.88);
+}
+
+/* Video Viewer Container */
+.royal-carousel-video-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.royal-carousel-video-container .royal-video-container {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Counter & Info Meta Bar */
+.royal-carousel-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 680px;
+  padding: 2px 4px 0;
+}
+
+.royal-carousel-counter-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8c6527;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.counter-current {
+  color: #6d1620;
+  font-weight: 700;
+}
+
+.counter-sep {
+  opacity: 0.6;
+}
+
+.counter-total {
+  opacity: 0.85;
+}
+
+.counter-cover-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: #6d1620;
+  background: rgba(109, 22, 32, 0.08);
+  border: 1px solid rgba(109, 22, 32, 0.25);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+.royal-enlarge-text-btn {
+  background: transparent;
+  border: 1px solid rgba(196, 150, 76, 0.4);
+  color: #6d1620;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-enlarge-text-btn:hover {
+  background: #6d1620;
+  color: #FFF8E7;
+  border-color: #dfb66d;
+}
+
+/* Caption Box */
+.royal-carousel-caption-box {
+  width: 100%;
+  max-width: 680px;
+  text-align: center;
+  padding: 0 4px;
+  margin: 0;
+}
+
+.royal-carousel-caption-box p {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13.5px;
+  font-style: italic;
+  color: #5c3d26;
+  line-height: 1.35;
+}
+
+/* -----------------------------------------------------
+   5. COMPACT HORIZONTAL THUMBNAIL STRIP
+----------------------------------------------------- */
+
+.royal-thumb-strip-wrapper {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 6px;
+  width: 100%;
+  max-width: 680px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+
+.royal-thumb-strip-wrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.royal-thumb-strip-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(196, 150, 76, 0.45);
+  border-radius: 2px;
+}
+
+.royal-thumb-item {
+  flex: 0 0 54px;
+  height: 42px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(196, 150, 76, 0.35);
+  overflow: hidden;
+  background: #FAF4E8;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  transition: all 0.2s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-thumb-item:hover {
+  border-color: #b88628;
+  transform: translateY(-1px);
+}
+
+.royal-thumb-item.is-active {
+  border-color: #6d1620;
+  box-shadow:
+    0 0 0 1.5px #dfb66d,
+    0 3px 8px rgba(109, 22, 32, 0.35);
+  transform: translateY(-1px);
+}
+
+.royal-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.royal-thumb-video-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 6, 3, 0.45);
+  color: #FAF4E8;
+}
+
+/* -----------------------------------------------------
+   6. EMPTY STATE
+----------------------------------------------------- */
+
+.royal-album-empty-state {
+  padding: 36px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.royal-empty-title {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #8c6527;
+  text-transform: uppercase;
+}
+
+.royal-empty-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #6a441e;
+  max-width: 320px;
+  margin: 0;
+}
+
+/* -----------------------------------------------------
+   7. FULL-SCREEN LIGHTBOX
+----------------------------------------------------- */
+
+.album-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(10, 4, 2, 0.96);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: max(12px, env(safe-area-inset-top, 12px))
+    max(12px, env(safe-area-inset-right, 12px))
+    max(12px, env(safe-area-inset-bottom, 12px))
+    max(12px, env(safe-area-inset-left, 12px));
+  box-sizing: border-box;
+  animation: albumFadeIn 0.25s ease forwards;
+  user-select: none;
+}
+
+.album-lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  color: #FFF8E7;
+  z-index: 20;
+}
+
+.album-lightbox-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.album-lightbox-counter {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #dfb66d;
+}
+
+.album-lightbox-event-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(255, 248, 231, 0.75);
+}
+
+.album-lightbox-close-btn {
+  background: rgba(22, 10, 6, 0.7);
+  border: 1px solid rgba(196, 150, 76, 0.5);
+  color: #FFF8E7;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.album-lightbox-close-btn:hover {
+  background: #6d1620;
+  border-color: #dfb66d;
+  transform: rotate(90deg);
+}
+
+.album-lightbox-stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+
+.album-lightbox-img-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 80vh;
+  max-height: 80dvh;
+}
+
+.album-lightbox-image {
+  max-width: 100%;
+  max-height: 80vh;
+  max-height: 80dvh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1.5px solid rgba(196, 150, 76, 0.4);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.85);
+}
+
+.album-lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(22, 10, 6, 0.75);
+  border: 1.5px solid rgba(196, 150, 76, 0.55);
+  color: #FFF8E7;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 20;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.album-lightbox-arrow:hover {
+  background: #6d1620;
+  border-color: #dfb66d;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.album-lightbox-arrow.prev { left: 8px; }
+.album-lightbox-arrow.next { right: 8px; }
+
+@media (max-width: 600px) {
+  .album-lightbox-arrow {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+  .album-lightbox-arrow.prev { left: 4px; }
+  .album-lightbox-arrow.next { right: 4px; }
+}
+
+.album-lightbox-footer {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 6px 14px;
+  box-sizing: border-box;
+}
+
+.album-lightbox-caption {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(14px, 3.2vw, 16px);
+  font-style: italic;
+  color: #FAF4E8;
+  margin: 0;
+  line-height: 1.4;
+}

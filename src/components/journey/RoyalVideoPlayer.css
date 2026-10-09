@@ -1,0 +1,384 @@
+/* ==========================================================================
+   ROYAL VIDEO PLAYER STYLES
+   Bespoke luxury video player styling for Puneeth & Chinmai's Wedding Album
+   ========================================================================== */
+
+.royal-video-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0d0604;
+  border: 1.5px solid rgba(184, 134, 40, 0.45);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(35, 15, 6, 0.15);
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 0 auto;
+}
+
+.royal-video-container.is-fullscreen {
+  border-radius: 0;
+  border: none;
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Native Video Element */
+.royal-video-screen {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #000000;
+  cursor: pointer;
+}
+
+/* Buffering Spinner Overlay */
+.royal-video-spinner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 6, 4, 0.65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #dfb66d;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.royal-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid rgba(196, 150, 76, 0.3);
+  border-top-color: #dfb66d;
+  border-radius: 50%;
+  animation: royalSpin 0.8s linear infinite;
+}
+
+@keyframes royalSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error Overlay with Retry */
+.royal-video-error-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 8, 8, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #f7d2d2;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  z-index: 15;
+  padding: 16px;
+  text-align: center;
+}
+
+.royal-btn-retry {
+  background: #6d1620;
+  border: 1px solid #dfb66d;
+  color: #FFF8E7;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.royal-btn-retry:hover {
+  background: #871f2c;
+  transform: translateY(-1px);
+}
+
+/* Center Hero Play Button */
+.royal-video-hero-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-play-circle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(22, 10, 6, 0.78);
+  border: 2px solid #dfb66d;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(184, 134, 40, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FAF4E8;
+  padding-left: 3px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.royal-video-hero-play:hover .hero-play-circle {
+  transform: scale(1.1);
+  background: rgba(109, 22, 32, 0.9);
+  border-color: #FFF8E7;
+  box-shadow: 0 6px 20px rgba(109, 22, 32, 0.6);
+}
+
+/* Controls Bar Overlay */
+.royal-video-controls-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(12, 5, 3, 0.95) 0%,
+    rgba(12, 5, 3, 0.8) 60%,
+    transparent 100%
+  );
+  padding: 18px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 20;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.royal-video-controls-bar.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.royal-video-controls-bar.hidden {
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+}
+
+/* Custom Interactive Timeline Scrubber */
+.royal-scrubber-track {
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  touch-action: none;
+}
+
+.scrubber-bar-bg {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  position: relative;
+  transition: height 0.15s ease;
+}
+
+.royal-scrubber-track:hover .scrubber-bar-bg {
+  height: 6px;
+}
+
+.scrubber-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #b88628, #dfb66d);
+  border-radius: 2px;
+  position: relative;
+}
+
+.scrubber-playhead-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #FFFDF9;
+  border: 2px solid #6d1620;
+  box-shadow: 0 0 6px rgba(223, 182, 109, 0.85);
+  transition: transform 0.1s ease;
+  pointer-events: none;
+}
+
+.royal-scrubber-track:hover .scrubber-playhead-thumb {
+  transform: translate(-50%, -50%) scale(1.25);
+}
+
+/* Action Controls Row */
+.royal-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.royal-controls-left,
+.royal-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Button Base */
+.royal-ctrl-btn {
+  background: transparent;
+  border: none;
+  color: #FAF4E8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-ctrl-btn:hover {
+  color: #dfb66d;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Skip Buttons (-10s, +10s) */
+.skip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: #dfb66d;
+  padding: 2px 4px;
+}
+
+.skip-symbol {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.skip-num {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Time Display */
+.royal-time-display {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #FAF4E8;
+  letter-spacing: 0.04em;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+.time-current {
+  color: #dfb66d;
+}
+
+.time-sep {
+  opacity: 0.6;
+}
+
+.time-total {
+  opacity: 0.85;
+}
+
+/* Volume Slider */
+.royal-volume-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.royal-volume-slider {
+  width: 50px;
+  height: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  accent-color: #dfb66d;
+}
+
+.royal-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #dfb66d;
+  border: 1px solid #6d1620;
+}
+
+/* Speed Switcher */
+.speed-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid rgba(196, 150, 76, 0.45);
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #dfb66d;
+}
+
+.speed-btn:hover {
+  border-color: #dfb66d;
+  background: rgba(109, 22, 32, 0.3);
+}
+
+/* Caption Bar */
+.royal-video-caption-bar {
+  padding: 8px 12px;
+  background: #FFFDF9;
+  border-top: 1px solid rgba(196, 150, 76, 0.25);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #5c3d26;
+  line-height: 1.4;
+}
+
+.royal-video-caption-bar p {
+  margin: 0;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 480px) {
+  .royal-volume-slider {
+    width: 38px;
+  }
+  .royal-controls-left,
+  .royal-controls-right {
+    gap: 4px;
+  }
+  .hero-play-circle {
+    width: 48px;
+    height: 48px;
+  }
+  .royal-time-display {
+    font-size: 12px;
+  }
+}

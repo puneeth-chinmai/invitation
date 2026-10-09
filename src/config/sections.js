@@ -21,14 +21,15 @@ export const SECTIONS = [
     icon: '𑁍',
     ariaLabel: 'Wedding Details and Schedule',
   },
-  // Ready for upcoming sections:
-  // {
-  //   id: 'our-journey',
-  //   label: 'Our Journey',
-  //   icon: '❦',
-  //   ariaLabel: 'Our Story and Journey',
-  // },
+  {
+    id: 'our-journey',
+    label: 'Our Journey',
+    icon: '❦',
+    ariaLabel: 'Our Journey: From Then to Forever',
+  },
 ]
 
 export const DEFAULT_SECTION_ID = 'invitation'
 export const DETAILS_SECTION_ID = 'wedding-details'
+export const JOURNEY_SECTION_ID = 'our-journey'
+
