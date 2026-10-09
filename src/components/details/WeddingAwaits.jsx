@@ -4,6 +4,7 @@ import WeddingCountdown from './WeddingCountdown'
 import WeddingEvents from './WeddingEvents'
 import VenueSection from './VenueSection'
 import CalendarShareHub from './CalendarShareHub'
+import SectionTransitionCard from '../navigation/SectionTransitionCard'
 import { DelicateDivider } from './DetailsIcons'
 import './WeddingAwaits.css'
 
@@ -17,9 +18,10 @@ import './WeddingAwaits.css'
  *   - Understated venue guide with map preview and Google Maps directions
  *   - Streamlined Add to Calendar (Google Calendar & Apple Calendar)
  *   - Share Invitation suite (Web Share, WhatsApp, Copy Link)
+ *   - Contextual section transition: "Continue Their Story" leading to Our Journey
  *   - Zero emojis; delicate monochrome SVG linework and antique-gold dividers
  */
-export default function WeddingAwaits() {
+export default function WeddingAwaits({ onNavigateToJourney }) {
   return (
     <div className="wedding-details-viewport">
       {/* Viewport Filigree Frame */}
@@ -85,15 +87,31 @@ export default function WeddingAwaits() {
         <CalendarShareHub />
 
         {/* =========================================
-            6. REFINED FOOTER SEAL
+            6. CONTEXTUAL TRANSITION: CONTINUE THEIR STORY
+        ========================================= */}
+        {onNavigateToJourney && (
+          <SectionTransitionCard
+            kicker="THE NEXT CHAPTER"
+            title="The Story COntinues"
+            description="Discover the journey that brought Puneeth & Chinmai together."
+            ctaText="Explore The Journey"
+            ctaIcon="→"
+            motifIcon="❦"
+            onNavigate={onNavigateToJourney}
+          />
+        )}
+
+        {/* =========================================
+            7. REFINED FOOTER SEAL
         ========================================= */}
         <footer className="details-page-footer">
           <DelicateDivider />
           <p className="footer-blessing-text">
-            Chikkamagaluru, Karnataka · 28 &amp; 29 November 2026
+            Puneeth Weds Chinmai
           </p>
         </footer>
       </div>
     </div>
   )
 }
+

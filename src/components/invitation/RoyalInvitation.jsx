@@ -80,7 +80,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate(40)
-      } catch {}
+      } catch { }
     }
 
     // Tag detaches with gentle drop & fade
@@ -110,7 +110,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate(35)
-      } catch {}
+      } catch { }
     }
 
     // Clear inline drag offsets so unified CSS keyframes execute smoothly
@@ -142,7 +142,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     if (scrollState !== 'closed' || isTriggeredRef.current) return
     try {
       e.currentTarget.setPointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
     isDraggingTagRef.current = true
     setIsDraggingTag(true)
     dragStartYRef.current = e.clientY
@@ -177,7 +177,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     setIsDraggingTag(false)
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
 
     // Pull threshold: 46px
     if (currentDragYRef.current >= 46) {
@@ -201,7 +201,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     setIsDraggingTag(false)
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
     currentDragYRef.current = 0
     if (scrollUnitRef.current) {
       scrollUnitRef.current.style.setProperty(
@@ -219,7 +219,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     if (scrollState !== 'opened') return
     try {
       e.currentTarget.setPointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
     isTopDraggingRef.current = true
     topDragStartYRef.current = e.clientY
     currentTopDragYRef.current = 0
@@ -254,7 +254,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     isTopDraggingRef.current = false
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
 
     // Closing threshold: 45px
     if (currentTopDragYRef.current >= 45) {
@@ -278,7 +278,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     isTopDraggingRef.current = false
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
     currentTopDragYRef.current = 0
     if (assemblyRef.current) {
       assemblyRef.current.style.setProperty(
@@ -297,7 +297,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     if (scrollState !== 'opened') return
     try {
       e.currentTarget.setPointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
     isBottomDraggingRef.current = true
     bottomDragStartYRef.current = e.clientY
     currentBottomDragYRef.current = 0
@@ -332,7 +332,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     isBottomDraggingRef.current = false
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
 
     // Closing threshold: 45px
     if (currentBottomDragYRef.current >= 45) {
@@ -356,7 +356,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
     isBottomDraggingRef.current = false
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch { }
     currentBottomDragYRef.current = 0
     if (assemblyRef.current) {
       assemblyRef.current.style.setProperty(
@@ -483,13 +483,12 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
         =================================================== */
         <div
           ref={assemblyRef}
-          className={`opened-invitation-assembly ${
-            scrollState === 'opening'
-              ? 'is-opening'
-              : scrollState === 'closing'
-                ? 'is-closing'
-                : 'is-opened'
-          }`}
+          className={`opened-invitation-assembly ${scrollState === 'opening'
+            ? 'is-opening'
+            : scrollState === 'closing'
+              ? 'is-closing'
+              : 'is-opened'
+            }`}
         >
           {/* Top Antique Royal Lacquered Rosewood Roller Bar (Pull down to close) */}
           <div
@@ -627,7 +626,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
                 <div className="invitation-venue-block">
                   <h3 className="invitation-venue-title">VENUE</h3>
                   <p className="invitation-venue-name">
-                    GAYATRI KALYANA MANTAPA
+                    GAYATHRI DEVI KALYANA MANTAPA
                   </p>
                   <p className="invitation-venue-city">
                     CHIKKAMAGALURU

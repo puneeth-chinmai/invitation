@@ -1,0 +1,161 @@
+/* ==========================================================================
+   SECTION TRANSITION CARD
+   Contextual navigation bridge between chapters of the wedding invitation.
+   Ivory, antique gold, and royal maroon styling.
+   ========================================================================== */
+
+.section-transition-card {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  margin: 16px auto;
+  background: radial-gradient(ellipse at 50% 25%, #FFFDF9 0%, #FAF3E3 60%, #F5EBD7 100%);
+  border: 1.5px solid #c4964c;
+  border-radius: 12px;
+  box-shadow:
+    0 14px 40px rgba(45, 22, 6, 0.12),
+    0 2px 6px rgba(109, 22, 32, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  padding: clamp(24px, 4.5vw, 34px) clamp(18px, 4vw, 30px);
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.section-transition-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 46px rgba(45, 22, 6, 0.16),
+    0 4px 10px rgba(109, 22, 32, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+}
+
+/* Corner Flourishes */
+.transition-corner {
+  position: absolute;
+  font-size: 13px;
+  color: #c4964c;
+  line-height: 1;
+  user-select: none;
+  opacity: 0.8;
+}
+.transition-corner.tl { top: 10px; left: 12px; }
+.transition-corner.tr { top: 10px; right: 12px; }
+.transition-corner.bl { bottom: 10px; left: 12px; }
+.transition-corner.br { bottom: 10px; right: 12px; }
+
+/* Optional Circular Motif Badge */
+.transition-motif-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #8f1f2d 0%, #6d1620 70%, #4a0c13 100%);
+  border: 1.5px solid #dfb66d;
+  box-shadow:
+    0 4px 14px rgba(109, 22, 32, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.transition-motif-glyph {
+  font-size: 18px;
+  line-height: 1;
+  color: #FAF4E8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Typography */
+.transition-kicker {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(10px, 2.6vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: #8c6527;
+  text-transform: uppercase;
+}
+
+.transition-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(20px, 4.6vw, 26px);
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.06em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.transition-description {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(15px, 3.8vw, 18px);
+  font-style: italic;
+  color: #5c3d26;
+  margin: 0;
+  max-width: 460px;
+  line-height: 1.5;
+}
+
+/* Call to Action Button */
+.transition-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+  background: linear-gradient(135deg, #7a1924 0%, #6d1620 50%, #561118 100%);
+  border: 1.5px solid #dfb66d;
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12.5px, 3vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 11px 26px;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow:
+    0 6px 20px rgba(109, 22, 32, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.22s ease,
+    box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.transition-cta-button:hover {
+  background: linear-gradient(135deg, #8f1f2d 0%, #7a1924 50%, #60141c 100%);
+  border-color: #FFF8E7;
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 24px rgba(109, 22, 32, 0.45),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.transition-cta-icon {
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.22s ease;
+  display: inline-block;
+}
+
+.transition-cta-button:hover .transition-cta-icon {
+  transform: translateX(4px);
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .section-transition-card,
+  .transition-cta-button,
+  .transition-cta-icon {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}

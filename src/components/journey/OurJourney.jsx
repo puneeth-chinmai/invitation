@@ -7,6 +7,7 @@ import { TEST_FIXTURE_EVENTS } from '../../data/journeyTestFixtures'
 import { fetchPublishedEvents } from '../../services/journeyService'
 import JourneyMapCanvas from './JourneyMapCanvas'
 import EventGalleryModal from './EventGalleryModal'
+import SectionTransitionCard from '../navigation/SectionTransitionCard'
 import { CompassRose, AntiqueDivider } from './JourneyOrnaments'
 import './OurJourney.css'
 
@@ -22,8 +23,12 @@ import './OurJourney.css'
  *   - Compact photo waypoint markers on alternating sides
  *   - Dedicated event galleries supporting multiple photographs and native video playback
  *   - Final destination: "29 November 2026 — The Wedding Day (And so, forever begins.)"
+ *   - Contextual section transition: "Send Your Blessings" leading to Blessings & Wishes
  */
-export default function OurJourney({ useTestFixtures: propUseTestFixtures = false }) {
+export default function OurJourney({
+  useTestFixtures: propUseTestFixtures = false,
+  onNavigateToWishes,
+}) {
   // Support toggling test fixtures via URL search param ?test-fixtures=1 or prop for automated verification
   const isTestMode = useMemo(() => {
     if (propUseTestFixtures) return true
@@ -113,7 +118,7 @@ export default function OurJourney({ useTestFixtures: propUseTestFixtures = fals
           </span>
 
           <h1 className="journey-main-title">
-            OUR JOURNEY
+            The JOURNEY
           </h1>
 
           <h2 className="journey-sub-title">
@@ -155,6 +160,20 @@ export default function OurJourney({ useTestFixtures: propUseTestFixtures = fals
           onSelectEvent={(eventId) => setSelectedEventId(eventId)}
         />
 
+        {/* ===================================================
+            CONTEXTUAL TRANSITION: SEND YOUR BLESSINGS
+        =================================================== */}
+        {onNavigateToWishes && (
+          <SectionTransitionCard
+            kicker="HEARTFELT PRAYERS"
+            title="Send Your Blessings"
+            description="Share your heartfelt wishes for their beautiful new beginning."
+            ctaText="Write a Blessing"
+            ctaIcon="→"
+            motifIcon="✉"
+            onNavigate={onNavigateToWishes}
+          />
+        )}
 
         {/* ===================================================
             VINTAGE MAP FOOTER SEAL

@@ -3,12 +3,14 @@ import OpeningScene from './scenes/opening/OpeningScene'
 import RoyalInvitation from './components/invitation/RoyalInvitation'
 import WeddingAwaits from './components/details/WeddingAwaits'
 import OurJourney from './components/journey/OurJourney'
+import BlessingsWishes from './components/wishes/BlessingsWishes'
 import RoyalNav from './components/navigation/RoyalNav'
 import {
   SECTIONS,
   DEFAULT_SECTION_ID,
   DETAILS_SECTION_ID,
   JOURNEY_SECTION_ID,
+  WISHES_SECTION_ID,
 } from './config/sections'
 
 // Lazily load AdminApp so public guests do not load admin bundle
@@ -19,7 +21,7 @@ const AdminApp = lazy(() => import('./components/admin/AdminApp'))
  * App
  *
  * Central coordinator managing multi-section transitions:
- * OpeningScene → RoyalInvitation → Wedding Details → Our Journey
+ * OpeningScene → RoyalInvitation → Wedding Details → Our Journey → Blessings & Wishes
  * Features dynamic, scalable navigation driven by the central section registry (SECTIONS),
  * and a secure, isolated /admin portal for private memories management.
  */
@@ -60,13 +62,22 @@ export default function App() {
     (window.location.search.includes('journey') ||
       window.location.hash.includes('journey'))
 
-  const initialSection = isDirectJourney
-    ? JOURNEY_SECTION_ID
-    : isDirectDetails
-      ? DETAILS_SECTION_ID
-      : isDirectInvitation
-        ? DEFAULT_SECTION_ID
-        : 'opening'
+  const isDirectWishes =
+    typeof window !== 'undefined' &&
+    (window.location.search.includes('wishes') ||
+      window.location.search.includes('blessings') ||
+      window.location.hash.includes('wishes') ||
+      window.location.hash.includes('blessings'))
+
+  const initialSection = isDirectWishes
+    ? WISHES_SECTION_ID
+    : isDirectJourney
+      ? JOURNEY_SECTION_ID
+      : isDirectDetails
+        ? DETAILS_SECTION_ID
+        : isDirectInvitation
+          ? DEFAULT_SECTION_ID
+          : 'opening'
 
 
 
@@ -196,7 +207,9 @@ export default function App() {
             animation: 'detailsFadeIn 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards',
           }}
         >
-          <WeddingAwaits />
+          <WeddingAwaits
+            onNavigateToJourney={() => handleSelectSection(JOURNEY_SECTION_ID)}
+          />
         </div>
       )}
 
@@ -210,11 +223,27 @@ export default function App() {
             animation: 'journeyFadeIn 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards',
           }}
         >
-          <OurJourney />
+          <OurJourney
+            onNavigateToWishes={() => handleSelectSection(WISHES_SECTION_ID)}
+          />
         </div>
       )}
 
-      {/* 5. Scalable Top Navigation Pill (Driven by SECTIONS registry) */}
+      {/* 5. Blessings & Wishes (Ceremonial letter and guest blessing) */}
+      {activeSectionId === WISHES_SECTION_ID && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 20,
+            animation: 'wishesFadeIn 0.75s cubic-bezier(0.25, 1, 0.5, 1) forwards',
+          }}
+        >
+          <BlessingsWishes />
+        </div>
+      )}
+
+      {/* 6. Scalable Top Navigation Pill (Driven by SECTIONS registry) */}
       {showNav && (
         <RoyalNav
           sections={SECTIONS}
@@ -233,6 +262,10 @@ export default function App() {
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes journeyFadeIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wishesFadeIn {
           from { opacity: 0; transform: translateY(6px); }
           to { opacity: 1; transform: translateY(0); }
         }

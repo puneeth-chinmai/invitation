@@ -1,0 +1,671 @@
+/* ==========================================================================
+   BLESSINGS & WISHES SECTION STYLES
+   Puneeth & Chinmai Wedding Invitation
+   Ivory, Deep Maroon, Antique Gold, and Royal Parchment Letter Styling
+   ========================================================================== */
+
+.wishes-viewport {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: radial-gradient(ellipse at 50% 20%, #FFFDF9 0%, #FAF4E6 45%, #F4EAD6 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  /* Ensure scroll-into-view never scrolls focused elements behind the navbar */
+  scroll-padding-top: max(88px, calc(env(safe-area-inset-top, 20px) + 72px));
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+}
+
+.wishes-viewport::-webkit-scrollbar {
+  width: 5px;
+}
+.wishes-viewport::-webkit-scrollbar-thumb {
+  background: rgba(196, 150, 76, 0.45);
+  border-radius: 4px;
+}
+
+/* Ambient Layer */
+.wishes-parchment-texture {
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(196, 150, 76, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(109, 22, 32, 0.04) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wishes-filigree-frame {
+  position: fixed;
+  inset: 8px;
+  border: 1px solid rgba(196, 150, 76, 0.35);
+  pointer-events: none;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+@media (min-width: 600px) {
+  .wishes-filigree-frame {
+    inset: 14px;
+    border-width: 1.5px;
+  }
+}
+
+/* Main Content Container: Generous top padding leaves room for the fixed RoyalNav */
+.wishes-container {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: max(88px, calc(env(safe-area-inset-top, 16px) + 74px)) 16px max(50px, env(safe-area-inset-bottom, 36px));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  justify-content: flex-start;
+}
+
+/* Safe vertical centering in Unopened/Sealed states via auto margins */
+.wishes-state-unopened .wishes-letter-card,
+.wishes-state-sealed .wishes-sealed-card {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Section Header */
+.wishes-header {
+  text-align: center;
+  margin-bottom: 24px;
+  max-width: 620px;
+}
+
+/* Compact header in writing mode to preserve mobile vertical space */
+.wishes-header--compact {
+  margin-bottom: 8px;
+}
+
+.wishes-compact-kicker {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(11px, 2.8vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #8c6527;
+  display: inline-block;
+  padding: 4px 14px;
+  background: rgba(196, 150, 76, 0.1);
+  border: 1px solid rgba(196, 150, 76, 0.3);
+  border-radius: 20px;
+}
+
+.wishes-kannada-kicker {
+  font-family: 'Noto Sans Kannada', 'Segoe UI', system-ui, sans-serif;
+  font-size: clamp(14px, 3.4vw, 17px);
+  color: #8c6527;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.wishes-main-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(22px, 5.5vw, 34px);
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.08em;
+  margin: 0 0 6px;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.wishes-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(15px, 3.8vw, 18px);
+  font-style: italic;
+  color: #5c3d26;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* -----------------------------------------------------
+   STATE A: THE CEREMONIAL LETTER (UNOPENED)
+----------------------------------------------------- */
+
+.wishes-letter-card {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  background: radial-gradient(ellipse at 50% 25%, #FFFDF9 0%, #FAF3E3 60%, #F5EBD7 100%);
+  border: 2px solid #b88628;
+  border-radius: 10px;
+  box-shadow:
+    0 16px 48px rgba(45, 22, 6, 0.16),
+    0 4px 12px rgba(109, 22, 32, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  padding: 36px 24px 32px;
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wishes-letter-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 20px 54px rgba(45, 22, 6, 0.2),
+    0 6px 16px rgba(109, 22, 32, 0.16);
+}
+
+/* Decorative Corner Flourishes */
+.letter-corner {
+  position: absolute;
+  font-size: 14px;
+  color: #c4964c;
+  line-height: 1;
+  user-select: none;
+  opacity: 0.8;
+}
+.letter-corner.tl { top: 10px; left: 12px; }
+.letter-corner.tr { top: 10px; right: 12px; }
+.letter-corner.bl { bottom: 10px; left: 12px; }
+.letter-corner.br { bottom: 10px; right: 12px; }
+
+/* Wax Seal Illustration */
+.wishes-wax-seal-wrapper {
+  position: relative;
+  cursor: pointer;
+  margin: 4px 0;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wishes-wax-seal-wrapper:hover {
+  transform: scale(1.06);
+}
+
+.wishes-wax-seal {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #8f1f2d 0%, #6d1620 65%, #4a0c13 100%);
+  border: 2px solid #dfb66d;
+  box-shadow:
+    0 6px 20px rgba(109, 22, 32, 0.45),
+    inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FAF4E8;
+}
+
+.wishes-seal-emblem {
+  font-family: 'Cinzel', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #dfb66d;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+.wishes-letter-intro {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 3.8vw, 19px);
+  color: #4a2f19;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 440px;
+}
+
+.wishes-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #7a1924 0%, #6d1620 50%, #561118 100%);
+  border: 1.5px solid #dfb66d;
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 3.2vw, 15px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 12px 28px;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow:
+    0 6px 20px rgba(109, 22, 32, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  transition: all 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wishes-btn-primary:hover {
+  background: linear-gradient(135deg, #8f1f2d 0%, #7a1924 50%, #60141c 100%);
+  border-color: #FFF8E7;
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 26px rgba(109, 22, 32, 0.45),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+/* -----------------------------------------------------
+   STATE B: LETTER WRITING INTERFACE
+----------------------------------------------------- */
+
+.wishes-writing-desk {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background: #FFFDF9;
+  border: 2px solid #b88628;
+  border-radius: 10px;
+  box-shadow:
+    0 20px 54px rgba(45, 22, 6, 0.18),
+    0 4px 16px rgba(109, 22, 32, 0.12);
+  padding: clamp(20px, 4vw, 30px) clamp(16px, 4vw, 24px) clamp(22px, 4vw, 28px);
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 28px;
+  animation: deskUnfold 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes deskUnfold {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Desk Top Navigation Bar */
+.wishes-desk-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(196, 150, 76, 0.35);
+}
+
+.wishes-desk-back-btn {
+  background: transparent;
+  border: 1px solid rgba(196, 150, 76, 0.35);
+  color: #7a4e21;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wishes-desk-back-btn:hover {
+  color: #6d1620;
+  border-color: #6d1620;
+  background: rgba(109, 22, 32, 0.06);
+}
+
+.wishes-desk-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8c6527;
+}
+
+.wishes-desk-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.wishes-desk-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(19px, 4.2vw, 24px);
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.08em;
+  margin: 0 0 4px;
+}
+
+.wishes-desk-subtitle {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(14px, 3.4vw, 16px);
+  font-style: italic;
+  color: #6a441e;
+  line-height: 1.4;
+}
+
+/* Form Groups */
+.wishes-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wishes-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  /* Keep form fields from ever being hidden behind navbar on focus */
+  scroll-margin-top: max(96px, calc(env(safe-area-inset-top, 20px) + 80px));
+}
+
+.wishes-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #6d1620;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wishes-label-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #8c6527;
+  font-weight: 400;
+  text-transform: none;
+}
+
+/* Inputs */
+.wishes-input,
+.wishes-textarea {
+  width: 100%;
+  background: #FAF6ED;
+  border: 1.5px solid rgba(196, 150, 76, 0.45);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'Cormorant Garamond', 'Noto Sans Kannada', serif;
+  font-size: 16px; /* 16px prevents iOS Safari unwanted auto-zoom */
+  color: #3b2210;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  outline: none;
+  scroll-margin-top: max(96px, calc(env(safe-area-inset-top, 20px) + 80px));
+}
+
+.wishes-input:focus,
+.wishes-textarea:focus {
+  background: #FFFDF9;
+  border-color: #6d1620;
+  box-shadow: 0 0 0 3px rgba(109, 22, 32, 0.12);
+}
+
+.wishes-input::placeholder,
+.wishes-textarea::placeholder {
+  color: #a38563;
+  font-style: italic;
+}
+
+.wishes-textarea {
+  min-height: 115px;
+  max-height: 250px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Language Selector Pills */
+.wishes-lang-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wishes-lang-pill {
+  flex: 1;
+  background: #FAF6ED;
+  border: 1.5px solid rgba(196, 150, 76, 0.45);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: 'Cinzel', 'Noto Sans Kannada', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6a441e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wishes-lang-pill.is-active {
+  background: #6d1620;
+  border-color: #6d1620;
+  color: #FFF8E7;
+  box-shadow: 0 3px 10px rgba(109, 22, 32, 0.25);
+}
+
+/* Character Counter & Notice */
+.wishes-counter-row {
+  display: flex;
+  justify-content: flex-end;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: #8c6527;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+/* Error Banner */
+.wishes-error-banner {
+  background: rgba(145, 30, 42, 0.08);
+  border: 1px solid #911e2a;
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #7d1722;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Action Buttons */
+.wishes-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.wishes-btn-secondary {
+  background: transparent;
+  border: 1.5px solid rgba(196, 150, 76, 0.5);
+  color: #6d1620;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 10px 20px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wishes-btn-secondary:hover {
+  background: rgba(109, 22, 32, 0.06);
+  border-color: #6d1620;
+}
+
+/* -----------------------------------------------------
+   STATE C: SEALED CONFIRMATION
+----------------------------------------------------- */
+
+.wishes-sealed-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: radial-gradient(ellipse at 50% 25%, #FFFDF9 0%, #FAF3E3 60%, #F5EBD7 100%);
+  border: 2px solid #b88628;
+  border-radius: 10px;
+  box-shadow:
+    0 16px 48px rgba(45, 22, 6, 0.18),
+    0 4px 12px rgba(109, 22, 32, 0.12);
+  padding: 38px 24px 34px;
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: sealFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sealFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.wishes-sealed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(19, 115, 51, 0.1);
+  border: 1px solid rgba(19, 115, 51, 0.3);
+  color: #137333;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.wishes-sealed-heading {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(20px, 4.6vw, 26px);
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.wishes-sealed-message {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 3.8vw, 19px);
+  color: #4a2f19;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 420px;
+}
+
+.wishes-kannada-quote {
+  font-family: 'Noto Sans Kannada', serif;
+  font-size: 15px;
+  font-style: italic;
+  color: #8c6527;
+  margin: 4px 0 0;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS & NAVBAR CLEARANCE
+   ========================================================================== */
+
+@media (max-width: 600px) {
+  .wishes-container {
+    padding-top: max(84px, calc(env(safe-area-inset-top, 16px) + 70px));
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: max(40px, env(safe-area-inset-bottom, 24px));
+  }
+
+  .wishes-writing-desk {
+    padding: 18px 14px 20px;
+    margin-top: 4px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+  }
+
+  .wishes-desk-topbar {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+
+  .wishes-desk-header {
+    margin-bottom: 14px;
+  }
+
+  .wishes-desk-title {
+    font-size: 20px;
+  }
+
+  .wishes-form {
+    gap: 14px;
+  }
+
+  .wishes-input,
+  .wishes-textarea {
+    padding: 9px 12px;
+    font-size: 16px;
+  }
+
+  .wishes-actions-row {
+    gap: 10px;
+  }
+
+  .wishes-btn-secondary,
+  .wishes-btn-primary {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .wishes-desk-title {
+    font-size: 18px;
+  }
+
+  .wishes-lang-pill {
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+
+  .wishes-btn-secondary {
+    padding: 9px 12px;
+    font-size: 11px;
+  }
+
+  .wishes-btn-primary {
+    padding: 9px 14px;
+    font-size: 11px;
+  }
+}

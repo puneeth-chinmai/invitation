@@ -6,6 +6,8 @@ import {
 } from '../../services/journeyService'
 import AdminEventEditor from './AdminEventEditor'
 import EventGalleryModal from '../journey/EventGalleryModal'
+import AdminWishesInbox from './AdminWishesInbox'
+import { adminGetWishesStats } from '../../services/wishesService'
 
 /**
  * AdminDashboard
@@ -24,6 +26,16 @@ export default function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState(null)
   const [isCreatingNew, setIsCreatingNew] = useState(false)
   const [previewEvent, setPreviewEvent] = useState(null)
+
+  // Sub-Navigation: 'milestones' | 'wishes'
+  const [activeTab, setActiveTab] = useState('milestones')
+  const [unreadWishesCount, setUnreadWishesCount] = useState(0)
+
+  useEffect(() => {
+    adminGetWishesStats()
+      .then((s) => setUnreadWishesCount(s.unread || 0))
+      .catch(() => {})
+  }, [activeTab])
 
   const loadEvents = useCallback(async () => {
     setLoading(true)
@@ -118,34 +130,68 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-content-wrap">
-      {/* Overview Stat Counters */}
-      <div className="admin-stats-grid">
-        <div className="admin-stat-card">
-          <span className="stat-label">Total Milestones</span>
-          <span className="stat-value">{totalEvents}</span>
-        </div>
-        <div className="admin-stat-card">
-          <span className="stat-label">Published</span>
-          <span className="stat-value" style={{ color: '#137333' }}>
-            {publishedCount}
-          </span>
-        </div>
-        <div className="admin-stat-card">
-          <span className="stat-label">Drafts</span>
-          <span className="stat-value" style={{ color: '#b06000' }}>
-            {draftCount}
-          </span>
-        </div>
-        <div className="admin-stat-card">
-          <span className="stat-label">Total Media Items</span>
-          <span className="stat-value">{totalMedia}</span>
-        </div>
-      </div>
+      {/* Sub-Navigation: Milestones vs Blessings & Wishes */}
+      <nav className="admin-tab-nav" role="tablist" aria-label="Admin Sections">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'milestones'}
+          className={`admin-tab-btn ${activeTab === 'milestones' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('milestones')}
+        >
+          <span aria-hidden="true">❦</span>
+          <span>Relationship Milestones</span>
+        </button>
 
-      {errorMsg && <div className="admin-notice error">{errorMsg}</div>}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'wishes'}
+          className={`admin-tab-btn ${activeTab === 'wishes' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('wishes')}
+        >
+          <span aria-hidden="true">✉</span>
+          <span>Blessings &amp; Wishes</span>
+          {unreadWishesCount > 0 && (
+            <span className="admin-tab-badge" title={`${unreadWishesCount} unread blessings`}>
+              {unreadWishesCount}
+            </span>
+          )}
+        </button>
+      </nav>
 
-      {/* Main Events List Card */}
-      <div className="admin-card">
+      {activeTab === 'wishes' ? (
+        <AdminWishesInbox />
+      ) : (
+        <>
+          {/* Overview Stat Counters */}
+          <div className="admin-stats-grid">
+            <div className="admin-stat-card">
+              <span className="stat-label">Total Milestones</span>
+              <span className="stat-value">{totalEvents}</span>
+            </div>
+            <div className="admin-stat-card">
+              <span className="stat-label">Published</span>
+              <span className="stat-value" style={{ color: '#137333' }}>
+                {publishedCount}
+              </span>
+            </div>
+            <div className="admin-stat-card">
+              <span className="stat-label">Drafts</span>
+              <span className="stat-value" style={{ color: '#b06000' }}>
+                {draftCount}
+              </span>
+            </div>
+            <div className="admin-stat-card">
+              <span className="stat-label">Total Media Items</span>
+              <span className="stat-value">{totalMedia}</span>
+            </div>
+          </div>
+
+          {errorMsg && <div className="admin-notice error">{errorMsg}</div>}
+
+          {/* Main Events List Card */}
+          <div className="admin-card">
         <div className="admin-card-header">
           <div>
             <h2 className="admin-card-title">Relationship Milestones</h2>
@@ -327,6 +373,8 @@ export default function AdminDashboard() {
           event={previewEvent}
           onClose={() => setPreviewEvent(null)}
         />
+      )}
+        </>
       )}
     </div>
   )

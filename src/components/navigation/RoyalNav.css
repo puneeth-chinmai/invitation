@@ -1,8 +1,11 @@
 /* =====================================================
-   ROYAL NAVIGATION PILL — SCALABLE MULTI-SECTION MENU
-   Gracefully accommodates 2 or more sections with smooth
-   horizontal pill scrolling on narrow mobile viewports.
-===================================================== */
+   ROYAL NAVIGATION PILL — SCALABLE 4-SECTION MENU
+   Desktop: Full labels and classical icons for all 4 sections.
+   Mobile: Compact icon-based navigation fitting completely within
+   the mobile viewport without horizontal scrolling. The active section
+   smoothly expands to show its icon and full label, while inactive
+   sections show comfortable, tappable icons.
+   ===================================================== */
 
 .royal-nav-container {
   position: fixed;
@@ -12,7 +15,7 @@
   z-index: 100;
   pointer-events: auto;
   user-select: none;
-  max-width: min(94vw, 560px);
+  max-width: min(96vw, 720px);
   animation: royalNavFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -40,41 +43,33 @@
     0 8px 24px rgba(45, 22, 6, 0.16),
     0 2px 6px rgba(45, 22, 6, 0.08),
     inset 0 1px 1px rgba(255, 255, 255, 0.85);
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-}
-
-.royal-nav-pill::-webkit-scrollbar {
-  display: none;
 }
 
 .royal-nav-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
   background: transparent;
   border: none;
   outline: none;
   border-radius: 20px;
-  padding: 6px 14px;
   font-family: 'Cinzel', serif;
-  font-size: clamp(10px, 2.5vw, 11px);
   font-weight: 600;
-  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #6a441e;
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.18s ease;
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
 }
 
 .royal-nav-btn:hover {
   color: #3b1509;
-  background: rgba(196, 150, 76, 0.12);
+  background: rgba(196, 150, 76, 0.14);
 }
 
 .royal-nav-btn.active {
@@ -91,8 +86,11 @@
 }
 
 .royal-nav-icon {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .royal-nav-divider {
@@ -103,14 +101,136 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 420px) {
-  .royal-nav-container {
-    max-width: 96vw;
+/* =====================================================
+   DESKTOP NAVIGATION (>= 769px)
+   All 5 sections display icon + full label side-by-side
+   ===================================================== */
+@media (min-width: 769px) {
+  .royal-nav-pill {
+    padding: 4px 8px;
   }
+
   .royal-nav-btn {
-    padding: 5px 11px;
-    gap: 5px;
+    padding: 6px 12px;
+    gap: 6px;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+  }
+
+  .royal-nav-text {
+    display: inline-block;
+    white-space: nowrap;
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   MOBILE NAVIGATION (<= 768px)
+   Compact icon-based navigation fitting completely within
+   the mobile viewport without horizontal scroll.
+   - Active section: Icon + Full Label
+   - Inactive sections: Icon only (tappable touch target)
+   ===================================================== */
+@media (max-width: 768px) {
+  .royal-nav-container {
+    max-width: min(96vw, 440px);
+    width: auto;
+  }
+
+  .royal-nav-pill {
+    padding: 3px 4px;
+    gap: 1px;
+    overflow-x: visible; /* Eliminates hidden horizontal scroll */
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .royal-nav-btn {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 6px 8px;
+    justify-content: center;
+    gap: 0;
+    border-radius: 18px;
+  }
+
+  .royal-nav-text {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 0;
+    opacity: 0;
+    margin-left: 0;
     font-size: 10px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.09em;
+    pointer-events: none;
+    transition:
+      max-width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      margin 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Active state on mobile: smoothly expands full section label */
+  .royal-nav-btn.active {
+    padding: 6px 12px;
+    gap: 5px;
+  }
+
+  .royal-nav-btn.active .royal-nav-text {
+    max-width: 160px;
+    opacity: 1;
+    margin-left: 5px;
+    pointer-events: auto;
+  }
+
+  .royal-nav-divider {
+    height: 12px;
+    margin: 0 1px;
+    opacity: 0.55;
+  }
+}
+
+/* =====================================================
+   ULTRA-COMPACT MOBILE VIEWPORTS (<= 360px)
+   ===================================================== */
+@media (max-width: 360px) {
+  .royal-nav-pill {
+    padding: 2px 3px;
+  }
+
+  .royal-nav-btn {
+    min-width: 32px;
+    min-height: 34px;
+    padding: 5px 6px;
+  }
+
+  .royal-nav-btn.active {
+    padding: 5px 10px;
+  }
+
+  .royal-nav-btn.active .royal-nav-text {
+    font-size: 9.5px;
+    letter-spacing: 0.07em;
+    max-width: 140px;
+  }
+
+  .royal-nav-icon {
+    font-size: 13px;
+  }
+
+  .royal-nav-divider {
+    margin: 0;
+  }
+}
+
+/* =====================================================
+   ACCESSIBILITY: REDUCED MOTION PREFERENCE
+   ===================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .royal-nav-container,
+  .royal-nav-btn,
+  .royal-nav-text {
+    animation: none !important;
+    transition: none !important;
   }
 }
