@@ -17,25 +17,61 @@ import './RoyalInvitation.css'
  *   - Ancient royal parchment with organic deckled edges and natural tonal aging.
  *   - Heavy cylindrical lacquered rosewood & antique-brass scroll rollers.
  *   - Hanging royal pull tag that dynamically lengthens during drag without clipping or detaching.
- *   - Smooth 2.0s physical vertical unrolling animation with progressive content reveal.
+ *   - Smooth physical vertical unrolling animation with progressive content reveal.
+ *   - Coordinated physical bidirectional closing interaction driven by shared animation progress:
+ *       * Pulling lower roller UP or upper roller DOWN triggers the exact same coordinated closing.
+ *       * Rollers converge toward one another monotonically; they never cross or separate.
+ *       * Parchment progressively rolls inward, concealing text gracefully.
+ *       * Settles smoothly into the compact closed-scroll composition with seal and pull tag.
+ *   - Traditional "Until We Meet" closing instruction.
  *   - Real selectable HTML text with exact wedding dates, reception, muhurtam, and venue.
  *   - Mobile-first responsive layout with smooth vertical scrolling.
  */
-export default function RoyalInvitation({ onComplete }) {
-  // Scroll states: 'closed' | 'opening' | 'opened'
-  const [scrollState, setScrollState] = useState('closed')
-  const [isDragging, setIsDragging] = useState(false)
+export default function RoyalInvitation({ onComplete, onClose, initialState = 'closed' }) {
+  // Scroll states: 'closed' | 'opening' | 'opened' | 'closing'
+  const [scrollState, setScrollState] = useState(initialState)
+  const [isDraggingTag, setIsDraggingTag] = useState(false)
   const [tagDetached, setTagDetached] = useState(false)
 
   const scrollUnitRef = useRef(null)
+  const assemblyRef = useRef(null)
   const dragStartYRef = useRef(0)
   const currentDragYRef = useRef(0)
   const isTriggeredRef = useRef(false)
-  const isDraggingRef = useRef(false)
+  const isDraggingTagRef = useRef(false)
+
   const openTimeoutRef = useRef(null)
   const unrollTimerRef = useRef(null)
+  const closeTimerRef = useRef(null)
+  const settleTimerRef = useRef(null)
 
-  // Trigger opening sequence
+  // Top roller drag refs
+  const topDragStartYRef = useRef(0)
+  const currentTopDragYRef = useRef(0)
+  const isTopDraggingRef = useRef(false)
+
+  // Bottom roller drag refs
+  const bottomDragStartYRef = useRef(0)
+  const currentBottomDragYRef = useRef(0)
+  const isBottomDraggingRef = useRef(false)
+
+  // Sync initialState prop changes (e.g. when revisiting invitation via navigation)
+  useEffect(() => {
+    if (initialState) {
+      setScrollState(initialState)
+      if (initialState === 'closed') {
+        isTriggeredRef.current = false
+        setTagDetached(false)
+        if (scrollUnitRef.current) {
+          scrollUnitRef.current.style.setProperty('--drag-y', '0px')
+        }
+      }
+    }
+  }, [initialState])
+
+  // =====================================================
+  // UNROLL INVITATION SEQUENCE
+  // =====================================================
   const triggerUnroll = useCallback(() => {
     if (isTriggeredRef.current || scrollState !== 'closed') return
     isTriggeredRef.current = true
@@ -54,7 +90,7 @@ export default function RoyalInvitation({ onComplete }) {
     openTimeoutRef.current = setTimeout(() => {
       setScrollState('opening')
 
-      // Commit opened state after 1.8s animation completes
+      // Commit opened state after 1.8s unroll animation completes
       unrollTimerRef.current = setTimeout(() => {
         setScrollState('opened')
         if (onComplete) onComplete()
@@ -63,16 +99,52 @@ export default function RoyalInvitation({ onComplete }) {
   }, [scrollState, onComplete])
 
   // =====================================================
+  // COORDINATED PHYSICAL CLOSING SEQUENCE
+  // Single shared closing mechanism regardless of which roller is pulled.
+  // =====================================================
+  const triggerClose = useCallback(() => {
+    if (scrollState !== 'opened') return
+    setScrollState('closing')
+
+    // Subtle haptic feedback
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(35)
+      } catch {}
+    }
+
+    // Clear inline drag offsets so unified CSS keyframes execute smoothly
+    if (assemblyRef.current) {
+      assemblyRef.current.style.setProperty('--roller-top-offset', '0px')
+      assemblyRef.current.style.setProperty('--roller-bottom-offset', '0px')
+      assemblyRef.current.style.setProperty('--drag-contract-y', '0px')
+      assemblyRef.current.style.setProperty('--roller-transition', 'none')
+    }
+
+    // Coordinated 1.4s closing animation where rollers converge and parchment contracts to 0.
+    // At 1400ms, commit closed scroll state so it cleanly settles.
+    closeTimerRef.current = setTimeout(() => {
+      isTriggeredRef.current = false
+      setTagDetached(false)
+      setScrollState('closed')
+
+      // Settle in closed state for 350ms, then invoke onClose to transition to next section
+      settleTimerRef.current = setTimeout(() => {
+        if (onClose) onClose()
+      }, 350)
+    }, 1400)
+  }, [scrollState, onClose])
+
+  // =====================================================
   // POINTER EVENTS: ZERO-LAG DRAG-TO-EXTEND PULL TAG
   // =====================================================
-
-  const handlePointerDown = (e) => {
+  const handleTagPointerDown = (e) => {
     if (scrollState !== 'closed' || isTriggeredRef.current) return
     try {
       e.currentTarget.setPointerCapture(e.pointerId)
     } catch {}
-    isDraggingRef.current = true
-    setIsDragging(true)
+    isDraggingTagRef.current = true
+    setIsDraggingTag(true)
     dragStartYRef.current = e.clientY
     currentDragYRef.current = 0
     if (scrollUnitRef.current) {
@@ -80,8 +152,8 @@ export default function RoyalInvitation({ onComplete }) {
     }
   }
 
-  const handlePointerMove = (e) => {
-    if (!isDraggingRef.current || isTriggeredRef.current) return
+  const handleTagPointerMove = (e) => {
+    if (!isDraggingTagRef.current || isTriggeredRef.current) return
     const deltaY = e.clientY - dragStartYRef.current
 
     // Only allow downward pulling, clamped to 75px max
@@ -99,10 +171,10 @@ export default function RoyalInvitation({ onComplete }) {
     }
   }
 
-  const handlePointerUp = (e) => {
-    if (!isDraggingRef.current) return
-    isDraggingRef.current = false
-    setIsDragging(false)
+  const handleTagPointerUp = (e) => {
+    if (!isDraggingTagRef.current) return
+    isDraggingTagRef.current = false
+    setIsDraggingTag(false)
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
     } catch {}
@@ -123,10 +195,10 @@ export default function RoyalInvitation({ onComplete }) {
     }
   }
 
-  const handlePointerCancel = (e) => {
-    if (!isDraggingRef.current) return
-    isDraggingRef.current = false
-    setIsDragging(false)
+  const handleTagPointerCancel = (e) => {
+    if (!isDraggingTagRef.current) return
+    isDraggingTagRef.current = false
+    setIsDraggingTag(false)
     try {
       e.currentTarget.releasePointerCapture(e.pointerId)
     } catch {}
@@ -140,11 +212,169 @@ export default function RoyalInvitation({ onComplete }) {
     }
   }
 
+  // =====================================================
+  // POINTER EVENTS: TOP ROLLER DRAG DOWN TO CLOSE
+  // =====================================================
+  const handleTopPointerDown = (e) => {
+    if (scrollState !== 'opened') return
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId)
+    } catch {}
+    isTopDraggingRef.current = true
+    topDragStartYRef.current = e.clientY
+    currentTopDragYRef.current = 0
+    if (assemblyRef.current) {
+      assemblyRef.current.style.setProperty('--roller-transition', 'none')
+    }
+  }
+
+  const handleTopPointerMove = (e) => {
+    if (!isTopDraggingRef.current || scrollState !== 'opened') return
+    const deltaY = e.clientY - topDragStartYRef.current
+
+    // Only allow downward pulling for top roller
+    if (deltaY > 0) {
+      const clamped = Math.min(deltaY, 80)
+      currentTopDragYRef.current = clamped
+      if (assemblyRef.current) {
+        assemblyRef.current.style.setProperty('--roller-top-offset', `${clamped}px`)
+        assemblyRef.current.style.setProperty('--drag-contract-y', `${clamped}px`)
+      }
+    } else {
+      currentTopDragYRef.current = 0
+      if (assemblyRef.current) {
+        assemblyRef.current.style.setProperty('--roller-top-offset', '0px')
+        assemblyRef.current.style.setProperty('--drag-contract-y', '0px')
+      }
+    }
+  }
+
+  const handleTopPointerUp = (e) => {
+    if (!isTopDraggingRef.current) return
+    isTopDraggingRef.current = false
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch {}
+
+    // Closing threshold: 45px
+    if (currentTopDragYRef.current >= 45) {
+      triggerClose()
+    } else {
+      // Spring back to open position
+      currentTopDragYRef.current = 0
+      if (assemblyRef.current) {
+        assemblyRef.current.style.setProperty(
+          '--roller-transition',
+          'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+        )
+        assemblyRef.current.style.setProperty('--roller-top-offset', '0px')
+        assemblyRef.current.style.setProperty('--drag-contract-y', '0px')
+      }
+    }
+  }
+
+  const handleTopPointerCancel = (e) => {
+    if (!isTopDraggingRef.current) return
+    isTopDraggingRef.current = false
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch {}
+    currentTopDragYRef.current = 0
+    if (assemblyRef.current) {
+      assemblyRef.current.style.setProperty(
+        '--roller-transition',
+        'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+      )
+      assemblyRef.current.style.setProperty('--roller-top-offset', '0px')
+      assemblyRef.current.style.setProperty('--drag-contract-y', '0px')
+    }
+  }
+
+  // =====================================================
+  // POINTER EVENTS: BOTTOM ROLLER DRAG UP TO CLOSE
+  // =====================================================
+  const handleBottomPointerDown = (e) => {
+    if (scrollState !== 'opened') return
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId)
+    } catch {}
+    isBottomDraggingRef.current = true
+    bottomDragStartYRef.current = e.clientY
+    currentBottomDragYRef.current = 0
+    if (assemblyRef.current) {
+      assemblyRef.current.style.setProperty('--roller-transition', 'none')
+    }
+  }
+
+  const handleBottomPointerMove = (e) => {
+    if (!isBottomDraggingRef.current || scrollState !== 'opened') return
+    const deltaY = bottomDragStartYRef.current - e.clientY
+
+    // Only allow upward pulling for bottom roller
+    if (deltaY > 0) {
+      const upwardDist = Math.min(deltaY, 80)
+      currentBottomDragYRef.current = upwardDist
+      if (assemblyRef.current) {
+        assemblyRef.current.style.setProperty('--roller-bottom-offset', `-${upwardDist}px`)
+        assemblyRef.current.style.setProperty('--drag-contract-y', `${upwardDist}px`)
+      }
+    } else {
+      currentBottomDragYRef.current = 0
+      if (assemblyRef.current) {
+        assemblyRef.current.style.setProperty('--roller-bottom-offset', '0px')
+        assemblyRef.current.style.setProperty('--drag-contract-y', '0px')
+      }
+    }
+  }
+
+  const handleBottomPointerUp = (e) => {
+    if (!isBottomDraggingRef.current) return
+    isBottomDraggingRef.current = false
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch {}
+
+    // Closing threshold: 45px
+    if (currentBottomDragYRef.current >= 45) {
+      triggerClose()
+    } else {
+      // Spring back to open position
+      currentBottomDragYRef.current = 0
+      if (assemblyRef.current) {
+        assemblyRef.current.style.setProperty(
+          '--roller-transition',
+          'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+        )
+        assemblyRef.current.style.setProperty('--roller-bottom-offset', '0px')
+        assemblyRef.current.style.setProperty('--drag-contract-y', '0px')
+      }
+    }
+  }
+
+  const handleBottomPointerCancel = (e) => {
+    if (!isBottomDraggingRef.current) return
+    isBottomDraggingRef.current = false
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch {}
+    currentBottomDragYRef.current = 0
+    if (assemblyRef.current) {
+      assemblyRef.current.style.setProperty(
+        '--roller-transition',
+        'transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+      )
+      assemblyRef.current.style.setProperty('--roller-bottom-offset', '0px')
+      assemblyRef.current.style.setProperty('--drag-contract-y', '0px')
+    }
+  }
+
   // Cleanup timers on unmount
   useEffect(() => {
     return () => {
       if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current)
       if (unrollTimerRef.current) clearTimeout(unrollTimerRef.current)
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+      if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
     }
   }, [])
 
@@ -200,7 +430,7 @@ export default function RoyalInvitation({ onComplete }) {
 
               {/* Movable Tag Assembly attached to the bottom of the extending cord */}
               <div
-                className={`hanging-tag-movable ${!isDragging && !tagDetached ? 'swaying' : ''} ${isDragging ? 'dragging' : ''}`}
+                className={`hanging-tag-movable ${!isDraggingTag && !tagDetached ? 'swaying' : ''} ${isDraggingTag ? 'dragging' : ''}`}
                 style={{
                   transform: tagDetached
                     ? 'translateX(-50%) translateY(40px) scale(0.92)'
@@ -208,14 +438,14 @@ export default function RoyalInvitation({ onComplete }) {
                   opacity: tagDetached ? 0 : 1,
                   transition: tagDetached
                     ? 'transform 0.4s ease, opacity 0.35s ease'
-                    : isDragging
+                    : isDraggingTag
                       ? 'none'
                       : 'top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                 }}
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerCancel}
+                onPointerDown={handleTagPointerDown}
+                onPointerMove={handleTagPointerMove}
+                onPointerUp={handleTagPointerUp}
+                onPointerCancel={handleTagPointerCancel}
                 onClick={triggerUnroll}
                 role="button"
                 tabIndex={0}
@@ -249,18 +479,43 @@ export default function RoyalInvitation({ onComplete }) {
         </div>
       ) : (
         /* ===================================================
-           OPENED ROYAL INVITATION SCROLL (ANTIQUE ARTIFACT)
+           OPENED & CLOSING ROYAL INVITATION SCROLL ASSEMBLY
         =================================================== */
         <div
+          ref={assemblyRef}
           className={`opened-invitation-assembly ${
-            scrollState === 'opening' ? 'is-opening' : 'is-opened'
+            scrollState === 'opening'
+              ? 'is-opening'
+              : scrollState === 'closing'
+                ? 'is-closing'
+                : 'is-opened'
           }`}
         >
-          {/* Top Antique Royal Lacquered Rosewood Roller Bar */}
-          <div className="physical-roller-bar top">
+          {/* Top Antique Royal Lacquered Rosewood Roller Bar (Pull down to close) */}
+          <div
+            className="physical-roller-bar top"
+            onPointerDown={handleTopPointerDown}
+            onPointerMove={handleTopPointerMove}
+            onPointerUp={handleTopPointerUp}
+            onPointerCancel={handleTopPointerCancel}
+            onClick={triggerClose}
+            role="button"
+            tabIndex={0}
+            aria-label="Pull top roller down to close invitation"
+            title="Pull down or tap to close invitation"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                triggerClose()
+              }
+            }}
+          >
             <ScrollFinial side="left" className="bar-finial" />
             <div className="roller-body-core">
               <div className="roller-wood-grain-overlay" />
+              <div className="roller-drag-indicator top">
+                <span>▼ DRAG DOWN TO CLOSE ▼</span>
+              </div>
               <OrnamentalBand className="bar-band left" />
               <RollerCenterFiligree className="bar-centerpiece" />
               <OrnamentalBand className="bar-band right" />
@@ -283,7 +538,6 @@ export default function RoyalInvitation({ onComplete }) {
 
               {/* Real Selectable HTML Content */}
               <div className="invitation-text-content">
-
                 {/* 1. Top Blessing */}
                 <div className="invitation-blessing-block">
                   <img
@@ -384,6 +638,39 @@ export default function RoyalInvitation({ onComplete }) {
                 <div className="invitation-base-lotus">
                   ❖ ─── 𑁍 ─── ❖
                 </div>
+
+                {/* 7. Traditional Closing Instruction */}
+                <div
+                  className="invitation-closing-instruction-block"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    triggerClose()
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Until We Meet: Pull lower roller up or upper roller down to close invitation and continue"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      triggerClose()
+                    }
+                  }}
+                >
+                  <div className="closing-instruction-divider">
+                    <div className="closing-divider-line" />
+                    <span>❖</span>
+                    <div className="closing-divider-line" />
+                  </div>
+                  <h4 className="closing-instruction-title">Until We Meet</h4>
+                  <p className="closing-instruction-text">
+                    Pull the lower roller up or the upper roller down to close the invitation and continue.
+                  </p>
+                  <div className="closing-roller-action-hint">
+                    <span className="closing-hint-arrow">▲</span>
+                    <span className="closing-hint-text">Pull roller to close</span>
+                    <span className="closing-hint-arrow">▲</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -391,16 +678,60 @@ export default function RoyalInvitation({ onComplete }) {
             <div className="parchment-inner-curl-bottom" />
           </div>
 
-          {/* Bottom Antique Royal Lacquered Rosewood Roller Bar */}
-          <div className="physical-roller-bar bottom">
+          {/* Bottom Antique Royal Lacquered Rosewood Roller Bar (Pull up to close) */}
+          <div
+            className="physical-roller-bar bottom"
+            onPointerDown={handleBottomPointerDown}
+            onPointerMove={handleBottomPointerMove}
+            onPointerUp={handleBottomPointerUp}
+            onPointerCancel={handleBottomPointerCancel}
+            onClick={triggerClose}
+            role="button"
+            tabIndex={0}
+            aria-label="Pull bottom roller up to close invitation"
+            title="Pull up or tap to close invitation"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                triggerClose()
+              }
+            }}
+          >
             <ScrollFinial side="left" className="bar-finial" />
             <div className="roller-body-core">
               <div className="roller-wood-grain-overlay" />
+              <div className="roller-drag-indicator bottom">
+                <span>▲ DRAG UP TO CLOSE ▲</span>
+              </div>
               <OrnamentalBand className="bar-band left" />
               <RollerCenterFiligree className="bar-centerpiece" />
               <OrnamentalBand className="bar-band right" />
             </div>
             <ScrollFinial side="right" className="bar-finial" />
+          </div>
+
+          {/* Ground shadow that emerges as the scroll rolls closed */}
+          <div className="closing-scroll-shadow" />
+
+          {/* Settle Hardware: Royal seal and pull tag smoothly emerging at the center as rollers meet */}
+          <div className="closing-settle-hardware">
+            <EmbossedRoyalSeal className="closed-scroll-seal" />
+            <div className="tag-attachment-anchor">
+              <div className="tag-mounting-grommet" />
+              <div className="hanging-braided-cord" />
+              <div className="hanging-tag-movable swaying">
+                <div className="hanging-tag-card">
+                  <div className="tag-eyelet" />
+                  <div className="tag-arrow-indicator">▼</div>
+                  <h4 className="tag-main-instruction">PULL TO REVEAL</h4>
+                  <p className="tag-sub-instruction">Your invitation awaits</p>
+                </div>
+                <div className="tag-bottom-tassel">
+                  <div className="tassel-brass-cap" />
+                  <div className="tassel-silk-fringe" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

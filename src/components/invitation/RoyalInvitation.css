@@ -531,13 +531,151 @@
 }
 
 .opened-invitation-assembly.is-opened .physical-parchment-sheet {
-  max-height: calc(100dvh - 105px);
+  max-height: calc(100dvh - 105px - var(--drag-contract-y, 0px));
   overflow-y: auto;
 }
 
 .opened-invitation-assembly.is-opened .invitation-text-content {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* =====================================================
+   COORDINATED PHYSICAL CLOSING MECHANISM (SHARED PROGRESS)
+   Both top and bottom gestures trigger this exact unified closing.
+   Distance between rollers decreases monotonically to 0.
+   Rollers meet at center without ever crossing or separating.
+   ===================================================== */
+
+.opened-invitation-assembly.is-closing {
+  filter: drop-shadow(0 14px 28px rgba(45, 22, 6, 0.28));
+  pointer-events: none;
+  animation: assemblyCloseMorph 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  overflow: visible;
+}
+
+@keyframes assemblyCloseMorph {
+  0% {
+    width: min(92vw, 470px);
+    max-width: 470px;
+  }
+  100% {
+    width: min(84vw, 350px);
+    max-width: 350px;
+  }
+}
+
+.opened-invitation-assembly.is-closing .physical-parchment-sheet {
+  overflow: hidden !important;
+  animation: sheetShrinkClose 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: max-height, opacity;
+}
+
+@keyframes sheetShrinkClose {
+  0% {
+    max-height: calc(100dvh - 105px);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    max-height: 0px;
+    opacity: 0;
+  }
+}
+
+.opened-invitation-assembly.is-closing .invitation-text-content {
+  animation: contentFadeOutClose 0.55s ease forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes contentFadeOutClose {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.opened-invitation-assembly.is-closing .roller-drag-indicator {
+  opacity: 0 !important;
+  transition: opacity 0.2s ease;
+}
+
+.opened-invitation-assembly.is-closing .roller-centerpiece-filigree {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Settle Hardware: Central royal seal and pull tag emerging at meeting point */
+.closing-settle-hardware {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 15;
+}
+
+.opened-invitation-assembly.is-closing .closing-settle-hardware {
+  animation: settleHardwareFadeIn 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes settleHardwareFadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+  55% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  85% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Ground shadow appearing underneath as scroll closes */
+.closing-scroll-shadow {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82%;
+  height: 18px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(40, 16, 4, 0.45) 0%, rgba(40, 16, 4, 0) 70%);
+  filter: blur(4px);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 1;
+}
+
+.opened-invitation-assembly.is-closing .closing-scroll-shadow {
+  animation: closingShadowFadeIn 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes closingShadowFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scaleX(1.3);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1);
+  }
 }
 
 @keyframes smoothParchmentUnroll {
@@ -562,7 +700,6 @@
   }
 }
 
-
 /* Heavy Cylindrical Lacquered Rosewood & Brass Roller Bars */
 .physical-roller-bar {
   position: relative;
@@ -574,15 +711,60 @@
   z-index: 8;
   flex-shrink: 0;
   overflow: visible;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.physical-roller-bar:active {
+  cursor: grabbing;
 }
 
 .physical-roller-bar.top {
   box-shadow: 0 8px 18px rgba(35, 14, 4, 0.45);
+  transform: translateY(var(--roller-top-offset, 0px));
+  transition: var(--roller-transition, none);
 }
 
 .physical-roller-bar.bottom {
   box-shadow: 0 -4px 12px rgba(35, 14, 4, 0.35), 0 8px 20px rgba(35, 14, 4, 0.45);
+  transform: translateY(var(--roller-bottom-offset, 0px));
+  transition: var(--roller-transition, none);
 }
+
+/* Roller Drag Indicator Cues */
+.roller-drag-indicator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cinzel', serif;
+  font-size: clamp(7px, 1.8vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: rgba(255, 238, 185, 0.7);
+  pointer-events: none;
+  z-index: 5;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  opacity: 0.85;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.roller-drag-indicator.top {
+  top: 1px;
+}
+
+.roller-drag-indicator.bottom {
+  bottom: 1px;
+}
+
+.physical-roller-bar:hover .roller-drag-indicator {
+  opacity: 1;
+  color: #FFF3D6;
+}
+
 
 /* Core Cylindrical Rosewood Body of the Roller Bar */
 .roller-body-core {
@@ -1010,6 +1192,106 @@
   opacity: 0.75;
 }
 
+/* 7. Traditional Closing Instruction Block */
+.invitation-closing-instruction-block {
+  margin-top: clamp(14px, 2.8vh, 22px);
+  margin-bottom: 6px;
+  padding: 12px 14px 10px 14px;
+  background: rgba(109, 22, 32, 0.04);
+  border: 1px dashed rgba(196, 150, 76, 0.45);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  max-width: 320px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.invitation-closing-instruction-block:hover {
+  background: rgba(109, 22, 32, 0.08);
+  border-color: rgba(196, 150, 76, 0.7);
+  transform: translateY(-1px);
+}
+
+.invitation-closing-instruction-block:focus-visible {
+  border-color: #b88628;
+  box-shadow: 0 0 0 2px rgba(184, 134, 40, 0.3);
+}
+
+.closing-instruction-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #b88628;
+  font-size: 10px;
+  width: 60%;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.closing-divider-line {
+  flex: 1;
+  max-width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #b88628, transparent);
+}
+
+.closing-instruction-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12px, 3.2vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6d1620;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
+}
+
+.closing-instruction-text {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: clamp(12px, 3.2vw, 14px);
+  font-style: italic;
+  font-weight: 400;
+  color: #6a441e;
+  line-height: 1.35;
+  margin: 0 0 7px 0;
+}
+
+.closing-roller-action-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b88628;
+  font-weight: 600;
+  animation: closeHintPulse 2s ease-in-out infinite;
+}
+
+@keyframes closeHintPulse {
+  0%, 100% {
+    opacity: 0.75;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+.closing-hint-arrow {
+  font-size: 8px;
+}
+
+
 /* -----------------------------------------------------
    6. REDUCED MOTION SUPPORT
 ----------------------------------------------------- */
@@ -1023,5 +1305,14 @@
   }
   .tag-arrow-indicator {
     animation: none !important;
+  }
+  .opened-invitation-assembly.is-closing,
+  .opened-invitation-assembly.is-closing .physical-parchment-sheet,
+  .opened-invitation-assembly.is-closing .invitation-text-content,
+  .closing-settle-hardware,
+  .closing-scroll-shadow {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -1,0 +1,116 @@
+/* =====================================================
+   ROYAL NAVIGATION PILL — SCALABLE MULTI-SECTION MENU
+   Gracefully accommodates 2 or more sections with smooth
+   horizontal pill scrolling on narrow mobile viewports.
+===================================================== */
+
+.royal-nav-container {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top, 10px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  pointer-events: auto;
+  user-select: none;
+  max-width: min(94vw, 560px);
+  animation: royalNavFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes royalNavFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.royal-nav-pill {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 252, 245, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(196, 150, 76, 0.45);
+  border-radius: 30px;
+  padding: 4px 6px;
+  box-shadow:
+    0 8px 24px rgba(45, 22, 6, 0.16),
+    0 2px 6px rgba(45, 22, 6, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.85);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.royal-nav-pill::-webkit-scrollbar {
+  display: none;
+}
+
+.royal-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: none;
+  outline: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(10px, 2.5vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6a441e;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+.royal-nav-btn:hover {
+  color: #3b1509;
+  background: rgba(196, 150, 76, 0.12);
+}
+
+.royal-nav-btn.active {
+  background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
+  color: #FFF8E7;
+  box-shadow:
+    0 2px 8px rgba(109, 22, 32, 0.35),
+    inset 0 1px 1px rgba(255, 235, 170, 0.4);
+}
+
+.royal-nav-btn.active:hover {
+  background: linear-gradient(135deg, #7c1a25 0%, #962534 100%);
+  color: #FFF8E7;
+}
+
+.royal-nav-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.royal-nav-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(196, 150, 76, 0.35);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 420px) {
+  .royal-nav-container {
+    max-width: 96vw;
+  }
+  .royal-nav-btn {
+    padding: 5px 11px;
+    gap: 5px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+}
