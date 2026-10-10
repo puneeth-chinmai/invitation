@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import {
   WEDDING_EVENTS,
   getGoogleCalendarUrl,
@@ -23,12 +23,10 @@ import {
  *   3. Zero emojis; monochrome line icons only.
  */
 export default function CalendarShareHub() {
-  const [selectedEventKey, setSelectedEventKey] = useState('muhurtam') // 'reception' | 'muhurtam'
+  const [calendarChooserOpen, setCalendarChooserOpen] = useState(false)
   const [shareModalOpen, setShareModalOpen] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
   const copyTimerRef = useRef(null)
-
-  const selectedEvent = WEDDING_EVENTS[selectedEventKey]
 
   // Clean canonical site URL
   const getCanonicalUrl = useCallback(() => {
@@ -36,13 +34,26 @@ export default function CalendarShareHub() {
     return window.location.origin + window.location.pathname
   }, [])
 
+  // Close modals on Escape key
+  useEffect(() => {
+    if (!shareModalOpen && !calendarChooserOpen) return
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setShareModalOpen(false)
+        setCalendarChooserOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [shareModalOpen, calendarChooserOpen])
+
   // Handle Apple Calendar click
-  const handleAppleCalendarClick = (e) => {
-    // Generates calendar data URI that directly opens the native event sheet on iOS / macOS
-    const uri = getAppleCalendarDataUri(selectedEvent)
+  const handleAppleCalendarClick = (event) => {
+    // Generates calendar data URI that directly opens native Calendar prompt on iOS / macOS
+    const uri = getAppleCalendarDataUri(event)
     const link = document.createElement('a')
     link.href = uri
-    link.setAttribute('download', `${selectedEvent.id}.ics`)
+    link.setAttribute('download', `${event.id}.ics`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -53,7 +64,7 @@ export default function CalendarShareHub() {
     const url = getCanonicalUrl()
     const shareData = {
       title: 'Puneeth & Chinmai — Wedding Invitation',
-      text: 'You are cordially invited to celebrate the wedding of Puneeth & Chinmai on 28th & 29th November 2026 at Gayatri Kalyana Mantapa, Chikkamagaluru.',
+      text: 'You are cordially invited to celebrate the wedding of Puneeth & Chinmai on 28th & 29th November 2026 at Gayathri Devi Kalyana Mantapa, Chikkamagaluru.',
       url: url,
     }
 
@@ -88,78 +99,178 @@ export default function CalendarShareHub() {
   }
 
   const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-    'You are cordially invited to celebrate the wedding of Puneeth & Chinmai on 28th & 29th November 2026 at Gayatri Kalyana Mantapa, Chikkamagaluru.\n\n' +
-      getCanonicalUrl()
+    'You are cordially invited to celebrate the wedding of Puneeth & Chinmai on 28th & 29th November 2026 at Gayathri Devi Kalyana Mantapa, Chikkamagaluru.\n\n' +
+    getCanonicalUrl()
   )}`
 
   return (
     <section className="calendar-share-section" aria-label="Add to Calendar and Share Invitation">
       {/* =========================================
-          1. ADD TO CALENDAR SECTION
+          1. ELEGANT WEDDING DATE KEEPSAKE
       ========================================= */}
       <div className="calendar-card-container">
         <div className="section-title-block">
           <span className="section-eyebrow">SAVE THE DATE</span>
-          <h3 className="section-heading">Add to Calendar</h3>
+          <h3 className="section-heading">Two Days. One Beautiful Beginning.</h3>
           <DelicateDivider />
+          <p className="calendar-intro-subnote">
+            Save our wedding celebrations to your personal calendar.
+          </p>
         </div>
 
-        {/* Event Selector Toggle Pills */}
-        <div className="event-picker-tabs" role="tablist" aria-label="Select Wedding Event">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={selectedEventKey === 'reception'}
-            className={`event-picker-tab ${selectedEventKey === 'reception' ? 'active' : ''}`}
-            onClick={() => setSelectedEventKey('reception')}
-          >
-            <span className="picker-tab-name">Reception</span>
-            <span className="picker-tab-time">28 Nov · 7:30 PM</span>
-          </button>
+        {/* Both Events Presented Once as Refined Date Cards */}
+        <div className="calendar-events-display">
+          {/* Event 1: Reception */}
+          <div className="calendar-event-keystrip">
+            <div className="calendar-event-datebox">
+              <span className="cal-datebox-month">NOV</span>
+              <span className="cal-datebox-day">28</span>
+              <span className="cal-datebox-dayname">SAT</span>
+            </div>
+            <div className="calendar-event-meta">
+              <div className="cal-meta-header">
+                <span className="cal-meta-title">Reception</span>
+              </div>
+              <span className="cal-meta-date">Saturday, 28 November 2026</span>
+              <span className="cal-meta-time">7:30 PM onwards</span>
+            </div>
+          </div>
 
-          <button
-            type="button"
-            role="tab"
-            aria-selected={selectedEventKey === 'muhurtam'}
-            className={`event-picker-tab ${selectedEventKey === 'muhurtam' ? 'active' : ''}`}
-            onClick={() => setSelectedEventKey('muhurtam')}
-          >
-            <span className="picker-tab-name">Muhurtam</span>
-            <span className="picker-tab-time">29 Nov · 8:00 AM</span>
-          </button>
+          {/* Event 2: Muhurtam */}
+          <div className="calendar-event-keystrip">
+            <div className="calendar-event-datebox auspicious">
+              <span className="cal-datebox-month">NOV</span>
+              <span className="cal-datebox-day">29</span>
+              <span className="cal-datebox-dayname">SUN</span>
+            </div>
+            <div className="calendar-event-meta">
+              <div className="cal-meta-header">
+                <span className="cal-meta-title">Muhurtam</span>
+              </div>
+              <span className="cal-meta-date">Sunday, 29 November 2026</span>
+              <span className="cal-meta-time">8:00 AM – 9:30 AM</span>
+            </div>
+          </div>
         </div>
 
-        {/* Calendar Action Buttons */}
-        <div className="calendar-actions-grid">
-          {/* Google Calendar */}
-          <a
-            href={getGoogleCalendarUrl(selectedEvent)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="calendar-btn google"
-            aria-label={`Add ${selectedEvent.name} to Google Calendar (opens in new tab)`}
-          >
-            <CalendarLineIcon size={15} color="#FFF8E7" />
-            <span>Google Calendar</span>
-            <ExternalArrowLineIcon size={12} color="#f7d286" />
-          </a>
-
-          {/* Apple Calendar / iOS */}
+        {/* One Primary Calendar Action Button */}
+        <div className="calendar-action-center">
           <button
             type="button"
-            className="calendar-btn apple"
-            onClick={handleAppleCalendarClick}
-            aria-label={`Add ${selectedEvent.name} to Apple Calendar`}
+            className="calendar-primary-trigger-btn"
+            onClick={() => setCalendarChooserOpen(true)}
+            aria-expanded={calendarChooserOpen}
+            aria-haspopup="dialog"
+            aria-label="Add Wedding Events to Calendar"
           >
-            <CalendarLineIcon size={15} color="#6d1620" />
-            <span>Apple Calendar</span>
+            <CalendarLineIcon size={16} color="#FFF8E7" />
+            <span>Add to Calendar</span>
           </button>
         </div>
-
-        <p className="calendar-note-text">
-          Adds {selectedEvent.name} ({selectedEvent.displayDate} at {selectedEvent.displayTime}) to your personal calendar.
-        </p>
       </div>
+
+      {/* =========================================
+          CALENDAR CHOOSER DIALOG (POPUP)
+      ========================================= */}
+      {calendarChooserOpen && (
+        <div
+          className="calendar-chooser-backdrop"
+          onClick={() => setCalendarChooserOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Choose Calendar to Add"
+        >
+          <div
+            className="calendar-chooser-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div className="chooser-header-titles">
+                <span className="chooser-eyebrow">SAVE TO CALENDAR</span>
+                <h4 className="modal-title">Select Event</h4>
+              </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setCalendarChooserOpen(false)}
+                aria-label="Close calendar options"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="modal-lead-text">
+              Choose an event to add to your Google Calendar or Apple Calendar:
+            </p>
+
+            <div className="chooser-event-options">
+              {/* Event 1: Muhurtam */}
+              <div className="chooser-event-group">
+                <div className="chooser-group-header">
+                  <span className="chooser-group-name">Muhurtam</span>
+                  <span className="chooser-group-time">Sun, 29 Nov · 8:00 AM – 9:30 AM</span>
+                </div>
+                <div className="chooser-buttons-row">
+                  <a
+                    href={getGoogleCalendarUrl(WEDDING_EVENTS.muhurtam)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="chooser-service-btn google"
+                    onClick={() => setCalendarChooserOpen(false)}
+                    aria-label="Add Muhurtam to Google Calendar (opens in new tab)"
+                  >
+                    <span>Google Calendar</span>
+                    <ExternalArrowLineIcon size={12} color="#FFF8E7" />
+                  </a>
+                  <button
+                    type="button"
+                    className="chooser-service-btn apple"
+                    onClick={() => {
+                      handleAppleCalendarClick(WEDDING_EVENTS.muhurtam)
+                      setCalendarChooserOpen(false)
+                    }}
+                    aria-label="Add Muhurtam to Apple Calendar"
+                  >
+                    <span>Apple Calendar</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Event 2: Reception */}
+              <div className="chooser-event-group">
+                <div className="chooser-group-header">
+                  <span className="chooser-group-name">Reception</span>
+                  <span className="chooser-group-time">Sat, 28 Nov · 7:30 PM onwards</span>
+                </div>
+                <div className="chooser-buttons-row">
+                  <a
+                    href={getGoogleCalendarUrl(WEDDING_EVENTS.reception)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="chooser-service-btn google"
+                    onClick={() => setCalendarChooserOpen(false)}
+                    aria-label="Add Reception to Google Calendar (opens in new tab)"
+                  >
+                    <span>Google Calendar</span>
+                    <ExternalArrowLineIcon size={12} color="#FFF8E7" />
+                  </a>
+                  <button
+                    type="button"
+                    className="chooser-service-btn apple"
+                    onClick={() => {
+                      handleAppleCalendarClick(WEDDING_EVENTS.reception)
+                      setCalendarChooserOpen(false)
+                    }}
+                    aria-label="Add Reception to Apple Calendar"
+                  >
+                    <span>Apple Calendar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* =========================================
           2. SHARE INVITATION SECTION

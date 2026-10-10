@@ -250,10 +250,10 @@
   border: 1.5px solid rgba(196, 150, 76, 0.65);
   border-radius: 8px;
   box-shadow:
-    0 16px 36px rgba(45, 22, 6, 0.14),
-    0 3px 10px rgba(45, 22, 6, 0.06),
-    inset 0 1px 2px rgba(255, 255, 255, 0.85);
-  padding: clamp(22px, 4.8vw, 30px) clamp(16px, 3.8vw, 26px);
+    0 18px 42px rgba(45, 22, 6, 0.15),
+    0 4px 12px rgba(45, 22, 6, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  padding: clamp(24px, 5.2vw, 36px) clamp(16px, 4vw, 28px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -271,13 +271,13 @@
 }
 
 .countdown-header-block {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .countdown-eyebrow {
   font-family: 'Cinzel', serif;
-  font-size: clamp(9px, 2.2vw, 10px);
-  letter-spacing: 0.24em;
+  font-size: clamp(9px, 2.2vw, 10.5px);
+  letter-spacing: 0.26em;
   font-weight: 600;
   color: #8c5d1e;
   text-transform: uppercase;
@@ -285,23 +285,24 @@
 
 .countdown-main-heading {
   font-family: 'Cinzel', serif;
-  font-size: clamp(17px, 4vw, 22px);
+  font-size: clamp(19px, 4.4vw, 24px);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: #6d1620;
-  margin: 4px 0 2px 0;
+  margin: 5px 0 2px 0;
+  text-shadow: 0 1px 4px rgba(184, 134, 40, 0.15);
 }
 
 .countdown-couple-names {
   font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: clamp(14px, 3.4vw, 16px);
+  font-size: clamp(14px, 3.4vw, 16.5px);
   font-style: italic;
   color: #724b23;
   margin: 0;
 }
 
 .countdown-divider {
-  margin: 8px auto 16px auto;
+  margin: 8px auto 18px auto;
 }
 
 /* Unified 4-Column Display with Delicate Separators */
@@ -309,9 +310,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(8px, 2.2vw, 18px);
+  gap: clamp(10px, 2.6vw, 22px);
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   margin-bottom: 18px;
 }
 
@@ -325,19 +326,20 @@
 
 .countdown-serif-numeral {
   font-family: 'Cinzel', 'Playfair Display', serif;
-  font-size: clamp(26px, 6.5vw, 38px);
-  font-weight: 500;
+  font-size: clamp(28px, 7vw, 42px);
+  font-weight: 600;
   line-height: 1;
   color: #6d1620;
   letter-spacing: 0.04em;
-  text-shadow: 0 1px 3px rgba(184, 134, 40, 0.18);
+  text-shadow: 0 2px 5px rgba(184, 134, 40, 0.2);
+  font-variant-numeric: tabular-nums;
 }
 
 .countdown-unit-label {
   font-family: 'Cinzel', serif;
-  font-size: clamp(8px, 1.9vw, 9.5px);
+  font-size: clamp(8.5px, 2vw, 10px);
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   color: #8c5d1e;
   margin-top: 6px;
   text-transform: uppercase;
@@ -345,8 +347,8 @@
 
 .countdown-unit-divider {
   width: 1px;
-  height: clamp(28px, 5vw, 36px);
-  background: linear-gradient(180deg, transparent, rgba(184, 134, 40, 0.45), transparent);
+  height: clamp(30px, 5.5vw, 42px);
+  background: linear-gradient(180deg, transparent, rgba(184, 134, 40, 0.55), transparent);
   flex-shrink: 0;
 }
 
@@ -354,8 +356,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding-top: 8px;
-  border-top: 1px solid rgba(196, 150, 76, 0.25);
+  padding-top: 10px;
+  border-top: 1px solid rgba(196, 150, 76, 0.28);
   width: 90%;
 }
 
@@ -402,22 +404,77 @@
 .events-editorial-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: clamp(14px, 3vw, 18px);
+  gap: clamp(14px, 3vw, 20px);
 }
 
 .event-editorial-card {
   position: relative;
-  background: linear-gradient(180deg, #FFFDF8 0%, #FAF3E0 60%, #F3E5C8 100%);
+  background: #FFFDF9;
   border: 1.5px solid rgba(196, 150, 76, 0.65);
   border-radius: 8px;
   box-shadow:
     0 14px 32px rgba(45, 22, 6, 0.12),
     0 3px 8px rgba(45, 22, 6, 0.06),
     inset 0 1px 2px rgba(255, 255, 255, 0.85);
-  padding: clamp(20px, 4.2vw, 26px) clamp(16px, 3.6vw, 22px);
+  padding: clamp(22px, 4.5vw, 28px) clamp(18px, 4vw, 24px);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 250px;
+}
+
+/* Artwork Backdrop Container */
+.event-card-art-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.event-card-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Distinct artwork positioning separately tuned for Reception and Muhurtam compositions */
+.event-card-art-img.reception-art {
+  object-position: 85% 65%;
+}
+
+.event-card-art-img.muhurtam-art {
+  object-position: 80% 75%;
+}
+
+/* Multi-layer directional scrim:
+   Opaque warm ivory protects text legibility on the left,
+   while fading cleanly to transparent on the right & lower-right to let artwork shine */
+.event-card-art-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 253, 248, 0.95) 0%,
+      rgba(255, 253, 248, 0.90) 42%,
+      rgba(255, 253, 248, 0.52) 66%,
+      rgba(255, 253, 248, 0.12) 86%,
+      rgba(255, 253, 248, 0.02) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 253, 248, 0.65) 0%,
+      transparent 35%,
+      transparent 70%,
+      rgba(250, 243, 229, 0.45) 100%
+    );
+  pointer-events: none;
 }
 
 .event-editorial-card::before {
@@ -427,55 +484,71 @@
   border: 1px solid rgba(109, 22, 32, 0.18);
   border-radius: 5px;
   pointer-events: none;
+  z-index: 1;
+}
+
+/* Content container with balanced inset allowing artwork to extend naturally */
+.event-card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  max-width: 72%;
 }
 
 .event-badge-label {
   align-self: flex-start;
   font-family: 'Cinzel', serif;
-  font-size: clamp(8px, 1.9vw, 9.5px);
+  font-size: clamp(8px, 1.8vw, 9px);
   font-weight: 600;
   letter-spacing: 0.16em;
   color: #6d1620;
-  background: rgba(109, 22, 32, 0.05);
-  border: 1px solid rgba(196, 150, 76, 0.4);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(196, 150, 76, 0.5);
   border-radius: 12px;
-  padding: 3px 10px;
+  padding: 2.5px 8px;
   text-transform: uppercase;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+  box-shadow: 0 1px 3px rgba(45, 22, 6, 0.05);
 }
 
 .event-badge-label.auspicious {
   color: #8c5d1e;
-  background: rgba(184, 134, 40, 0.07);
-  border-color: rgba(184, 134, 40, 0.45);
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(184, 134, 40, 0.55);
 }
 
 .event-editorial-title {
   font-family: 'Cinzel', serif;
-  font-size: clamp(18px, 4.2vw, 22px);
+  font-size: clamp(17px, 3.8vw, 21px);
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   color: #2b1406;
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   text-align: left;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
 .event-accent-line {
-  width: 36px;
+  width: 32px;
   height: 2px;
   background: linear-gradient(90deg, #6d1620 0%, #b88628 100%);
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .event-detail-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.event-detail-item:last-child {
+  margin-bottom: 0;
 }
 
 .event-detail-icon {
-  margin-top: 1px;
+  margin-top: 2px;
   flex-shrink: 0;
 }
 
@@ -486,21 +559,27 @@
 
 .event-primary-info {
   font-family: 'Cinzel', serif;
-  font-size: clamp(12px, 2.8vw, 13.5px);
+  font-size: clamp(11.5px, 2.6vw, 13px);
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
+  line-height: 1.35;
   color: #6d1620;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
 }
 
 .event-secondary-info {
   font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: clamp(12px, 2.7vw, 14px);
+  font-size: clamp(11px, 2.5vw, 12.5px);
   font-style: italic;
-  color: #6e4d29;
+  color: #5a3715;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-top: 1px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
 }
 
 /* -----------------------------------------------------
-   5. VENUE GUIDE & DIRECTIONS
+   5. UNIFIED VENUE EXPERIENCE & DIRECTIONS
 ----------------------------------------------------- */
 
 .venue-card-section {
@@ -509,21 +588,25 @@
   gap: 12px;
 }
 
+.venue-cinematic-card,
 .venue-editorial-card {
   position: relative;
-  background: linear-gradient(180deg, #FFFDF8 0%, #FAF3E0 55%, #F3E5C8 100%);
+  background: linear-gradient(180deg, #FFFDF8 0%, #FAF3E0 45%, #F4E8D0 100%);
   border: 1.5px solid rgba(196, 150, 76, 0.65);
   border-radius: 8px;
   box-shadow:
-    0 16px 36px rgba(45, 22, 6, 0.14),
-    0 3px 10px rgba(45, 22, 6, 0.06),
-    inset 0 1px 2px rgba(255, 255, 255, 0.85);
-  padding: clamp(20px, 4.5vw, 28px) clamp(16px, 3.6vw, 24px);
+    0 18px 42px rgba(45, 22, 6, 0.14),
+    0 4px 12px rgba(45, 22, 6, 0.06),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  padding: 0;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
 }
 
+.venue-cinematic-card::before,
 .venue-editorial-card::before {
   content: '';
   position: absolute;
@@ -531,63 +614,138 @@
   border: 1px solid rgba(109, 22, 32, 0.2);
   border-radius: 5px;
   pointer-events: none;
+  z-index: 3;
 }
 
-.venue-header-row {
+/* Continuous Architectural Atmosphere Layer:
+   Integrated into the card, extending from the top down behind the destination block.
+   Eliminates any separate block boundary or horizontal seam. */
+.venue-art-atmosphere {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: clamp(260px, 52vw, 340px);
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.venue-atmosphere-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 32%;
+  display: block;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000000 0%,
+    #000000 35%,
+    rgba(0, 0, 0, 0.8) 55%,
+    rgba(0, 0, 0, 0.4) 75%,
+    rgba(0, 0, 0, 0.1) 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000000 0%,
+    #000000 35%,
+    rgba(0, 0, 0, 0.8) 55%,
+    rgba(0, 0, 0, 0.4) 75%,
+    rgba(0, 0, 0, 0.1) 90%,
+    transparent 100%
+  );
+}
+
+/* Warm-ivory atmosphere scrim:
+   Transitions smoothly into the exact card background color */
+.venue-atmosphere-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 253, 248, 0) 0%,
+    rgba(255, 253, 248, 0.15) 35%,
+    rgba(255, 253, 248, 0.6) 65%,
+    rgba(250, 243, 224, 0.9) 88%,
+    #FAF3E0 100%
+  );
+  pointer-events: none;
+}
+
+/* Unified Venue Content Flow:
+   Flows continuously over the atmosphere layer with breathing space for the upper architecture */
+.venue-content-flow {
+  position: relative;
+  z-index: 2;
+  padding: clamp(160px, 34vw, 220px) clamp(16px, 4vw, 28px) clamp(20px, 4.5vw, 28px);
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
-.venue-pin-container {
-  width: 38px;
-  height: 38px;
+.venue-destination-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: clamp(14px, 3vw, 18px);
+}
+
+.venue-pin-badge {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(196, 150, 76, 0.55);
+  border: 1.5px solid rgba(196, 150, 76, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(45, 22, 6, 0.08);
-  flex-shrink: 0;
+  margin-bottom: 8px;
 }
 
-.venue-title-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.venue-building-name {
+.venue-grand-name {
   font-family: 'Cinzel', serif;
-  font-size: clamp(16px, 3.8vw, 20px);
+  font-size: clamp(17px, 3.8vw, 20.5px);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: #2b1406;
   margin: 0;
+  line-height: 1.25;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
-.venue-locality {
+.venue-grand-locality {
   font-family: 'Cinzel', serif;
-  font-size: clamp(11px, 2.5vw, 13px);
+  font-size: clamp(10.5px, 2.4vw, 12px);
   font-weight: 500;
   letter-spacing: 0.12em;
   color: #6d1620;
-  margin: 2px 0 0 0;
+  margin: 3px 0 0 0;
+  text-transform: uppercase;
 }
 
-/* Map Preview Panel */
-.venue-map-panel {
+.venue-details-accent-rule {
+  width: 48px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, #b88628, transparent);
+  margin-top: 10px;
+}
+
+/* Secondary Framed Map Preview Panel */
+.venue-map-preview-panel {
   position: relative;
   width: 100%;
-  height: clamp(170px, 38vw, 230px);
+  height: clamp(130px, 24vw, 160px);
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid rgba(196, 150, 76, 0.55);
   box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.15),
-    0 3px 10px rgba(45, 22, 6, 0.08);
-  margin-bottom: 16px;
+    inset 0 1px 3px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(45, 22, 6, 0.08);
+  margin-bottom: clamp(14px, 3vw, 18px);
 }
 
 .venue-map-frame {
@@ -597,32 +755,34 @@
   display: block;
 }
 
-.venue-map-border-overlay {
+.venue-map-frame-border {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(196, 150, 76, 0.35);
+  border: 1px solid rgba(196, 150, 76, 0.3);
   pointer-events: none;
 }
 
-.venue-cta-row {
+/* Primary Directions Action CTA */
+.venue-cta-block {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
 }
 
-.venue-get-directions-btn {
+.venue-directions-primary-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  min-height: 48px;
   background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
   color: #FFF8E7;
   border: 1.5px solid rgba(235, 195, 115, 0.7);
   border-radius: 25px;
-  padding: 10px 24px;
+  padding: 12px 32px;
   font-family: 'Cinzel', serif;
-  font-size: clamp(11px, 2.7vw, 12.5px);
+  font-size: clamp(11px, 2.5vw, 12.5px);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -635,18 +795,23 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.venue-get-directions-btn:hover {
+.venue-directions-primary-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(60, 15, 20, 0.42);
 }
 
-.venue-get-directions-btn:active {
+.venue-directions-primary-btn:active {
   transform: translateY(0);
+}
+
+.venue-directions-primary-btn:focus-visible {
+  outline: 2px solid #8c5d1e;
+  outline-offset: 2px;
 }
 
 .venue-directions-subnote {
   font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: clamp(11px, 2.5vw, 13px);
+  font-size: clamp(11px, 2.5vw, 12.5px);
   font-style: italic;
   color: #724d27;
   margin: 0;
@@ -672,7 +837,7 @@
     0 16px 36px rgba(45, 22, 6, 0.14),
     0 3px 10px rgba(45, 22, 6, 0.06),
     inset 0 1px 2px rgba(255, 255, 255, 0.85);
-  padding: clamp(20px, 4.5vw, 26px) clamp(16px, 3.6vw, 22px);
+  padding: clamp(22px, 4.6vw, 32px) clamp(16px, 3.8vw, 26px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -688,132 +853,331 @@
   pointer-events: none;
 }
 
-/* Event Selector Toggle Pills */
-.event-picker-tabs {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 380px;
-  margin-bottom: 16px;
+.calendar-intro-subnote {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: clamp(13px, 3vw, 15px);
+  font-style: italic;
+  font-weight: 500;
+  color: #5a3715;
+  margin: -4px 0 16px 0;
+  text-align: center;
+  max-width: 440px;
+  line-height: 1.35;
 }
 
-.event-picker-tab {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.85);
+/* Clear Date Cards Grid — Presents both events once */
+.calendar-events-display {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(10px, 2.2vw, 16px);
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
+}
+
+.calendar-event-keystrip {
+  background: rgba(255, 255, 255, 0.88);
   border: 1.5px solid rgba(196, 150, 76, 0.45);
-  border-radius: 20px;
-  padding: 8px 10px;
+  border-radius: 6px;
+  padding: clamp(10px, 2.2vw, 14px) clamp(10px, 2vw, 14px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(45, 22, 6, 0.05);
+}
+
+.calendar-event-datebox {
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  outline: none;
+  justify-content: center;
+  width: 44px;
+  height: 52px;
+  background: rgba(109, 22, 32, 0.07);
+  border: 1px solid rgba(109, 22, 32, 0.25);
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
-.event-picker-tab:hover {
-  border-color: #b88628;
-  background: #FFFDF9;
+.calendar-event-datebox.auspicious {
+  background: rgba(184, 134, 40, 0.1);
+  border-color: rgba(184, 134, 40, 0.35);
 }
 
-.event-picker-tab.active {
-  background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
-  border-color: rgba(235, 195, 115, 0.7);
-  box-shadow: 0 3px 10px rgba(60, 15, 20, 0.3);
-}
-
-.picker-tab-name {
+.cal-datebox-month {
   font-family: 'Cinzel', serif;
-  font-size: 11px;
+  font-size: 8.5px;
   font-weight: 600;
   letter-spacing: 0.1em;
+  color: #6d1620;
+  line-height: 1;
+}
+
+.cal-datebox-day {
+  font-family: 'Cinzel', serif;
+  font-size: 19px;
+  font-weight: 700;
   color: #2b1406;
-  text-transform: uppercase;
+  line-height: 1.1;
+  margin: 1px 0;
 }
 
-.event-picker-tab.active .picker-tab-name {
-  color: #FFF8E7;
+.cal-datebox-dayname {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #8c5d1e;
+  line-height: 1;
 }
 
-.picker-tab-time {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: 11.5px;
-  color: #6e4d29;
+.calendar-event-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
 }
 
-.event-picker-tab.active .picker-tab-time {
-  color: #f7d286;
-}
-
-/* Calendar Action Buttons */
-.calendar-actions-grid {
+.cal-meta-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 380px;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 2px;
 }
 
-.calendar-btn {
-  flex: 1;
+.cal-meta-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12.5px, 2.7vw, 14.5px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #2b1406;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.cal-meta-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #6d1620;
+  background: rgba(109, 22, 32, 0.08);
+  border-radius: 8px;
+  padding: 1px 5px;
+}
+
+.cal-meta-tag.auspicious {
+  color: #8c5d1e;
+  background: rgba(184, 134, 40, 0.1);
+}
+
+.cal-meta-date {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(10px, 2.2vw, 11px);
+  font-weight: 500;
+  color: #6d1620;
+  line-height: 1.2;
+}
+
+.cal-meta-time {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: clamp(11.5px, 2.5vw, 13px);
+  font-style: italic;
+  font-weight: 500;
+  color: #5a3715;
+  margin-top: 1px;
+}
+
+/* Primary Trigger Action */
+.calendar-action-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.calendar-primary-trigger-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  border-radius: 22px;
-  padding: 9px 14px;
+  gap: 9px;
+  min-height: 48px;
+  background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
+  color: #FFF8E7;
+  border: 1.5px solid rgba(235, 195, 115, 0.7);
+  border-radius: 25px;
+  padding: 12px 36px;
   font-family: 'Cinzel', serif;
-  font-size: clamp(10px, 2.4vw, 11px);
+  font-size: clamp(11px, 2.6vw, 12.5px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 4px 16px rgba(60, 15, 20, 0.32),
+    inset 0 1px 1px rgba(255, 235, 170, 0.45);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.calendar-primary-trigger-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(60, 15, 20, 0.42);
+}
+
+.calendar-primary-trigger-btn:active {
+  transform: translateY(0);
+}
+
+.calendar-primary-trigger-btn:focus-visible {
+  outline: 2px solid #8c5d1e;
+  outline-offset: 2px;
+}
+
+/* Calendar Chooser Dialog Styles */
+.calendar-chooser-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 10, 3, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: modalBackdropFadeIn 0.22s ease forwards;
+}
+
+.calendar-chooser-card {
+  position: relative;
+  width: min(92vw, 420px);
+  background: linear-gradient(180deg, #FFFDF8 0%, #FAF3E0 60%, #F3E5C8 100%);
+  border: 1.5px solid rgba(196, 150, 76, 0.7);
+  border-radius: 10px;
+  box-shadow:
+    0 24px 48px rgba(45, 22, 6, 0.35),
+    0 6px 16px rgba(45, 22, 6, 0.16);
+  padding: 22px 20px;
+  box-sizing: border-box;
+  text-align: left;
+  animation: modalCardScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.chooser-header-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.chooser-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: #8c5d1e;
+  text-transform: uppercase;
+}
+
+.chooser-event-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.chooser-event-group {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(196, 150, 76, 0.45);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 1px 4px rgba(45, 22, 6, 0.04);
+}
+
+.chooser-group-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.chooser-group-name {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #6d1620;
+  text-transform: uppercase;
+}
+
+.chooser-group-time {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 500;
+  color: #6e4d29;
+}
+
+.chooser-buttons-row {
+  display: flex;
+  gap: 8px;
+}
+
+.chooser-service-btn {
+  flex: 1;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 20px;
+  padding: 8px 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
 
-.calendar-btn.google {
+.chooser-service-btn:focus-visible {
+  outline: 2px solid #8c5d1e;
+  outline-offset: 2px;
+}
+
+.chooser-service-btn.google {
   background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
   color: #FFF8E7;
-  border: 1px solid rgba(235, 195, 115, 0.65);
-  box-shadow:
-    0 3px 10px rgba(60, 15, 20, 0.28),
-    inset 0 1px 1px rgba(255, 235, 170, 0.4);
+  border: 1.5px solid rgba(235, 195, 115, 0.7);
+  box-shadow: 0 2px 8px rgba(60, 15, 20, 0.25);
 }
 
-.calendar-btn.google:hover {
+.chooser-service-btn.google:hover {
   transform: translateY(-1px);
-  box-shadow: 0 5px 14px rgba(60, 15, 20, 0.38);
+  box-shadow: 0 4px 12px rgba(60, 15, 20, 0.35);
 }
 
-.calendar-btn.apple {
+.chooser-service-btn.apple {
   background: rgba(255, 255, 255, 0.95);
   color: #6d1620;
-  border: 1.5px solid rgba(196, 150, 76, 0.55);
-  box-shadow: 0 2px 6px rgba(45, 22, 6, 0.08);
+  border: 1.5px solid rgba(196, 150, 76, 0.6);
+  box-shadow: 0 1px 4px rgba(45, 22, 6, 0.06);
 }
 
-.calendar-btn.apple:hover {
+.chooser-service-btn.apple:hover {
   background: #FFFDF9;
   border-color: #b88628;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(45, 22, 6, 0.12);
-}
-
-.calendar-note-text {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: clamp(12px, 2.7vw, 13.5px);
-  font-style: italic;
-  color: #724d27;
-  margin: 0;
-  text-align: center;
-  max-width: 360px;
+  box-shadow: 0 3px 8px rgba(45, 22, 6, 0.1);
 }
 
 /* Share Main Action Button */
@@ -828,10 +1192,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  min-height: 46px;
   background: rgba(255, 252, 245, 0.95);
   border: 1.5px solid rgba(196, 150, 76, 0.6);
   border-radius: 25px;
-  padding: 10px 22px;
+  padding: 12px 26px;
   font-family: 'Cinzel', serif;
   font-size: clamp(11px, 2.6vw, 12px);
   font-weight: 600;
@@ -857,6 +1222,11 @@
 
 .share-main-action-btn:active {
   transform: translateY(0);
+}
+
+.share-main-action-btn:focus-visible {
+  outline: 2px solid #8c5d1e;
+  outline-offset: 2px;
 }
 
 /* -----------------------------------------------------
@@ -928,11 +1298,29 @@
 .modal-close-btn {
   background: transparent;
   border: none;
-  font-size: 16px;
+  font-size: 18px;
   color: #8c5d1e;
   cursor: pointer;
-  padding: 4px 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: -10px -10px -10px 0;
+  padding: 0;
   line-height: 1;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(109, 22, 32, 0.08);
+  color: #6d1620;
+}
+
+.modal-close-btn:focus-visible {
+  outline: 2px solid #8c5d1e;
+  outline-offset: 2px;
 }
 
 .modal-lead-text {
@@ -954,6 +1342,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-height: 52px;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(196, 150, 76, 0.5);
   border-radius: 8px;
@@ -963,6 +1352,7 @@
   cursor: pointer;
   transition: all 0.18s ease;
   box-shadow: 0 2px 6px rgba(45, 22, 6, 0.06);
+  outline: none;
 }
 
 .modal-share-item:hover {
@@ -970,6 +1360,11 @@
   border-color: #b88628;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(45, 22, 6, 0.12);
+}
+
+.modal-share-item:focus-visible {
+  outline: 2px solid #8c5d1e;
+  outline-offset: 2px;
 }
 
 .modal-item-info {
@@ -1031,32 +1426,170 @@
    9. RESPONSIVE BREAKPOINTS
 ----------------------------------------------------- */
 
-@media (max-width: 440px) {
+@media (max-width: 480px) {
   .wedding-details-content-container {
     max-width: 95vw;
     gap: 18px;
   }
 
   .countdown-unified-display {
-    gap: 6px;
+    gap: 8px;
   }
 
   .countdown-serif-numeral {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .countdown-unit-label {
-    font-size: 7.5px;
-    letter-spacing: 0.12em;
+    font-size: 8px;
+    letter-spacing: 0.14em;
   }
 
   .countdown-unit-divider {
-    height: 24px;
+    height: 26px;
   }
 
-  .calendar-actions-grid {
-    flex-direction: column;
-    align-items: stretch;
+  /* Restored Taller Proportions for Event Cards on Mobile */
+  .event-editorial-card {
+    min-height: clamp(250px, 58vw, 285px);
+    padding: clamp(20px, 5vw, 24px) clamp(16px, 4.2vw, 20px);
+    justify-content: center;
+  }
+
+  .event-card-content {
+    max-width: 80%;
+  }
+
+  .event-detail-item {
+    gap: 9px;
+    margin-bottom: 10px;
+  }
+
+  .event-accent-line {
+    margin-bottom: 11px;
+  }
+
+  /* Separate artwork focus tuning on mobile */
+  .event-card-art-img.reception-art {
+    object-position: 86% 65%;
+  }
+
+  .event-card-art-img.muhurtam-art {
+    object-position: 82% 76%;
+  }
+
+  /* Mobile directional scrim: ensures left text contrast while art naturally fills the card */
+  .event-card-art-scrim {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(255, 253, 248, 0.96) 0%,
+        rgba(255, 253, 248, 0.90) 45%,
+        rgba(255, 253, 248, 0.52) 70%,
+        rgba(255, 253, 248, 0.14) 88%,
+        rgba(255, 253, 248, 0.02) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(255, 253, 248, 0.65) 0%,
+        transparent 35%,
+        transparent 75%,
+        rgba(250, 243, 229, 0.45) 100%
+      );
+  }
+
+  /* Venue Card on Mobile */
+  .venue-cinematic-card,
+  .venue-editorial-card {
+    padding-bottom: 0;
+  }
+
+  .venue-art-atmosphere {
+    height: clamp(230px, 60vw, 290px);
+  }
+
+  .venue-content-flow {
+    padding: clamp(140px, 40vw, 180px) 12px 18px 12px;
+  }
+
+  .venue-destination-block {
+    margin-bottom: 12px;
+  }
+
+  .venue-grand-name {
+    font-size: clamp(15.5px, 4.4vw, 18px);
+  }
+
+  .venue-grand-locality {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .venue-map-preview-panel {
+    height: 130px;
+    margin-bottom: 14px;
+  }
+
+  .venue-directions-primary-btn {
+    width: 100%;
+    max-width: 290px;
+    padding: 12px 20px;
+  }
+
+  /* Calendar Keepsake on Mobile */
+  .calendar-card-container {
+    padding: 18px 14px;
+  }
+
+  .calendar-intro-subnote {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .calendar-events-display {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .calendar-event-keystrip {
+    padding: 10px 12px;
+  }
+
+  .calendar-primary-trigger-btn {
+    width: 100%;
+    max-width: 290px;
+  }
+}
+
+@media (max-width: 360px) {
+  .event-editorial-card {
+    min-height: 250px;
+    padding: 18px 14px;
+  }
+
+  .event-card-content {
+    max-width: 85%;
+  }
+
+  .event-editorial-title {
+    font-size: 16px;
+  }
+
+  .event-primary-info {
+    font-size: 11px;
+  }
+
+  .event-secondary-info {
+    font-size: 10.5px;
+  }
+
+  .venue-grand-name {
+    font-size: 15px;
+  }
+
+  .venue-map-preview-panel {
+    height: 120px;
   }
 }
 
@@ -1068,6 +1601,7 @@
   .details-intro-header,
   .wedding-countdown-section,
   .event-editorial-card,
+  .venue-cinematic-card,
   .venue-editorial-card,
   .calendar-card-container,
   .share-modal-backdrop,

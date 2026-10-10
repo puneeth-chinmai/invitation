@@ -92,7 +92,7 @@ export default function WeddingAwaits({ onNavigateToJourney }) {
         {onNavigateToJourney && (
           <SectionTransitionCard
             kicker="THE NEXT CHAPTER"
-            title="The Story COntinues"
+            title="The Story Continues"
             description="Discover the journey that brought Puneeth & Chinmai together."
             ctaText="Explore The Journey"
             ctaIcon="→"
