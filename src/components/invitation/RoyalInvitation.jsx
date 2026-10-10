@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import ganeshaSymbolUrl from '../../assets/images/ganesha_symbol.png'
+import templeBgUrl from '../../assets/images/temple_interior_bg.jpg'
 import {
   ScrollFinial,
   OrnamentalBand,
@@ -8,6 +9,85 @@ import {
   LotusCornerFiligree,
 } from './ScrollCraftsmanship'
 import './RoyalInvitation.css'
+
+const SESSION_LANG_KEY = 'royal_invitation_lang'
+
+function getSavedLanguage() {
+  try {
+    const saved = sessionStorage.getItem(SESSION_LANG_KEY)
+    if (saved === 'kannada' || saved === 'english') {
+      return saved
+    }
+  } catch {
+    // sessionStorage might be restricted in some privacy modes
+  }
+  return 'english'
+}
+
+function saveLanguage(lang) {
+  try {
+    sessionStorage.setItem(SESSION_LANG_KEY, lang)
+  } catch {
+    // ignore
+  }
+}
+
+const INVITATION_CONTENT = {
+  english: {
+    ganeshaBlessing: 'WITH THE BLESSINGS OF Our Family and Elders',
+    ganeshaAlt: 'Lord Ganesha',
+    mainHeading: 'WEDDING INVITATION',
+    intro: 'With immense joy, we invite you to join us in celebrating the wedding of',
+    groom: 'PUNEETH',
+    ampersand: '&',
+    bride: 'CHINMAI',
+    closingNote: 'Your presence and blessings will make our celebration truly special.',
+    receptionTitle: 'RECEPTION',
+    receptionDate: '28 NOVEMBER 2026',
+    receptionTime: '7:30 PM ONWARDS',
+    muhurtamTitle: 'MUHURTAM',
+    muhurtamDate: '29 NOVEMBER 2026',
+    muhurtamTime: '8:00 AM',
+    venueTitle: 'VENUE',
+    venueName: 'GAYATHRI DEVI KALYANA MANTAPA',
+    venueCity: 'CHIKKAMAGALURU',
+    closeInstructionTitle: 'Until We Meet',
+    closeInstructionText: 'Pull the lower roller up or the upper roller down to close the invitation and continue.',
+    closeHint: 'Pull roller to close',
+    topRollerCue: '▼ DRAG DOWN TO CLOSE ▼',
+    bottomRollerCue: '▲ DRAG UP TO CLOSE ▲',
+    topRollerAria: 'Pull top roller down to close invitation',
+    bottomRollerAria: 'Pull bottom roller up to close invitation',
+    closeBlockAria: 'Until We Meet: Pull lower roller up or upper roller down to close invitation and continue',
+  },
+  kannada: {
+    ganeshaBlessing: 'ಗುರು-ಹಿರಿಯರ ಹಾಗೂ ಕುಟುಂಬದ ಆಶೀರ್ವಾದದೊಂದಿಗೆ',
+    ganeshaAlt: 'ಶ್ರೀ ಮಹಾಗಣಪತಿ',
+    mainHeading: 'ವಿವಾಹ ಮಹೋತ್ಸವದ ಆಮಂತ್ರಣ',
+    intro: 'ಅಪಾರ ಸಂತಸ ಹಾಗೂ ಸಂಭ್ರಮದೊಂದಿಗೆ, ನಮ್ಮ ಶುಭ ವಿವಾಹ ಮಹೋತ್ಸವಕ್ಕೆ ತಮ್ಮನ್ನು ಪ್ರೀತಿಯಿಂದ ಆಹ್ವಾನಿಸುತ್ತಿದ್ದೇವೆ',
+    groom: 'ಪುನೀತ್',
+    ampersand: '&',
+    bride: 'ಚಿನ್ಮಯಿ',
+    closingNote: 'ತಮ್ಮ ಉಪಸ್ಥಿತಿ ಮತ್ತು ಶುಭ ಹಾರೈಕೆಗಳೇ ನಮ್ಮ ಈ ಸಂಭ್ರಮಕ್ಕೆ ನಿಜವಾದ ಶೋಭೆ.',
+    receptionTitle: 'ಆರತಕ್ಷತೆ',
+    receptionDate: '28 ನವೆಂಬರ್ 2026',
+    receptionTime: 'ಸಂಜೆ 7:30 ರಿಂದ',
+    muhurtamTitle: 'ಶುಭ ಮುಹೂರ್ತ',
+    muhurtamDate: '29 ನವೆಂಬರ್ 2026',
+    muhurtamTime: 'ಬೆಳಿಗ್ಗೆ 8:00 ಕ್ಕೆ',
+    venueTitle: 'ಸ್ಥಳ',
+    venueName: 'ಶ್ರೀ ಗಾಯತ್ರಿ ದೇವಿ ಕಲ್ಯಾಣ ಮಂಟಪ',
+    venueCity: 'ಚಿಕ್ಕಮಗಳೂರು',
+    closeInstructionTitle: 'ಮತ್ತೆ ಭೇಟಿಯಾಗುವವರೆಗೆ',
+    closeInstructionText: 'ಆಮಂತ್ರಣವನ್ನು ಮಡಚಿ ಮುಂದುವರಿಯಲು ಕೆಳಗಿನ ಸುರುಳಿಯನ್ನು ಮೇಲಕ್ಕೆ ಅಥವಾ ಮೇಲಿನ ಸುರುಳಿಯನ್ನು ಕೆಳಕ್ಕೆ ಎಳೆಯಿರಿ.',
+    closeHint: 'ಮಡಚಲು ಸುರುಳಿ ಎಳೆಯಿರಿ',
+    topRollerCue: '▼ ಮಡಚಲು ಕೆಳಕ್ಕೆ ಎಳೆಯಿರಿ ▼',
+    bottomRollerCue: '▲ ಮಡಚಲು ಮೇಲಕ್ಕೆ ಎಳೆಯಿರಿ ▲',
+    topRollerAria: 'ಆಮಂತ್ರಣವನ್ನು ಮಡಚಲು ಮೇಲಿನ ಸುರುಳಿಯನ್ನು ಕೆಳಕ್ಕೆ ಎಳೆಯಿರಿ',
+    bottomRollerAria: 'ಆಮಂತ್ರಣವನ್ನು ಮಡಚಲು ಕೆಳಗಿನ ಸುರುಳಿಯನ್ನು ಮೇಲಕ್ಕೆ ಎಳೆಯಿರಿ',
+    closeBlockAria: 'ಮತ್ತೆ ಭೇಟಿಯಾಗುವವರೆಗೆ: ಆಮಂತ್ರಣವನ್ನು ಮಡಚಿ ಮುಂದುವರಿಯಲು ಕೆಳಗಿನ ಸುರುಳಿಯನ್ನು ಮೇಲಕ್ಕೆ ಅಥವಾ ಮೇಲಿನ ಸುರುಳಿಯನ್ನು ಕೆಳಕ್ಕೆ ಎಳೆಯಿರಿ',
+  },
+}
 
 /**
  * RoyalInvitation
@@ -25,9 +105,21 @@ import './RoyalInvitation.css'
  *       * Settles smoothly into the compact closed-scroll composition with seal and pull tag.
  *   - Traditional "Until We Meet" closing instruction.
  *   - Real selectable HTML text with exact wedding dates, reception, muhurtam, and venue.
+ *   - Bilingual English & Kannada language toggle with session persistence.
  *   - Mobile-first responsive layout with smooth vertical scrolling.
  */
 export default function RoyalInvitation({ onComplete, onClose, initialState = 'closed' }) {
+  // Language state: 'english' | 'kannada' (session-persisted)
+  const [language, setLanguage] = useState(getSavedLanguage)
+
+  const handleLanguageChange = useCallback((newLang) => {
+    if (newLang === language) return
+    setLanguage(newLang)
+    saveLanguage(newLang)
+  }, [language])
+
+  const t = INVITATION_CONTENT[language] || INVITATION_CONTENT.english
+
   // Scroll states: 'closed' | 'opening' | 'opened' | 'closing'
   const [scrollState, setScrollState] = useState(initialState)
   const [isDraggingTag, setIsDraggingTag] = useState(false)
@@ -58,6 +150,12 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
   // Sync initialState prop changes (e.g. when revisiting invitation via navigation)
   useEffect(() => {
     if (initialState) {
+      // Clear any pending timers on external state change to prevent race conditions
+      if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current)
+      if (unrollTimerRef.current) clearTimeout(unrollTimerRef.current)
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+      if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
+
       setScrollState(initialState)
       if (initialState === 'closed') {
         isTriggeredRef.current = false
@@ -75,6 +173,10 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
   const triggerUnroll = useCallback(() => {
     if (isTriggeredRef.current || scrollState !== 'closed') return
     isTriggeredRef.current = true
+
+    // Clear any pending closing/settle timers if unroll was triggered
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    if (settleTimerRef.current) clearTimeout(settleTimerRef.current)
 
     // Subtle haptic vibration where supported
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
@@ -105,6 +207,10 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
   const triggerClose = useCallback(() => {
     if (scrollState !== 'opened') return
     setScrollState('closing')
+
+    // Clear any pending opening/unroll timers
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current)
+    if (unrollTimerRef.current) clearTimeout(unrollTimerRef.current)
 
     // Subtle haptic feedback
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
@@ -379,7 +485,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
   }, [])
 
   return (
-    <div className="royal-invitation-stage">
+    <div className={`royal-invitation-stage state-${scrollState}`}>
       {/* 1. Viewport Filigree Frame & Corner Flourishes */}
       <div className="stage-filigree-frame" />
       <div className="stage-corner-motif tl">❖</div>
@@ -387,7 +493,20 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
       <div className="stage-corner-motif bl">❖</div>
       <div className="stage-corner-motif br">❖</div>
 
-      {/* 2. Soft Ambient Light Pool */}
+      {/* 2. Realistic Defocused Temple Interior Environment (Pillared Hallway) */}
+      <div className="stage-temple-environment" aria-hidden="true">
+        <img
+          src={templeBgUrl}
+          alt=""
+          className="temple-environment-image"
+          loading="eager"
+          decoding="async"
+        />
+        {/* Soft Radial & Linear Vignette Mask: Fades center to ivory, keeping flanks visible */}
+        <div className="temple-environment-fade-mask" />
+      </div>
+
+      {/* 3. Soft Warm Central Illumination */}
       <div className="stage-light-glow" />
 
       {/* ===================================================
@@ -483,11 +602,12 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
         =================================================== */
         <div
           ref={assemblyRef}
-          className={`opened-invitation-assembly ${scrollState === 'opening'
-            ? 'is-opening'
-            : scrollState === 'closing'
-              ? 'is-closing'
-              : 'is-opened'
+          className={`opened-invitation-assembly ${language === 'kannada' ? 'is-kannada' : 'is-english'
+            } ${scrollState === 'opening'
+              ? 'is-opening'
+              : scrollState === 'closing'
+                ? 'is-closing'
+                : 'is-opened'
             }`}
         >
           {/* Top Antique Royal Lacquered Rosewood Roller Bar (Pull down to close) */}
@@ -500,8 +620,8 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
             onClick={triggerClose}
             role="button"
             tabIndex={0}
-            aria-label="Pull top roller down to close invitation"
-            title="Pull down or tap to close invitation"
+            aria-label={t.topRollerAria}
+            title={t.topRollerAria}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
@@ -513,7 +633,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
             <div className="roller-body-core">
               <div className="roller-wood-grain-overlay" />
               <div className="roller-drag-indicator top">
-                <span>▼ DRAG DOWN TO CLOSE ▼</span>
+                <span>{t.topRollerCue}</span>
               </div>
               <OrnamentalBand className="bar-band left" />
               <RollerCenterFiligree className="bar-centerpiece" />
@@ -536,36 +656,74 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
               <LotusCornerFiligree className="br" />
 
               {/* Real Selectable HTML Content */}
-              <div className="invitation-text-content">
+              <div className={`invitation-text-content ${language === 'kannada' ? 'lang-kannada' : 'lang-english'}`}>
+                {/* Compact Royal Language Switch: English | ಕನ್ನಡ (Subtle pill centred above Ganesha) */}
+                <div
+                  className="invitation-lang-switch-container"
+                  role="region"
+                  aria-label="Language selection / ಭಾಷೆ ಆಯ್ಕೆ"
+                >
+                  <div
+                    className="invitation-lang-switch-pill"
+                    role="group"
+                    aria-label="Invitation language"
+                  >
+                    <button
+                      type="button"
+                      className={`lang-switch-btn ${language === 'english' ? 'is-active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleLanguageChange('english')
+                      }}
+                      aria-pressed={language === 'english'}
+                      aria-label="View invitation in English"
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      className={`lang-switch-btn kannada-btn ${language === 'kannada' ? 'is-active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleLanguageChange('kannada')
+                      }}
+                      aria-pressed={language === 'kannada'}
+                      aria-label="ವಿವಾಹ ಆಮಂತ್ರಣವನ್ನು ಕನ್ನಡದಲ್ಲಿ ವೀಕ್ಷಿಸಿ"
+                    >
+                      ಕನ್ನಡ
+                    </button>
+                  </div>
+                </div>
+
                 {/* 1. Top Blessing */}
                 <div className="invitation-blessing-block">
                   <img
                     src={ganeshaSymbolUrl}
-                    alt="Lord Ganesha"
+                    alt={t.ganeshaAlt}
                     className="invitation-ganesha-emblem"
                   />
                   <h3 className="invitation-blessing-text">
-                    WITH THE BLESSINGS OF Our Family and Elders
+                    {t.ganeshaBlessing}
                   </h3>
                 </div>
 
                 {/* 2. Heading Section */}
                 <div className="invitation-heading-block">
                   <h2 className="invitation-main-heading">
-                    WEDDING INVITATION
+                    {t.mainHeading}
                   </h2>
                   <p className="invitation-celebrating-intro">
-                    With immense joy, we invite you to join us in celebrating the wedding of
+                    {t.intro}
                   </p>
                 </div>
 
                 {/* 3. Centerpiece Couple Names */}
                 <div className="invitation-names-block">
-                  <h1 className="invitation-groom-name">PUNEETH</h1>
-                  <span className="invitation-name-ampersand">&amp;</span>
-                  <h1 className="invitation-bride-name">CHINMAI</h1>
+                  <h1 className="invitation-groom-name">{t.groom}</h1>
+                  <span className="invitation-name-ampersand">{t.ampersand}</span>
+                  <h1 className="invitation-bride-name">{t.bride}</h1>
                   <p className="invitation-blessing-closing-note">
-                    Your presence and blessings will make our celebration truly special.
+                    {t.closingNote}
                   </p>
                 </div>
 
@@ -578,9 +736,9 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
 
                 {/* 4. Reception Details */}
                 <div className="invitation-event-block">
-                  <h3 className="invitation-event-title">RECEPTION</h3>
-                  <p className="invitation-event-date">28 NOVEMBER 2026</p>
-                  <p className="invitation-event-time">7:30 PM ONWARDS</p>
+                  <h3 className="invitation-event-title">{t.receptionTitle}</h3>
+                  <p className="invitation-event-date">{t.receptionDate}</p>
+                  <p className="invitation-event-time">{t.receptionTime}</p>
                 </div>
 
                 {/* Small Ornamental Separator */}
@@ -601,9 +759,9 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
 
                 {/* 5. Muhurtam Details */}
                 <div className="invitation-event-block">
-                  <h3 className="invitation-event-title">MUHURTAM</h3>
-                  <p className="invitation-event-date">29 NOVEMBER 2026</p>
-                  <p className="invitation-event-time">8:00 AM</p>
+                  <h3 className="invitation-event-title">{t.muhurtamTitle}</h3>
+                  <p className="invitation-event-date">{t.muhurtamDate}</p>
+                  <p className="invitation-event-time">{t.muhurtamTime}</p>
                 </div>
 
                 {/* Small Ornamental Separator */}
@@ -624,13 +782,9 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
 
                 {/* 6. Venue Details */}
                 <div className="invitation-venue-block">
-                  <h3 className="invitation-venue-title">VENUE</h3>
-                  <p className="invitation-venue-name">
-                    GAYATHRI DEVI KALYANA MANTAPA
-                  </p>
-                  <p className="invitation-venue-city">
-                    CHIKKAMAGALURU
-                  </p>
+                  <h3 className="invitation-venue-title">{t.venueTitle}</h3>
+                  <p className="invitation-venue-name">{t.venueName}</p>
+                  <p className="invitation-venue-city">{t.venueCity}</p>
                 </div>
 
                 {/* Bottom Auspicious Lotus Emblem */}
@@ -647,7 +801,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
                   }}
                   role="button"
                   tabIndex={0}
-                  aria-label="Until We Meet: Pull lower roller up or upper roller down to close invitation and continue"
+                  aria-label={t.closeBlockAria}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -660,13 +814,13 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
                     <span>❖</span>
                     <div className="closing-divider-line" />
                   </div>
-                  <h4 className="closing-instruction-title">Until We Meet</h4>
+                  <h4 className="closing-instruction-title">{t.closeInstructionTitle}</h4>
                   <p className="closing-instruction-text">
-                    Pull the lower roller up or the upper roller down to close the invitation and continue.
+                    {t.closeInstructionText}
                   </p>
                   <div className="closing-roller-action-hint">
                     <span className="closing-hint-arrow">▲</span>
-                    <span className="closing-hint-text">Pull roller to close</span>
+                    <span className="closing-hint-text">{t.closeHint}</span>
                     <span className="closing-hint-arrow">▲</span>
                   </div>
                 </div>
@@ -687,8 +841,8 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
             onClick={triggerClose}
             role="button"
             tabIndex={0}
-            aria-label="Pull bottom roller up to close invitation"
-            title="Pull up or tap to close invitation"
+            aria-label={t.bottomRollerAria}
+            title={t.bottomRollerAria}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
@@ -700,7 +854,7 @@ export default function RoyalInvitation({ onComplete, onClose, initialState = 'c
             <div className="roller-body-core">
               <div className="roller-wood-grain-overlay" />
               <div className="roller-drag-indicator bottom">
-                <span>▲ DRAG UP TO CLOSE ▲</span>
+                <span>{t.bottomRollerCue}</span>
               </div>
               <OrnamentalBand className="bar-band left" />
               <RollerCenterFiligree className="bar-centerpiece" />

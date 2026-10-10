@@ -14,7 +14,13 @@
   width: 100vw;
   height: 100vh;
   height: 100dvh;
-  background: radial-gradient(ellipse at 50% 38%, #FFFDF9 0%, #FAF4E6 45%, #F4EAD6 100%);
+  background-color: #FAF4E6;
+  background-image:
+    /* Layer 1: Directional sanctum radial wash - bright warm ivory center to sandstone beige edges */
+    radial-gradient(ellipse 92% 82% at 50% 40%, #FFFDF9 0%, #FAF4E7 46%, #F2E6CF 80%, #E9DAC0 100%),
+    /* Layer 2: Ultra-fine, low-contrast natural limestone/sandstone micro-striations */
+    repeating-linear-gradient(115deg, transparent 0px, transparent 24px, rgba(160, 120, 65, 0.012) 24.5px, transparent 25px, transparent 48px),
+    repeating-linear-gradient(25deg, transparent 0px, transparent 32px, rgba(160, 120, 65, 0.010) 32.5px, transparent 33px, transparent 64px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,40 +32,164 @@
   padding: max(12px, env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
 }
 
-
 /* Viewport Filigree Frame */
 .stage-filigree-frame {
   position: absolute;
   inset: clamp(8px, 2vw, 16px);
-  border: 1px solid rgba(196, 150, 76, 0.2);
+  border: 1px solid rgba(196, 150, 76, 0.18);
   border-radius: 6px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
 }
 
 .stage-corner-motif {
   position: absolute;
-  color: rgba(196, 150, 76, 0.4);
+  color: rgba(196, 150, 76, 0.36);
   font-size: 13px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
 }
 .stage-corner-motif.tl { top: clamp(6px, 1.8vw, 14px); left: clamp(6px, 1.8vw, 14px); }
 .stage-corner-motif.tr { top: clamp(6px, 1.8vw, 14px); right: clamp(6px, 1.8vw, 14px); }
 .stage-corner-motif.bl { bottom: clamp(6px, 1.8vw, 14px); left: clamp(6px, 1.8vw, 14px); }
 .stage-corner-motif.br { bottom: clamp(6px, 1.8vw, 14px); right: clamp(6px, 1.8vw, 14px); }
 
-/* Ambient Warm Light Glow */
+/* -----------------------------------------------------
+   REALISTIC TEMPLE INTERIOR ENVIRONMENT (PILLARED HALL)
+   Defocussed ancient stone temple corridor flanked by pillars,
+   feathered seamlessly into the luminous warm ivory center.
+----------------------------------------------------- */
+.stage-temple-environment {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0.88;
+  transition: opacity 0.85s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity;
+  /* Feathered radial mask: Leaves the center open & quiet while revealing pillars on the flanks */
+  mask-image: radial-gradient(
+    ellipse 66% 56% at 50% 48%,
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.35) 48%,
+    rgba(0, 0, 0, 0.82) 72%,
+    black 96%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 66% 56% at 50% 48%,
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.35) 48%,
+    rgba(0, 0, 0, 0.82) 72%,
+    black 96%
+  );
+}
+
+.temple-environment-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  filter: contrast(0.95) brightness(1.02);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Atmospheric Vignette & Color Wash: Harmonizes photo with the warm ivory palette */
+.temple-environment-fade-mask {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Central ivory light bloom ensuring zero distraction behind scroll */
+    radial-gradient(
+      ellipse 62% 52% at 50% 48%,
+      rgba(255, 253, 249, 0.85) 0%,
+      rgba(250, 244, 230, 0.6) 36%,
+      rgba(244, 234, 214, 0.2) 60%,
+      transparent 80%
+    ),
+    /* Subtle warm ivory & champagne wash blending stone tones */
+    linear-gradient(
+      180deg,
+      rgba(255, 253, 248, 0.22) 0%,
+      rgba(250, 244, 230, 0.1) 45%,
+      rgba(244, 232, 212, 0.26) 100%
+    );
+  pointer-events: none;
+}
+
+/* Scroll State Adaptations */
+/* Closed scroll: temple architecture clearly perceptible around outer flanks */
+.royal-invitation-stage.state-closed .stage-temple-environment {
+  opacity: 0.9;
+}
+
+/* Opening & Opened scroll: soften presence so parchment is the clear hero */
+.royal-invitation-stage.state-opening .stage-temple-environment,
+.royal-invitation-stage.state-opened .stage-temple-environment {
+  opacity: 0.44;
+}
+
+/* Closing scroll: smoothly returns to closed atmospheric depth */
+.royal-invitation-stage.state-closing .stage-temple-environment {
+  opacity: 0.9;
+}
+
+/* Mobile Portrait Positioning: Keeps pillars flanking the phone edges */
+@media (max-width: 768px) {
+  .temple-environment-image {
+    object-position: center 40%;
+    transform: scale(1.1);
+  }
+
+  .stage-temple-environment {
+    mask-image: radial-gradient(
+      ellipse 74% 60% at 50% 48%,
+      transparent 0%,
+      transparent 32%,
+      rgba(0, 0, 0, 0.45) 56%,
+      rgba(0, 0, 0, 0.9) 78%,
+      black 98%
+    );
+    -webkit-mask-image: radial-gradient(
+      ellipse 74% 60% at 50% 48%,
+      transparent 0%,
+      transparent 32%,
+      rgba(0, 0, 0, 0.45) 56%,
+      rgba(0, 0, 0, 0.9) 78%,
+      black 98%
+    );
+  }
+}
+
+/* Ambient Warm Golden Illumination (Continuous multi-stop soft aura) */
 .stage-light-glow {
   position: absolute;
   top: 48%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(92vw, 540px);
-  height: min(92vw, 540px);
-  background: radial-gradient(circle, rgba(255, 238, 202, 0.5) 0%, rgba(255, 238, 202, 0) 65%);
+  width: min(96vw, 680px);
+  height: min(94vh, 800px);
+  max-height: calc(100dvh - 16px);
+  background: radial-gradient(
+    ellipse 65% 58% at 50% 48%,
+    rgba(255, 246, 226, 0.65) 0%,
+    rgba(254, 239, 206, 0.46) 24%,
+    rgba(250, 228, 182, 0.22) 48%,
+    rgba(246, 222, 168, 0.07) 68%,
+    rgba(244, 234, 214, 0) 84%
+  );
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
+  transition: opacity 0.85s ease;
+}
+
+.royal-invitation-stage.state-opened .stage-light-glow {
+  opacity: 0.95;
 }
 
 /* -----------------------------------------------------
@@ -97,24 +227,24 @@
   height: 100%;
   border-radius: 6px;
   background:
-    radial-gradient(ellipse at 50% 32%, rgba(255, 255, 255, 0.65) 0%, transparent 68%),
+    radial-gradient(ellipse 85% 55% at 50% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 70%),
     linear-gradient(
       180deg,
-      #6e4e2c 0%,
-      #a07e4d 5%,
-      #deb982 14%,
-      #FFFDF7 32%,
-      #F8EED9 48%,
-      #ECD9B5 66%,
-      #caa46f 80%,
-      #865d2f 92%,
-      #3a200a 100%
+      #553619 0%,
+      #846233 5%,
+      #c6a067 13%,
+      #FFFDF8 30%,
+      #F7EDD6 46%,
+      #EBD6B0 64%,
+      #c49d66 78%,
+      #784f23 90%,
+      #2a1404 100%
     );
   box-shadow:
-    0 20px 42px rgba(40, 18, 5, 0.42),
-    0 5px 14px rgba(40, 18, 5, 0.25),
-    inset 0 2.5px 5px rgba(255, 255, 255, 0.75),
-    inset 0 -3.5px 6px rgba(25, 10, 2, 0.7);
+    0 22px 46px rgba(35, 14, 4, 0.44),
+    0 6px 16px rgba(35, 14, 4, 0.26),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -3px 5px rgba(20, 8, 2, 0.7);
   overflow: hidden;
   z-index: 2;
 }
@@ -126,18 +256,28 @@
   inset: 0;
   background:
     repeating-linear-gradient(
-      90deg,
+      112deg,
       transparent 0px,
-      transparent 24px,
-      rgba(140, 95, 45, 0.08) 25px,
-      transparent 27px
+      transparent 18px,
+      rgba(150, 105, 55, 0.04) 18.5px,
+      transparent 19px,
+      transparent 36px
+    ),
+    repeating-linear-gradient(
+      24deg,
+      transparent 0px,
+      transparent 22px,
+      rgba(150, 105, 55, 0.035) 22.5px,
+      transparent 23px,
+      transparent 45px
     ),
     repeating-linear-gradient(
       0deg,
       transparent 0px,
-      transparent 18px,
-      rgba(140, 95, 45, 0.05) 19px,
-      transparent 21px
+      transparent 12px,
+      rgba(130, 85, 35, 0.03) 12.5px,
+      transparent 13px,
+      transparent 25px
     );
   pointer-events: none;
 }
@@ -163,10 +303,10 @@
   height: 2px;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.6) 0%,
-    rgba(70, 35, 10, 0.5) 100%
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(50, 22, 6, 0.45) 100%
   );
-  box-shadow: 0 1px 2px rgba(35, 15, 3, 0.4);
+  box-shadow: 0 1.5px 3px rgba(25, 10, 2, 0.45);
   pointer-events: none;
   z-index: 3;
 }
@@ -274,7 +414,7 @@
   width: min(80vw, 320px);
   height: 18px;
   margin-top: 10px;
-  background: radial-gradient(ellipse at center, rgba(50, 24, 6, 0.38) 0%, rgba(50, 24, 6, 0) 72%);
+  background: radial-gradient(ellipse at center, rgba(35, 14, 4, 0.44) 0%, rgba(35, 14, 4, 0.16) 45%, rgba(35, 14, 4, 0) 72%);
   border-radius: 50%;
   filter: blur(2.5px);
   pointer-events: none;
@@ -303,9 +443,9 @@
   width: 14px;
   height: 10px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fff7d4 0%, #d8ac4e 45%, #7a4f15 100%);
-  border: 1px solid rgba(255, 235, 170, 0.8);
-  box-shadow: 0 2px 4px rgba(35, 16, 5, 0.45);
+  background: radial-gradient(circle at 35% 35%, #fff6d4 0%, #cca044 50%, #6e4310 100%);
+  border: 1px solid rgba(255, 230, 155, 0.85);
+  box-shadow: 0 2px 4.5px rgba(25, 10, 2, 0.5);
   z-index: 2;
 }
 
@@ -316,14 +456,17 @@
   transition: var(--drag-cord-transition, none);
   background: repeating-linear-gradient(
     180deg,
-    #6d141e 0px,
-    #6d141e 5px,
-    #d4a74a 5px,
-    #d4a74a 9px
+    #580f16 0px,
+    #781822 2.5px,
+    #580f16 4.5px,
+    #b08025 4.5px,
+    #e8c878 6.5px,
+    #8e5e15 9px
   );
   box-shadow:
-    1px 0 2px rgba(40, 18, 5, 0.3),
-    -1px 0 2px rgba(40, 18, 5, 0.3);
+    1px 0 2px rgba(30, 10, 2, 0.38),
+    -1px 0 2px rgba(30, 10, 2, 0.38),
+    inset 0.5px 0 0.5px rgba(255, 240, 200, 0.45);
   border-radius: 2px;
   transform-origin: top center;
   z-index: 1;
@@ -347,7 +490,7 @@
 }
 
 .hanging-tag-movable.swaying {
-  animation: naturalTagSway 5.4s ease-in-out infinite;
+  animation: naturalTagSway 6s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
 }
 
 .hanging-tag-movable.dragging {
@@ -360,10 +503,10 @@
     transform: translateX(-50%) rotate(0deg);
   }
   25% {
-    transform: translateX(-50%) rotate(1.2deg);
+    transform: translateX(-50%) rotate(0.9deg);
   }
   75% {
-    transform: translateX(-50%) rotate(-1.2deg);
+    transform: translateX(-50%) rotate(-0.9deg);
   }
 }
 
@@ -372,14 +515,16 @@
   position: relative;
   width: clamp(146px, 38vw, 176px);
   padding: 10px 14px 9px 14px;
-  background: linear-gradient(180deg, #FFFDF8 0%, #FAF3E2 45%, #EEDFBF 100%);
-  border: 1.5px solid rgba(196, 150, 76, 0.8);
+  background:
+    radial-gradient(ellipse 90% 80% at 50% 25%, #FFFDF9 0%, #FAF3E2 55%, #F0DEC0 100%);
+  border: 1.5px solid rgba(184, 134, 40, 0.75);
   border-radius: 6px;
   box-shadow:
-    0 10px 24px rgba(50, 25, 8, 0.3),
-    0 2px 6px rgba(50, 25, 8, 0.18),
-    inset 0 1px 2px rgba(255, 255, 255, 0.85),
-    inset 0 0 0 1px rgba(109, 22, 32, 0.22);
+    0 12px 28px rgba(45, 18, 5, 0.3),
+    0 3px 8px rgba(45, 18, 5, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 1px rgba(160, 110, 50, 0.25),
+    inset 0 0 0 1px rgba(109, 22, 32, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -390,7 +535,7 @@
 }
 
 .hanging-tag-card:focus-visible {
-  box-shadow: 0 0 0 2px #b88628, 0 10px 24px rgba(50, 25, 8, 0.35);
+  box-shadow: 0 0 0 2px #b88628, 0 12px 28px rgba(50, 25, 8, 0.35);
 }
 
 /* Top Eyelet on the Tag Card */
@@ -402,9 +547,9 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fff6d6 0%, #d8ac4e 45%, #7a4f15 100%);
-  box-shadow: 0 2px 4px rgba(35, 16, 5, 0.4);
-  border: 1px solid rgba(255, 235, 170, 0.75);
+  background: radial-gradient(circle at 35% 35%, #fff5d0 0%, #cca044 50%, #6e4310 100%);
+  box-shadow: 0 1.5px 3px rgba(30, 10, 2, 0.45);
+  border: 1px solid rgba(255, 230, 155, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -415,7 +560,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #331505;
+  background: #2a0f02;
 }
 
 /* Tag Instructions */
@@ -424,7 +569,7 @@
   line-height: 1;
   color: #c4964c;
   margin-bottom: 3px;
-  animation: arrowNudge 1.8s ease-in-out infinite;
+  animation: arrowNudge 2s ease-in-out infinite;
 }
 
 @keyframes arrowNudge {
@@ -433,7 +578,7 @@
     opacity: 0.75;
   }
   50% {
-    transform: translateY(3px);
+    transform: translateY(2.5px);
     opacity: 1;
   }
 }
@@ -447,7 +592,7 @@
   color: #6d1620;
   margin: 0;
   line-height: 1.25;
-  text-shadow: 0 1px 8px rgba(212, 160, 68, 0.2);
+  text-shadow: 0 1px 6px rgba(212, 160, 68, 0.2);
 }
 
 .tag-sub-instruction {
@@ -455,7 +600,7 @@
   font-size: clamp(11px, 2.7vw, 13px);
   font-style: italic;
   font-weight: 400;
-  color: #7a5426;
+  color: #724d20;
   margin: 2px 0 0 0;
   line-height: 1.2;
 }
@@ -473,8 +618,8 @@
   width: 10px;
   height: 7px;
   border-radius: 2px 2px 5px 5px;
-  background: linear-gradient(180deg, #fce09c 0%, #b88628 50%, #6e4612 100%);
-  box-shadow: 0 1px 3px rgba(35, 18, 6, 0.4);
+  background: linear-gradient(180deg, #f8df9e 0%, #cca044 45%, #633b0e 100%);
+  box-shadow: 0 1.5px 3px rgba(30, 10, 2, 0.45);
 }
 
 .tassel-silk-fringe {
@@ -482,13 +627,34 @@
   height: 19px;
   background: repeating-linear-gradient(
     90deg,
-    #6d141e 0px,
-    #6d141e 2px,
-    #b88628 2px,
-    #b88628 3px
+    #580f16 0px,
+    #781822 1.5px,
+    #580f16 2px,
+    #b08025 2px,
+    #e8c878 2.5px,
+    #8e5e15 3px
   );
   border-radius: 0 0 2px 2px;
-  box-shadow: 0 2px 5px rgba(35, 16, 5, 0.35);
+  box-shadow: 0 2px 5px rgba(30, 10, 2, 0.35);
+}
+
+/* Ground Shadow under the Closed Scroll (Soft contact grounding) */
+.closed-scroll-shadow {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82%;
+  height: 18px;
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 50%,
+    rgba(40, 16, 4, 0.38) 0%,
+    rgba(40, 16, 4, 0.12) 45%,
+    rgba(40, 16, 4, 0) 70%
+  );
+  filter: blur(4px);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* -----------------------------------------------------
@@ -519,14 +685,62 @@
 }
 
 .opened-invitation-assembly.is-opening .invitation-text-content {
-  animation: smoothContentReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s forwards;
+  opacity: 1;
+  transform: none;
+}
+
+/* =====================================================
+   WORKSTREAM B.2: SEQUENTIAL CONTENT REVEAL (5 STAGES)
+   Restrained, dignified cascading reveal during unroll.
+   ===================================================== */
+
+/* Initial hidden state for content during unroll before individual reveals fire */
+.opened-invitation-assembly.is-opening .invitation-lang-switch-container,
+.opened-invitation-assembly.is-opening .invitation-blessing-block,
+.opened-invitation-assembly.is-opening .invitation-heading-block,
+.opened-invitation-assembly.is-opening .invitation-names-block,
+.opened-invitation-assembly.is-opening .invitation-names-block + .invitation-filigree-divider,
+.opened-invitation-assembly.is-opening .invitation-event-block,
+.opened-invitation-assembly.is-opening .invitation-event-block + .invitation-filigree-divider,
+.opened-invitation-assembly.is-opening .invitation-venue-block,
+.opened-invitation-assembly.is-opening .invitation-base-lotus,
+.opened-invitation-assembly.is-opening .invitation-closing-instruction-block {
   opacity: 0;
-  transform: translateY(14px);
   will-change: opacity, transform;
 }
 
+/* Stage 1: Language Toggle & Ganesha Blessing (Apex Invocation) */
+.opened-invitation-assembly.is-opening .invitation-lang-switch-container,
+.opened-invitation-assembly.is-opening .invitation-blessing-block {
+  animation: contentSectionReveal 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+}
+
+/* Stage 2: Main Invitation Heading & Sacred Intro */
+.opened-invitation-assembly.is-opening .invitation-heading-block {
+  animation: contentSectionReveal 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.58s forwards;
+}
+
+/* Stage 3: Centerpiece Couple Names & Blessing Note */
+.opened-invitation-assembly.is-opening .invitation-names-block,
+.opened-invitation-assembly.is-opening .invitation-names-block + .invitation-filigree-divider {
+  animation: contentSectionReveal 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.82s forwards;
+}
+
+/* Stage 4: Reception, Muhurtam & Venue Details + Auspicious Lotus */
+.opened-invitation-assembly.is-opening .invitation-event-block,
+.opened-invitation-assembly.is-opening .invitation-event-block + .invitation-filigree-divider,
+.opened-invitation-assembly.is-opening .invitation-venue-block,
+.opened-invitation-assembly.is-opening .invitation-base-lotus {
+  animation: contentSectionReveal 0.62s cubic-bezier(0.22, 1, 0.36, 1) 1.06s forwards;
+}
+
+/* Stage 5: Traditional Closing Instruction Block */
+.opened-invitation-assembly.is-opening .invitation-closing-instruction-block {
+  animation: contentSectionReveal 0.62s cubic-bezier(0.22, 1, 0.36, 1) 1.30s forwards;
+}
+
 .opened-invitation-assembly.is-opened {
-  filter: drop-shadow(0 20px 40px rgba(45, 22, 6, 0.35)) drop-shadow(0 4px 10px rgba(45, 22, 6, 0.2));
+  filter: drop-shadow(0 24px 48px rgba(35, 14, 4, 0.32)) drop-shadow(0 6px 14px rgba(35, 14, 4, 0.18)) drop-shadow(0 1px 3px rgba(35, 14, 4, 0.1));
   transition: filter 0.45s ease;
 }
 
@@ -535,9 +749,21 @@
   overflow-y: auto;
 }
 
-.opened-invitation-assembly.is-opened .invitation-text-content {
+/* In fully opened state: static, stable, interactive, language switching never re-animates */
+.opened-invitation-assembly.is-opened .invitation-text-content,
+.opened-invitation-assembly.is-opened .invitation-lang-switch-container,
+.opened-invitation-assembly.is-opened .invitation-blessing-block,
+.opened-invitation-assembly.is-opened .invitation-heading-block,
+.opened-invitation-assembly.is-opened .invitation-names-block,
+.opened-invitation-assembly.is-opened .invitation-names-block + .invitation-filigree-divider,
+.opened-invitation-assembly.is-opened .invitation-event-block,
+.opened-invitation-assembly.is-opened .invitation-event-block + .invitation-filigree-divider,
+.opened-invitation-assembly.is-opened .invitation-venue-block,
+.opened-invitation-assembly.is-opened .invitation-base-lotus,
+.opened-invitation-assembly.is-opened .invitation-closing-instruction-block {
+  animation: none !important;
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 /* =====================================================
@@ -577,10 +803,10 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.95;
+    opacity: 0.96;
   }
-  85% {
-    opacity: 0.5;
+  80% {
+    opacity: 0.72;
   }
   100% {
     max-height: 0px;
@@ -589,7 +815,7 @@
 }
 
 .opened-invitation-assembly.is-closing .invitation-text-content {
-  animation: contentFadeOutClose 0.55s ease forwards;
+  animation: contentFadeOutClose 0.85s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   will-change: opacity, transform;
 }
 
@@ -598,9 +824,29 @@
     opacity: 1;
     transform: scale(1);
   }
+  60% {
+    opacity: 0.82;
+    transform: scale(0.99);
+  }
   100% {
     opacity: 0;
     transform: scale(0.96);
+  }
+}
+
+.opened-invitation-assembly.is-closing .parchment-ornamental-border {
+  animation: borderFadeOutClose 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes borderFadeOutClose {
+  0% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -681,11 +927,34 @@
 @keyframes smoothParchmentUnroll {
   0% {
     max-height: 0px;
-    opacity: 0.9;
+    opacity: 0.88;
+  }
+  15% {
+    max-height: 60px;
+    opacity: 0.94;
+  }
+  40% {
+    max-height: 260px;
+    opacity: 0.98;
+  }
+  70% {
+    max-height: 520px;
+    opacity: 1;
   }
   100% {
     max-height: min(720px, calc(100dvh - 105px));
     opacity: 1;
+  }
+}
+
+@keyframes contentSectionReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -723,13 +992,13 @@
 }
 
 .physical-roller-bar.top {
-  box-shadow: 0 8px 18px rgba(35, 14, 4, 0.45);
+  box-shadow: 0 6px 14px rgba(25, 8, 2, 0.42), 0 2px 4px rgba(25, 8, 2, 0.25);
   transform: translateY(var(--roller-top-offset, 0px));
   transition: var(--roller-transition, none);
 }
 
 .physical-roller-bar.bottom {
-  box-shadow: 0 -4px 12px rgba(35, 14, 4, 0.35), 0 8px 20px rgba(35, 14, 4, 0.45);
+  box-shadow: 0 -4px 10px rgba(25, 8, 2, 0.32), 0 6px 16px rgba(25, 8, 2, 0.4);
   transform: translateY(var(--roller-bottom-offset, 0px));
   transition: var(--roller-transition, none);
 }
@@ -740,15 +1009,15 @@
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Cinzel', serif;
-  font-size: clamp(7px, 1.8vw, 9px);
+  font-size: clamp(7.5px, 1.8vw, 9.5px);
   font-weight: 600;
   letter-spacing: 0.16em;
-  color: rgba(255, 238, 185, 0.7);
+  color: rgba(255, 236, 185, 0.78);
   pointer-events: none;
   z-index: 5;
   white-space: nowrap;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  opacity: 0.85;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  opacity: 0.88;
   transition: opacity 0.2s ease, color 0.2s ease;
 }
 
@@ -774,17 +1043,19 @@
   border-radius: 3px;
   background: linear-gradient(
     180deg,
-    #3b1509 0%,
-    #5c2311 12%,
-    #8d3a1c 26%,
-    #FFF3DF 32%,
-    #7c3116 40%,
-    #43160a 65%,
-    #1f0803 88%,
-    #0a0201 100%
+    #180503 0%,
+    #350d08 7%,
+    #5c1a10 18%,
+    #8c3319 28%,
+    #b8552e 33%,
+    #842e16 38%,
+    #54180d 54%,
+    #2f0a05 76%,
+    #140302 94%,
+    #080101 100%
   );
   box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.42),
+    inset 0 1px 2px rgba(255, 215, 175, 0.32),
     inset 0 -1.5px 3px rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
@@ -793,24 +1064,39 @@
 }
 
 .physical-roller-bar.top .roller-body-core {
-  border-bottom: 1px solid rgba(196, 150, 76, 0.45);
+  border-bottom: 1px solid rgba(184, 134, 40, 0.5);
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 215, 175, 0.32),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .physical-roller-bar.bottom .roller-body-core {
-  border-top: 1px solid rgba(196, 150, 76, 0.45);
+  border-top: 1px solid rgba(184, 134, 40, 0.5);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.7),
+    inset 0 -1.5px 2px rgba(255, 215, 175, 0.32);
 }
 
 /* Longitudinal Hardwood Grain Overlay */
 .roller-wood-grain-overlay {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    transparent 2px,
-    rgba(255, 210, 160, 0.05) 3px,
-    transparent 4px
-  );
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 1.5px,
+      rgba(255, 195, 140, 0.038) 2px,
+      transparent 3px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.16) 0%,
+      transparent 12%,
+      rgba(255, 220, 180, 0.03) 50%,
+      transparent 88%,
+      rgba(0, 0, 0, 0.16) 100%
+    );
   pointer-events: none;
 }
 
@@ -821,7 +1107,7 @@
   bottom: 0;
   width: clamp(14px, 3.2vw, 18px);
   z-index: 3;
-  filter: drop-shadow(0 0 4px rgba(15, 4, 1, 0.55));
+  filter: drop-shadow(0 0 3px rgba(10, 2, 1, 0.65)) drop-shadow(0 1px 2px rgba(10, 2, 1, 0.4));
 }
 .scroll-ornamental-band.bar-band.left {
   left: 9%;
@@ -842,7 +1128,7 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
-  filter: drop-shadow(0 1px 3px rgba(35, 14, 4, 0.4));
+  filter: drop-shadow(0 1px 2px rgba(25, 8, 2, 0.5));
 }
 
 .centerpiece-filigree-svg {
@@ -856,7 +1142,7 @@
   height: 132%;
   width: clamp(18px, 4.2vw, 24px);
   z-index: 4;
-  filter: drop-shadow(0 4px 8px rgba(30, 10, 3, 0.55)) drop-shadow(0 1px 3px rgba(30, 10, 3, 0.35));
+  filter: drop-shadow(0 3px 6px rgba(25, 8, 2, 0.6)) drop-shadow(0 1px 2px rgba(25, 8, 2, 0.4));
 }
 .scroll-finial-wrapper.bar-finial.left {
   margin-left: clamp(-14px, -3vw, -18px);
@@ -869,11 +1155,19 @@
 .physical-parchment-sheet {
   position: relative;
   width: 96%;
-  background-color: #FAF4E6;
+  background-color: #FAF4E5;
   background-image:
-    radial-gradient(ellipse at 50% 30%, #FFFDF9 0%, #FAF3DE 48%, #F2E3C2 82%, #E9CE9D 100%),
-    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(160, 120, 65, 0.04) 41px, transparent 42px),
-    repeating-linear-gradient(90deg, transparent, transparent 48px, rgba(160, 120, 65, 0.03) 49px, transparent 50px);
+    /* Layer 1: Directional luminous radial glow */
+    radial-gradient(ellipse 90% 75% at 50% 28%, #FFFDF8 0%, #FAF4E5 42%, #F4E8D0 75%, #EBD4B2 100%),
+    /* Layer 2: Subtle vertical aging wash */
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 6%, transparent 92%, rgba(185, 145, 95, 0.1) 100%),
+    /* Layer 3: Organic diagonal micro-fiber striations (handmade paper pulp) */
+    repeating-linear-gradient(112deg, transparent 0px, transparent 13px, rgba(165, 125, 75, 0.02) 13.5px, transparent 14px, transparent 27px),
+    repeating-linear-gradient(22deg, transparent 0px, transparent 19px, rgba(165, 125, 75, 0.018) 19.5px, transparent 20px, transparent 39px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 29px, rgba(150, 110, 60, 0.015) 29.5px, transparent 30px, transparent 58px);
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat;
+  background-size: 100% 100%, 100% 100%, auto, auto, auto;
+  background-attachment: local;
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
@@ -881,7 +1175,7 @@
   touch-action: pan-y;
   max-height: calc(100dvh - 105px);
   scrollbar-width: thin;
-  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+  scrollbar-color: rgba(184, 134, 40, 0.45) transparent;
   z-index: 4;
 
   /* Asymmetrical Antique Deckled Edge Contour */
@@ -923,7 +1217,7 @@
   background: transparent;
 }
 .physical-parchment-sheet::-webkit-scrollbar-thumb {
-  background: rgba(196, 150, 76, 0.45);
+  background: rgba(184, 134, 40, 0.45);
   border-radius: 4px;
 }
 
@@ -933,8 +1227,14 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 20px;
-  background: linear-gradient(180deg, rgba(40, 16, 4, 0.32) 0%, rgba(40, 16, 4, 0.12) 50%, transparent 100%);
+  height: 22px;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 6, 2, 0.42) 0%,
+    rgba(35, 12, 3, 0.26) 28%,
+    rgba(45, 18, 5, 0.08) 65%,
+    transparent 100%
+  );
   pointer-events: none;
   z-index: 10;
 }
@@ -944,8 +1244,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 20px;
-  background: linear-gradient(0deg, rgba(40, 16, 4, 0.32) 0%, rgba(40, 16, 4, 0.12) 50%, transparent 100%);
+  height: 22px;
+  background: linear-gradient(
+    0deg,
+    rgba(20, 6, 2, 0.42) 0%,
+    rgba(35, 12, 3, 0.26) 28%,
+    rgba(45, 18, 5, 0.08) 65%,
+    transparent 100%
+  );
   pointer-events: none;
   z-index: 10;
 }
@@ -955,7 +1261,10 @@
   position: relative;
   margin: clamp(10px, 2.5vw, 15px);
   padding: clamp(18px, 4.5vw, 26px) clamp(14px, 3.8vw, 22px);
-  border: 1.5px solid rgba(196, 150, 76, 0.7);
+  border: 1.5px solid rgba(184, 134, 40, 0.65);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 1px 1px rgba(60, 30, 10, 0.12);
   box-sizing: border-box;
 }
 
@@ -963,7 +1272,8 @@
   content: '';
   position: absolute;
   inset: 3px;
-  border: 1px solid rgba(109, 22, 32, 0.3);
+  border: 1px solid rgba(109, 22, 32, 0.26);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.35);
   pointer-events: none;
 }
 
@@ -994,7 +1304,77 @@
   z-index: 2;
 }
 
-/* 1. Top Blessing */
+/* 1. Language Selection (Subtle Top Pill Centred Above Ganesha) */
+.invitation-lang-switch-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto clamp(6px, 1.5vh, 10px) auto;
+  position: relative;
+  z-index: 5;
+}
+
+.invitation-lang-switch-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  background: rgba(246, 239, 226, 0.78);
+  border: 1px solid rgba(184, 134, 40, 0.38);
+  border-radius: 9999px;
+  box-shadow:
+    inset 0 1px 2px rgba(80, 40, 15, 0.08),
+    0 0.5px 0 rgba(255, 255, 255, 0.65);
+  gap: 2px;
+}
+
+.lang-switch-btn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: clamp(3px, 0.8vh, 4.5px) clamp(10px, 2.4vw, 13px);
+  border-radius: 9999px;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(10px, 2.2vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #724e28;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 25px;
+}
+
+.lang-switch-btn:hover:not(.is-active) {
+  background: rgba(184, 134, 40, 0.12);
+  color: #46280e;
+}
+
+.lang-switch-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(109, 22, 32, 0.4);
+}
+
+.lang-switch-btn.is-active {
+  background: #6d1620;
+  color: #FFFDF8;
+  box-shadow:
+    0 1.5px 4px rgba(109, 22, 32, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  cursor: default;
+}
+
+.lang-switch-btn.kannada-btn {
+  font-family: 'Noto Serif Kannada', serif;
+  letter-spacing: 0.02em;
+  font-size: clamp(10.5px, 2.3vw, 11.5px);
+  font-weight: 600;
+}
+
+/* 2. Top Blessing */
 .invitation-blessing-block {
   display: flex;
   flex-direction: column;
@@ -1022,7 +1402,7 @@
   line-height: 1.35;
 }
 
-/* 2. Heading Section */
+/* 3. Heading Section */
 .invitation-heading-block {
   margin-bottom: clamp(14px, 3vh, 20px);
   max-width: 390px;
@@ -1293,7 +1673,137 @@
 
 
 /* -----------------------------------------------------
-   6. REDUCED MOTION SUPPORT
+   6. KANNADA TYPOGRAPHY & SCRIPT ADAPTATIONS
+----------------------------------------------------- */
+
+.invitation-text-content.lang-kannada {
+  font-family: 'Noto Serif Kannada', serif;
+}
+
+.invitation-text-content.lang-kannada .invitation-blessing-text {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(11.5px, 2.7vw, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.5;
+}
+
+.invitation-text-content.lang-kannada .invitation-main-heading {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(15.5px, 4vw, 19.5px);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  line-height: 1.4;
+  text-shadow: 0 1px 6px rgba(212, 160, 68, 0.22);
+}
+
+.invitation-text-content.lang-kannada .invitation-celebrating-intro {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(13px, 3.4vw, 15px);
+  font-style: normal;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+}
+
+.invitation-text-content.lang-kannada .invitation-groom-name,
+.invitation-text-content.lang-kannada .invitation-bride-name {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(26px, 7.2vw, 40px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.invitation-text-content.lang-kannada .invitation-name-ampersand {
+  font-family: 'Cormorant Garamond', 'Great Vibes', serif;
+  font-size: clamp(22px, 5.5vw, 30px);
+  line-height: 1;
+}
+
+.invitation-text-content.lang-kannada .invitation-blessing-closing-note {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(12.5px, 3.2vw, 14.5px);
+  font-style: normal;
+  letter-spacing: 0.01em;
+  line-height: 1.55;
+}
+
+.invitation-text-content.lang-kannada .invitation-event-title,
+.invitation-text-content.lang-kannada .invitation-venue-title {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(13px, 3.4vw, 15.5px);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  line-height: 1.35;
+}
+
+.invitation-text-content.lang-kannada .invitation-event-date {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(13.5px, 3.6vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.invitation-text-content.lang-kannada .invitation-event-time {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(12px, 3.2vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.invitation-text-content.lang-kannada .invitation-venue-name {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(14px, 3.8vw, 17.5px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
+}
+
+.invitation-text-content.lang-kannada .invitation-venue-city {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(12px, 3.2vw, 14px);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.invitation-text-content.lang-kannada .closing-instruction-title {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(12.5px, 3.2vw, 14.5px);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  line-height: 1.35;
+}
+
+.invitation-text-content.lang-kannada .closing-instruction-text {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: clamp(11.5px, 3vw, 13.5px);
+  font-style: normal;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+.invitation-text-content.lang-kannada .closing-roller-action-hint {
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.opened-invitation-assembly.is-kannada .roller-drag-indicator {
+  font-family: 'Noto Serif Kannada', serif;
+  letter-spacing: 0.03em;
+  font-size: clamp(7.5px, 1.8vw, 9.5px);
+}
+
+
+/* -----------------------------------------------------
+   7. REDUCED MOTION SUPPORT
 ----------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1306,9 +1816,22 @@
   .tag-arrow-indicator {
     animation: none !important;
   }
+  .stage-temple-environment {
+    transition: none !important;
+  }
+  .opened-invitation-assembly.is-opening .physical-parchment-sheet,
+  .opened-invitation-assembly.is-opening .invitation-lang-switch-container,
+  .opened-invitation-assembly.is-opening .invitation-blessing-block,
+  .opened-invitation-assembly.is-opening .invitation-heading-block,
+  .opened-invitation-assembly.is-opening .invitation-names-block,
+  .opened-invitation-assembly.is-opening .invitation-event-block,
+  .opened-invitation-assembly.is-opening .invitation-venue-block,
+  .opened-invitation-assembly.is-opening .invitation-base-lotus,
+  .opened-invitation-assembly.is-opening .invitation-closing-instruction-block,
   .opened-invitation-assembly.is-closing,
   .opened-invitation-assembly.is-closing .physical-parchment-sheet,
   .opened-invitation-assembly.is-closing .invitation-text-content,
+  .opened-invitation-assembly.is-closing .parchment-ornamental-border,
   .closing-settle-hardware,
   .closing-scroll-shadow {
     animation-duration: 0.01ms !important;

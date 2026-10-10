@@ -14,35 +14,43 @@ export function LotusCornerFiligree({ className = '' }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
+      <defs>
+        <linearGradient id="cornerGoldGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#d8a748" />
+          <stop offset="45%" stopColor="#f7dc92" />
+          <stop offset="70%" stopColor="#c59235" />
+          <stop offset="100%" stopColor="#875818" />
+        </linearGradient>
+      </defs>
       {/* Outer corner framing curve */}
       <path
         d="M2 14 C2 6, 6 2, 14 2"
-        stroke="#c49438"
+        stroke="url(#cornerGoldGrad)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       {/* Intricate lotus petal flourish */}
       <path
         d="M5 22 C6 14, 14 6, 22 5 C17 10, 10 17, 5 22 Z"
-        fill="rgba(196, 148, 56, 0.28)"
+        fill="rgba(196, 148, 56, 0.22)"
         stroke="#b88628"
         strokeWidth="1"
       />
       {/* Secondary vine curl */}
       <path
         d="M2 30 C3 20, 10 12, 18 10 C12 16, 8 24, 6 30"
-        stroke="#c49438"
+        stroke="url(#cornerGoldGrad)"
         strokeWidth="1"
         strokeLinecap="round"
       />
       <path
         d="M30 2 C20 3, 12 10, 10 18 C16 12, 24 8, 30 6"
-        stroke="#c49438"
+        stroke="url(#cornerGoldGrad)"
         strokeWidth="1"
         strokeLinecap="round"
       />
       {/* Corner bud node */}
-      <circle cx="8" cy="8" r="2" fill="#d4a74a" stroke="#875c1d" strokeWidth="0.8" />
+      <circle cx="8" cy="8" r="2" fill="#d4a74a" stroke="#7a4e14" strokeWidth="0.8" />
       <circle cx="15" cy="15" r="1.5" fill="#c49438" />
     </svg>
   )
@@ -78,55 +86,56 @@ export function ScrollFinial({ side = 'left', className = '' }) {
         <defs>
           {/* Top highlight specular gradient */}
           <linearGradient id="finialGoldHighlight" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FFF9E0" stopOpacity="0.9" />
-            <stop offset="30%" stopColor="#F5D278" stopOpacity="0.7" />
-            <stop offset="70%" stopColor="#B38025" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#381E04" stopOpacity="0.8" />
+            <stop offset="0%" stopColor="#FFF9E0" stopOpacity="0.85" />
+            <stop offset="30%" stopColor="#F5D278" stopOpacity="0.65" />
+            <stop offset="70%" stopColor="#B38025" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#381E04" stopOpacity="0.75" />
           </linearGradient>
 
           {/* Core turned brass gradient for cylindrical volume */}
           <linearGradient id="turnedBrassGradient" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#4A2608" />
-            <stop offset="12%" stopColor="#9C6B1F" />
-            <stop offset="28%" stopColor="#E5BE65" />
-            <stop offset="42%" stopColor="#FFF5D2" />
-            <stop offset="58%" stopColor="#D9A948" />
-            <stop offset="78%" stopColor="#875314" />
-            <stop offset="92%" stopColor="#4A2608" />
-            <stop offset="100%" stopColor="#241103" />
+            <stop offset="0%" stopColor="#2e1402" />
+            <stop offset="10%" stopColor="#694110" />
+            <stop offset="22%" stopColor="#9c6c20" />
+            <stop offset="36%" stopColor="#cfa043" />
+            <stop offset="46%" stopColor="#f3d78c" />
+            <stop offset="58%" stopColor="#d2a13f" />
+            <stop offset="74%" stopColor="#91621a" />
+            <stop offset="88%" stopColor="#502d09" />
+            <stop offset="100%" stopColor="#1e0c01" />
           </linearGradient>
 
           {/* Deep recessed shadow gradient */}
           <linearGradient id="recessSocketGradient" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#180709" />
-            <stop offset="35%" stopColor="#331215" />
-            <stop offset="65%" stopColor="#25090C" />
-            <stop offset="100%" stopColor="#0F0304" />
+            <stop offset="0%" stopColor="#140506" />
+            <stop offset="35%" stopColor="#2b0d10" />
+            <stop offset="65%" stopColor="#1f0709" />
+            <stop offset="100%" stopColor="#0b0203" />
           </linearGradient>
 
           {/* Spherical radial highlight on finial bulb */}
           <radialGradient id="finialBulbRadial" cx="36%" cy="34%" r="65%">
-            <stop offset="0%" stopColor="#FFFFEB" />
-            <stop offset="25%" stopColor="#F3D17A" />
-            <stop offset="60%" stopColor="#A87522" />
-            <stop offset="85%" stopColor="#633C0A" />
-            <stop offset="100%" stopColor="#301A03" />
+            <stop offset="0%" stopColor="#fef5d6" />
+            <stop offset="25%" stopColor="#e5bb5d" />
+            <stop offset="60%" stopColor="#a3701d" />
+            <stop offset="85%" stopColor="#5e3708" />
+            <stop offset="100%" stopColor="#2b1402" />
           </radialGradient>
 
           {/* Finial tip radial highlight */}
           <radialGradient id="finialTipRadial" cx="30%" cy="32%" r="68%">
-            <stop offset="0%" stopColor="#FFFBE6" />
-            <stop offset="35%" stopColor="#E2B755" />
-            <stop offset="75%" stopColor="#8B5917" />
-            <stop offset="100%" stopColor="#3D2005" />
+            <stop offset="0%" stopColor="#fff8db" />
+            <stop offset="35%" stopColor="#d9a846" />
+            <stop offset="75%" stopColor="#875414" />
+            <stop offset="100%" stopColor="#351a03" />
           </radialGradient>
 
           {/* Bead gradient */}
           <radialGradient id="beadGold" cx="35%" cy="30%" r="65%">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="30%" stopColor="#FDE397" />
-            <stop offset="75%" stopColor="#B48227" />
-            <stop offset="100%" stopColor="#4F2D06" />
+            <stop offset="30%" stopColor="#fde092" />
+            <stop offset="75%" stopColor="#b07d22" />
+            <stop offset="100%" stopColor="#482705" />
           </radialGradient>
         </defs>
 
@@ -270,33 +279,33 @@ export function OrnamentalBand({ className = '' }) {
         <defs>
           {/* Velvet cylindrical shading gradient */}
           <linearGradient id="bandVelvetGradient" x1="0" y1="0" x2="0" y2="84" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#250508" />
-            <stop offset="10%" stopColor="#4A0B12" />
-            <stop offset="25%" stopColor="#6E121B" />
-            <stop offset="42%" stopColor="#8A1824" />
-            <stop offset="60%" stopColor="#6B111A" />
-            <stop offset="80%" stopColor="#450A10" />
-            <stop offset="92%" stopColor="#280508" />
-            <stop offset="100%" stopColor="#140204" />
+            <stop offset="0%" stopColor="#1c0305" />
+            <stop offset="10%" stopColor="#3d080f" />
+            <stop offset="25%" stopColor="#631019" />
+            <stop offset="42%" stopColor="#7a1620" />
+            <stop offset="60%" stopColor="#5c0c14" />
+            <stop offset="80%" stopColor="#38060b" />
+            <stop offset="92%" stopColor="#1e0204" />
+            <stop offset="100%" stopColor="#0c0102" />
           </linearGradient>
 
           {/* Gold wire inlay gradient */}
           <linearGradient id="bandGoldWire" x1="0" y1="0" x2="0" y2="84" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#54300A" />
-            <stop offset="15%" stopColor="#B38025" />
-            <stop offset="35%" stopColor="#FEE4A0" />
-            <stop offset="50%" stopColor="#DCA847" />
-            <stop offset="75%" stopColor="#966318" />
-            <stop offset="90%" stopColor="#522C08" />
-            <stop offset="100%" stopColor="#2A1403" />
+            <stop offset="0%" stopColor="#3d2105" />
+            <stop offset="15%" stopColor="#96681b" />
+            <stop offset="35%" stopColor="#f0d38b" />
+            <stop offset="50%" stopColor="#d2a03f" />
+            <stop offset="75%" stopColor="#8c5a15" />
+            <stop offset="90%" stopColor="#4a2506" />
+            <stop offset="100%" stopColor="#220e02" />
           </linearGradient>
 
           {/* Bead gradient for motif centers */}
           <radialGradient id="motifBeadGold" cx="35%" cy="30%" r="65%">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="35%" stopColor="#FFE08D" />
-            <stop offset="80%" stopColor="#B47E22" />
-            <stop offset="100%" stopColor="#4F2D06" />
+            <stop offset="35%" stopColor="#fde092" />
+            <stop offset="80%" stopColor="#b07d22" />
+            <stop offset="100%" stopColor="#482705" />
           </radialGradient>
         </defs>
 
@@ -323,7 +332,7 @@ export function OrnamentalBand({ className = '' }) {
                   C16.5 ${cy + 1}, 14 ${cy + 2.5}, 12 ${cy + 5.5} 
                   C10 ${cy + 2.5}, 7.5 ${cy + 1}, 7 ${cy} 
                   C7.5 ${cy - 1}, 10 ${cy - 2.5}, 12 ${cy - 5.5} Z`}
-              fill="#1F0407"
+              fill="#140203"
             />
             {/* Antique gold 4-petal lotus floret */}
             <path
@@ -350,7 +359,7 @@ export function OrnamentalBand({ className = '' }) {
           width="24"
           height="84"
           fill="url(#finialGoldHighlight)"
-          style={{ mixBlendMode: 'screen', opacity: 0.2 }}
+          style={{ mixBlendMode: 'screen', opacity: 0.16 }}
         />
       </svg>
     </div>
@@ -372,24 +381,37 @@ export function RollerCenterFiligree({ className = '' }) {
       >
         <defs>
           <linearGradient id="centerGold" x1="0" y1="0" x2="64" y2="0" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#966318" stopOpacity="0" />
-            <stop offset="20%" stopColor="#C89632" stopOpacity="0.85" />
-            <stop offset="50%" stopColor="#FFF2C6" />
-            <stop offset="80%" stopColor="#C89632" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#966318" stopOpacity="0" />
+            <stop offset="0%" stopColor="#6b3e0c" stopOpacity="0" />
+            <stop offset="20%" stopColor="#b5832a" stopOpacity="0.9" />
+            <stop offset="50%" stopColor="#fae7b4" />
+            <stop offset="80%" stopColor="#b5832a" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#6b3e0c" stopOpacity="0" />
           </linearGradient>
         </defs>
 
+        {/* Embossed relief shadow for depth against rosewood */}
+        <path
+          d="M32 2.7 L38 10.7 L32 18.7 L26 10.7 Z"
+          fill="#1c0702"
+          opacity="0.45"
+        />
         {/* Center Diamond / Lotus Crest */}
         <path
           d="M32 2 L38 10 L32 18 L26 10 Z"
           fill="url(#centerGold)"
-          stroke="#4F2D06"
+          stroke="#422204"
           strokeWidth="0.6"
         />
         <circle cx="32" cy="10" r="2" fill="#FFEAA8" />
 
         {/* Left flowing filigree vine */}
+        <path
+          d="M26 10.6 C21 8.6, 16 13.6, 11 10.6 C7 7.6, 3 10.6, 0 10.6"
+          stroke="#1c0702"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          opacity="0.4"
+        />
         <path
           d="M26 10 C21 8, 16 13, 11 10 C7 7, 3 10, 0 10"
           stroke="url(#centerGold)"
@@ -400,6 +422,13 @@ export function RollerCenterFiligree({ className = '' }) {
         <circle cx="8" cy="9" r="1" fill="#C89632" />
 
         {/* Right flowing filigree vine */}
+        <path
+          d="M38 10.6 C43 8.6, 48 13.6, 53 10.6 C57 7.6, 61 10.6, 64 10.6"
+          stroke="#1c0702"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          opacity="0.4"
+        />
         <path
           d="M38 10 C43 8, 48 13, 53 10 C57 7, 61 10, 64 10"
           stroke="url(#centerGold)"
@@ -447,28 +476,28 @@ export function EmbossedRoyalSeal({ className = '' }) {
         <defs>
           {/* Beveled outer bezel gradient */}
           <linearGradient id="bezelGradient" x1="12" y1="8" x2="50" y2="54" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#FFFEE8" />
-            <stop offset="25%" stopColor="#F1CE74" />
-            <stop offset="55%" stopColor="#B37E22" />
-            <stop offset="85%" stopColor="#693F0C" />
-            <stop offset="100%" stopColor="#301A03" />
+            <stop offset="0%" stopColor="#fef6dc" />
+            <stop offset="25%" stopColor="#e0b24e" />
+            <stop offset="55%" stopColor="#a3721e" />
+            <stop offset="85%" stopColor="#5a3408" />
+            <stop offset="100%" stopColor="#281301" />
           </linearGradient>
 
           {/* Recessed inner disc gradient */}
           <radialGradient id="recessedDiscGradient" cx="38%" cy="36%" r="62%">
-            <stop offset="0%" stopColor="#FFF3CE" />
-            <stop offset="35%" stopColor="#E2B755" />
-            <stop offset="70%" stopColor="#9C6B1B" />
-            <stop offset="90%" stopColor="#623C0A" />
-            <stop offset="100%" stopColor="#3A1E04" />
+            <stop offset="0%" stopColor="#fdf0c9" />
+            <stop offset="35%" stopColor="#d4a342" />
+            <stop offset="70%" stopColor="#8f6016" />
+            <stop offset="90%" stopColor="#552c06" />
+            <stop offset="100%" stopColor="#2e1302" />
           </radialGradient>
 
           {/* Granulation bead radial gradient */}
           <radialGradient id="sealBeadGrad" cx="35%" cy="30%" r="65%">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="35%" stopColor="#FFE08F" />
-            <stop offset="75%" stopColor="#B58123" />
-            <stop offset="100%" stopColor="#4A2605" />
+            <stop offset="35%" stopColor="#fde092" />
+            <stop offset="75%" stopColor="#b07d22" />
+            <stop offset="100%" stopColor="#482705" />
           </radialGradient>
         </defs>
 
@@ -522,3 +551,4 @@ export function EmbossedRoyalSeal({ className = '' }) {
     </div>
   )
 }
+
