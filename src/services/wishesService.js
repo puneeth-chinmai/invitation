@@ -69,7 +69,7 @@ export async function submitGuestWish({ guestName, message, language = 'english'
   // Attempt to save to Supabase
   if (isSupabaseConfigured() && supabase) {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('wedding_wishes')
         .insert([
           {
@@ -79,8 +79,6 @@ export async function submitGuestWish({ guestName, message, language = 'english'
             status: 'unread',
           },
         ])
-        .select('id')
-        .single()
 
       if (error) {
         // If table doesn't exist yet (PGRST205), fall back gracefully to local storage
@@ -91,7 +89,7 @@ export async function submitGuestWish({ guestName, message, language = 'english'
         throw error
       }
 
-      return { success: true, id: data?.id }
+      return { success: true }
     } catch (err) {
       console.error('[wishesService] Supabase insert failed:', err)
       // If network fails or table error, save locally as reliable fallback

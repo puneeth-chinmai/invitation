@@ -37,22 +37,33 @@ end $$;
 -- 4. Enable Row Level Security (RLS)
 alter table public.wedding_wishes enable row level security;
 
--- 5. Row Level Security Policies:
+-- 5. Table & Schema Permissions (Grants)
+grant usage on schema public to anon, authenticated;
+grant insert on table public.wedding_wishes to anon, authenticated;
+grant select, update, delete on table public.wedding_wishes to authenticated;
+
+-- 6. Row Level Security Policies:
 
 -- A. Public Guests: RESTRICTED INSERT ONLY
---    - Guests can submit their blessing anonymously
+--    - Guests can submit their blessing anonymously (anon and authenticated)
 --    - Restricts status to 'unread' only (prevents unauthorized status elevation)
---    - Validates minimum name and message lengths
+--    - Validates name and message length limits matching the table schema
 --    - ZERO public read/update/delete permissions are granted
 drop policy if exists "Public guests can submit blessings" on public.wedding_wishes;
+drop policy if exists "Allow public guest submissions" on public.wedding_wishes;
+drop policy if exists "Enable insert for anon and authenticated" on public.wedding_wishes;
+
 create policy "Public guests can submit blessings"
   on public.wedding_wishes
   for insert
   to anon, authenticated
   with check (
-    status = 'unread' and
+    (status is null or status = 'unread') and
     char_length(trim(guest_name)) >= 2 and
-    char_length(trim(message)) >= 3
+    char_length(guest_name) <= 100 and
+    char_length(trim(message)) >= 3 and
+    char_length(message) <= 2000 and
+    language in ('kannada', 'english')
   );
 
 -- B. Authenticated Administrators: SELECT all wishes (Inbox)
