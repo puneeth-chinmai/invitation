@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { MapPinIcon, CameraPlaceholderIcon, VideoPlayIcon } from './JourneyOrnaments'
 import RoyalVideoPlayer from './RoyalVideoPlayer'
 import AlbumLightbox from './AlbumLightbox'
+import { normalizeMediaList } from '../../utils/mediaNormalizer'
 import './EventAlbum.css'
 
 /**
@@ -47,10 +48,9 @@ export default function EventGalleryModal({
 
   const rawMedia = event?.media
 
-  // Sort media strictly by persisted sort order
+  // Canonical normalized media collection, sorted strictly by explicit order
   const sortedMedia = useMemo(() => {
-    if (!rawMedia || !Array.isArray(rawMedia)) return []
-    return [...rawMedia].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    return normalizeMediaList(rawMedia)
   }, [rawMedia])
 
   const coverMediaId = event?.coverMediaId
@@ -68,6 +68,7 @@ export default function EventGalleryModal({
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [prevEventId, setPrevEventId] = useState(event?.id)
+  const [thumbErrors, setThumbErrors] = useState({})
 
   // Synchronize index if event changes during render
   if (event?.id !== prevEventId) {
@@ -77,11 +78,6 @@ export default function EventGalleryModal({
 
   const total = sortedMedia.length
   const currentItem = sortedMedia[currentIndex] || null
-
-  // Image-only list for the full-screen photo lightbox
-  const imageMediaList = useMemo(() => {
-    return sortedMedia.filter((m) => m.type === 'image')
-  }, [sortedMedia])
 
   // Count photos & videos
   const photoCount = useMemo(() => {
@@ -132,6 +128,10 @@ export default function EventGalleryModal({
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Do not intercept arrow keys if an input or slider control has focus
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.getAttribute?.('role') === 'slider')) {
+        return
+      }
       if (e.key === 'Escape') {
         if (isLightboxOpen) {
           setIsLightboxOpen(false)
@@ -179,27 +179,6 @@ export default function EventGalleryModal({
     touchStartX.current = null
     touchEndX.current = null
   }
-
-  // Find index of current image in imageMediaList for lightbox
-  const currentImageLightboxIndex = useMemo(() => {
-    if (!currentItem || currentItem.type !== 'image') return 0
-    const idx = imageMediaList.findIndex((m) => m.id === currentItem.id)
-    return idx !== -1 ? idx : 0
-  }, [currentItem, imageMediaList])
-
-  // Lightbox navigation syncs back to carousel
-  const handleLightboxNavigate = useCallback(
-    (newImgIdx) => {
-      const targetImg = imageMediaList[newImgIdx]
-      if (targetImg) {
-        const globalIdx = sortedMedia.findIndex((m) => m.id === targetImg.id)
-        if (globalIdx !== -1) {
-          setCurrentIndex(globalIdx)
-        }
-      }
-    },
-    [imageMediaList, sortedMedia]
-  )
 
   const isCoverItem = currentItem && currentItem.id === (event?.coverMediaId || sortedMedia[0]?.id)
 
@@ -314,7 +293,8 @@ export default function EventGalleryModal({
                       src={currentItem.url}
                       alt={currentItem.altText || currentItem.caption || `${event?.title} media ${currentIndex + 1}`}
                       className="royal-carousel-photo"
-                      loading="eager"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="royal-carousel-zoom-pill">
                       <span aria-hidden="true">🔍</span>
@@ -323,16 +303,26 @@ export default function EventGalleryModal({
                   </div>
                 )}
 
-                {/* Video Viewer (Keyed by ID to stop previous video on navigation) */}
+                {/* Video Viewer (Keyed by ID/URL to stop previous video on navigation) */}
                 {currentItem.type === 'video' && (
                   <div className="royal-carousel-video-container">
                     <RoyalVideoPlayer
-                      key={currentItem.id}
+                      key={currentItem.id || currentItem.url || `video-${currentIndex}`}
                       src={currentItem.url}
-                      poster={currentItem.thumbnailUrl}
+                      poster={currentItem.thumbnailUrl || undefined}
                       caption={currentItem.caption}
                       title={`${event?.title} video ${currentIndex + 1}`}
                     />
+                    <button
+                      type="button"
+                      className="royal-carousel-zoom-pill video-expand"
+                      onClick={() => setIsLightboxOpen(true)}
+                      aria-label={`Open video ${currentIndex + 1} in fullscreen`}
+                      title="View Fullscreen"
+                    >
+                      <span aria-hidden="true">⤢</span>
+                      <span>Fullscreen</span>
+                    </button>
                   </div>
                 )}
               </div>
@@ -403,16 +393,35 @@ export default function EventGalleryModal({
                       aria-label={`${item.type === 'video' ? 'Video' : 'Photograph'} ${idx + 1}`}
                       title={`${item.type === 'video' ? 'Video' : 'Photograph'} ${idx + 1}`}
                     >
-                      <img
-                        src={item.type === 'video' ? item.thumbnailUrl || item.url : item.url}
-                        alt=""
-                        className="royal-thumb-img"
-                        loading="lazy"
-                      />
-                      {item.type === 'video' && (
-                        <div className="royal-thumb-video-icon">
-                          <VideoPlayIcon size={12} />
-                        </div>
+                      {item.type === 'video' ? (
+                        item.thumbnailUrl && !thumbErrors[item.id] ? (
+                          <>
+                            <img
+                              src={item.thumbnailUrl}
+                              alt=""
+                              className="royal-thumb-img"
+                              loading="lazy"
+                              decoding="async"
+                              onError={() => setThumbErrors((prev) => ({ ...prev, [item.id]: true }))}
+                            />
+                            <div className="royal-thumb-video-icon">
+                              <VideoPlayIcon size={12} />
+                            </div>
+                          </>
+                        ) : (
+                          /* No thumbnail or failed load: render a styled placeholder with a play icon */
+                          <div className="royal-thumb-video-placeholder" aria-hidden="true">
+                            <VideoPlayIcon size={14} />
+                          </div>
+                        )
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt=""
+                          className="royal-thumb-img"
+                          loading="lazy"
+                          decoding="async"
+                        />
                       )}
                     </button>
                   )
@@ -433,14 +442,14 @@ export default function EventGalleryModal({
       </div>
 
       {/* ===================================================
-          5. FULL-SCREEN LIGHTBOX FOR DETAILED PHOTO INSPECTION
+          5. UNIFIED FULL-SCREEN VIEWER FOR BOTH PHOTOS AND VIDEOS
       =================================================== */}
-      {isLightboxOpen && imageMediaList.length > 0 && (
+      {isLightboxOpen && (
         <AlbumLightbox
-          images={imageMediaList}
-          currentIndex={currentImageLightboxIndex}
+          media={sortedMedia}
+          currentIndex={currentIndex}
           onClose={() => setIsLightboxOpen(false)}
-          onNavigate={handleLightboxNavigate}
+          onNavigate={(newIdx) => setCurrentIndex(newIdx)}
           eventTitle={event?.title || ''}
         />
       )}

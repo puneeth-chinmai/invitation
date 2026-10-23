@@ -61,6 +61,8 @@ export default function RoyalVideoPlayer({
   const [isScrubbing, setIsScrubbing] = useState(false)
 
   const hideControlsTimer = useRef(null)
+  const scrubCleanupRef = useRef(null)
+
 
   // Pause when other video starts playing
   useEffect(() => {
@@ -145,6 +147,12 @@ export default function RoyalVideoPlayer({
       setIsScrubbing(false)
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
+      scrubCleanupRef.current = null
+    }
+
+    scrubCleanupRef.current = () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
     }
 
     window.addEventListener('mousemove', handleMouseMove)
@@ -164,6 +172,12 @@ export default function RoyalVideoPlayer({
 
       const handleTouchEnd = () => {
         setIsScrubbing(false)
+        window.removeEventListener('touchmove', handleTouchMove)
+        window.removeEventListener('touchend', handleTouchEnd)
+        scrubCleanupRef.current = null
+      }
+
+      scrubCleanupRef.current = () => {
         window.removeEventListener('touchmove', handleTouchMove)
         window.removeEventListener('touchend', handleTouchEnd)
       }
@@ -223,12 +237,25 @@ export default function RoyalVideoPlayer({
     return () => document.removeEventListener('fullscreenchange', handleFsChange)
   }, [])
 
-  // Clean unmount
+  // Clean unmount — pause audio/video immediately and release media decoders
   useEffect(() => {
     const el = videoRef.current
     return () => {
       if (el) {
         el.pause()
+        try {
+          el.removeAttribute('src')
+          el.load()
+        } catch {
+          // Ignore
+        }
+      }
+      if (hideControlsTimer.current) {
+        clearTimeout(hideControlsTimer.current)
+      }
+      if (scrubCleanupRef.current) {
+        scrubCleanupRef.current()
+        scrubCleanupRef.current = null
       }
     }
   }, [])
@@ -338,10 +365,17 @@ export default function RoyalVideoPlayer({
           aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
           tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === 'ArrowLeft') skipTime(-5)
-            if (e.key === 'ArrowRight') skipTime(5)
-            if (e.key === ' ') {
+            if (e.key === 'ArrowLeft') {
               e.preventDefault()
+              e.stopPropagation()
+              skipTime(-5)
+            } else if (e.key === 'ArrowRight') {
+              e.preventDefault()
+              e.stopPropagation()
+              skipTime(5)
+            } else if (e.key === ' ') {
+              e.preventDefault()
+              e.stopPropagation()
               togglePlay()
             }
           }}

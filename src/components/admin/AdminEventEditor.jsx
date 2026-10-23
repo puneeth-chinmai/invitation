@@ -6,7 +6,9 @@ import {
   adminSetCoverMedia,
   adminReorderMedia,
   adminUpdateMediaMeta,
+  adminRegenerateVideoThumbnail,
 } from '../../services/journeyService'
+import { normalizeMediaItem } from '../../utils/mediaNormalizer'
 import EventGalleryModal from '../journey/EventGalleryModal'
 
 /**
@@ -40,12 +42,15 @@ export default function AdminEventEditor({
   }))
 
 
-  const [mediaList, setMediaList] = useState(initialEvent?.media || [])
+  const [mediaList, setMediaList] = useState(() =>
+    (initialEvent?.media || []).map((m, idx) => normalizeMediaItem(m, idx))
+  )
   const [saving, setSaving] = useState(false)
   const [statusMsg, setStatusMsg] = useState(null)
   const [uploadProgress, setUploadProgress] = useState([])
   const [previewOpen, setPreviewOpen] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [regeneratingIds, setRegeneratingIds] = useState({})
 
   // Handle Form Input Changes
   const handleInputChange = (e) => {
@@ -172,6 +177,23 @@ export default function AdminEventEditor({
       setStatusMsg({ type: 'success', text: 'Media item removed.' })
     } catch (err) {
       setStatusMsg({ type: 'error', text: err.message || 'Failed to delete media.' })
+    }
+  }
+
+  // Regenerate video poster thumbnail
+  const handleRegenerateThumbnail = async (item) => {
+    if (!item?.url) return
+    setRegeneratingIds((prev) => ({ ...prev, [item.id]: true }))
+    try {
+      const newUrl = await adminRegenerateVideoThumbnail(formData.id, item.id, item.url)
+      setMediaList((prev) =>
+        prev.map((m) => (m.id === item.id ? { ...m, thumbnailUrl: newUrl } : m))
+      )
+      setStatusMsg({ type: 'success', text: `Poster generated for ${item.altText || 'video'}!` })
+    } catch (err) {
+      setStatusMsg({ type: 'error', text: `Poster generation failed: ${err.message}` })
+    } finally {
+      setRegeneratingIds((prev) => ({ ...prev, [item.id]: false }))
     }
   }
 
@@ -467,11 +489,13 @@ export default function AdminEventEditor({
               const isCompressing = p.status === 'compressing'
               const isUploadingStage = p.status === 'uploading'
               const isSaving = p.status === 'saving'
+              const isThumbnail = p.status === 'thumbnail'
 
               let label = p.stage || 'Processing...'
               if (isDone) label = p.stage || 'Completed'
               else if (isErr) label = 'Failed'
               else if (isCompressing) label = p.stage || 'Optimizing image...'
+              else if (isThumbnail) label = p.stage || 'Generating thumbnail...'
               else if (isUploadingStage) label = p.stage || 'Uploading to storage...'
               else if (isSaving) label = p.stage || 'Registering media...'
 
@@ -487,14 +511,14 @@ export default function AdminEventEditor({
                       ? '#e6f4ea'
                       : isErr
                         ? '#fde8e8'
-                        : isCompressing
+                        : isCompressing || isThumbnail
                           ? '#fef3c7'
                           : '#e8f0fe',
                     color: isDone
                       ? '#137333'
                       : isErr
                         ? '#9b1c1c'
-                        : isCompressing
+                        : isCompressing || isThumbnail
                           ? '#92400e'
                           : '#1a56db',
                     border: `1px solid ${
@@ -502,7 +526,7 @@ export default function AdminEventEditor({
                         ? '#b7e1cd'
                         : isErr
                           ? '#f8b4b4'
-                          : isCompressing
+                          : isCompressing || isThumbnail
                             ? '#fde68a'
                             : '#bfdbfe'
                     }`,
@@ -524,6 +548,7 @@ export default function AdminEventEditor({
                 </div>
               )
             })}
+
           </div>
         )}
 
@@ -578,15 +603,25 @@ export default function AdminEventEditor({
                       src={item.url}
                       alt={item.altText || 'Event media'}
                       className="admin-media-thumb"
+                      loading="lazy"
                     />
                   ) : (
                     <div style={{ position: 'relative' }}>
-                      <video
-                        src={item.url}
-                        className="admin-media-thumb"
-                        style={{ background: '#000' }}
-                        preload="metadata"
-                      />
+                      {item.thumbnailUrl ? (
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.altText || 'Video thumbnail'}
+                          className="admin-media-thumb"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <video
+                          src={item.url}
+                          className="admin-media-thumb"
+                          style={{ background: '#000' }}
+                          preload="metadata"
+                        />
+                      )}
                       <span
                         style={{
                           position: 'absolute',
@@ -601,6 +636,26 @@ export default function AdminEventEditor({
                       >
                         VIDEO
                       </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRegenerateThumbnail(item)}
+                        disabled={regeneratingIds[item.id]}
+                        style={{
+                          position: 'absolute',
+                          top: '6px',
+                          right: '6px',
+                          background: item.thumbnailUrl ? 'rgba(22, 10, 6, 0.75)' : '#92400e',
+                          color: '#fff',
+                          border: '1px solid rgba(255,255,255,0.4)',
+                          fontSize: '9px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          cursor: regeneratingIds[item.id] ? 'wait' : 'pointer',
+                        }}
+                        title="Generate or replace video poster thumbnail"
+                      >
+                        {regeneratingIds[item.id] ? 'Generating...' : item.thumbnailUrl ? '↻ Poster' : '📸 Make Poster'}
+                      </button>
                     </div>
                   )}
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import { getEventCoverMedia } from '../../data/journeyEvents'
+import { normalizeMediaItem } from '../../utils/mediaNormalizer'
 import {
   MapPinIcon,
   CameraPlaceholderIcon,
@@ -17,15 +18,16 @@ import {
  * Designed to keep the winding route visible at all times.
  * Entire marker (photo bezel + text label) is comfortably clickable/tappable.
  */
-export default function EventMarkerNode({
+export function EventMarkerNode({
   event,
   index,
   isLeftAligned = true,
   onSelect,
 }) {
-  const coverMedia = getEventCoverMedia(event)
+  const rawCoverMedia = getEventCoverMedia(event)
+  const coverMedia = rawCoverMedia ? normalizeMediaItem(rawCoverMedia, index) : null
   const totalMedia = event.media?.length || 0
-
+  const [thumbError, setThumbError] = React.useState(false)
 
   const isEngagement =
     event.id === 'event-engagement' ||
@@ -68,24 +70,29 @@ export default function EventMarkerNode({
                 alt={coverMedia.altText || event.title}
                 className="marker-thumbnail-img"
                 loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="marker-video-thumb">
-                {coverMedia.thumbnailUrl ? (
-                  <img
-                    src={coverMedia.thumbnailUrl}
-                    alt={coverMedia.altText || `${event.title} video`}
-                    className="marker-thumbnail-img"
-                    loading="lazy"
-                  />
+                {coverMedia.thumbnailUrl && !thumbError ? (
+                  <>
+                    <img
+                      src={coverMedia.thumbnailUrl}
+                      alt={coverMedia.altText || `${event.title} video`}
+                      className="marker-thumbnail-img"
+                      loading="lazy"
+                      decoding="async"
+                      onError={() => setThumbError(true)}
+                    />
+                    <span className="marker-video-badge" aria-hidden="true">
+                      <VideoPlayIcon size={12} />
+                    </span>
+                  </>
                 ) : (
-                  <div className="marker-empty-frame">
+                  <div className="marker-video-fallback" title={`${event.title} video`}>
                     <VideoPlayIcon size={20} />
                   </div>
                 )}
-                <span className="marker-video-badge" aria-hidden="true">
-                  <VideoPlayIcon size={12} />
-                </span>
               </div>
             )
           ) : (
@@ -140,3 +147,5 @@ export default function EventMarkerNode({
     </div>
   )
 }
+
+export default React.memo(EventMarkerNode)

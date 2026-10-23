@@ -120,4 +120,56 @@ export const TEST_FIXTURE_EVENTS = [
     published: true,
     media: [],
   },
+  {
+    id: 'test-event-edge-cases',
+    date: '12 November 2024',
+    isoDate: '2024-11-12',
+    title: 'Test Event Edge Cases (Video-First & No-Thumbnail)',
+    location: 'Edge Case Verification Stage',
+    description:
+      'Verifies: 1) First item is a video with no thumbnail; 2) Smooth mixed navigation to photo; 3) Video with thumbnail; 4) Last item is a video with no thumbnail.',
+    coverMediaId: 'fixture-edge-01',
+    published: true,
+    media: [
+      {
+        id: 'fixture-edge-01',
+        type: 'video',
+        url: '/test-fixtures/test-event-video.mp4',
+        thumbnailUrl: null, // Verifies video with NO thumbnail as first item & cover
+        caption: 'Edge Video 1 (First item, no poster thumbnail)',
+        altText: 'First item video without thumbnail',
+        order: 1,
+        aspectRatio: '16/9',
+      },
+      {
+        id: 'fixture-edge-02',
+        type: 'image',
+        url: makeNeutralSvg('Edge — Photo 2', 'Order: 2 • Transitional Image', '#8c6527'),
+        caption: 'Edge Photo 2 — Navigating from video to photo cleanly stops audio',
+        altText: 'Transitional test image',
+        order: 2,
+        aspectRatio: '4/3',
+      },
+      {
+        id: 'fixture-edge-03',
+        type: 'video',
+        url: '/test-fixtures/test-event-video.mp4',
+        thumbnailUrl: makeNeutralSvg('Edge — Video 3 Poster', 'Order: 3 • Has Poster Frame'),
+        caption: 'Edge Video 3 (Middle video with poster frame)',
+        altText: 'Middle video with poster frame',
+        order: 3,
+        aspectRatio: '16/9',
+      },
+      {
+        id: 'fixture-edge-04',
+        type: 'video',
+        url: '/test-fixtures/test-event-video.mp4',
+        thumbnailUrl: null, // Verifies last item is a video with NO thumbnail
+        caption: 'Edge Video 4 (Last item, no poster thumbnail)',
+        altText: 'Last item video without thumbnail',
+        order: 4,
+        aspectRatio: '16/9',
+      },
+    ],
+  },
 ]

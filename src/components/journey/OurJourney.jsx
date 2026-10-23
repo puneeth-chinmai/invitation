@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   getPublishedEvents,
   getWeddingDestination,
@@ -85,6 +85,14 @@ export default function OurJourney({
     return events.find((e) => e.id === selectedEventId) || null
   }, [selectedEventId, events])
 
+  const handleSelectEvent = useCallback((eventId) => {
+    setSelectedEventId(eventId)
+  }, [])
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedEventId(null)
+  }, [])
+
 
   return (
     <div
@@ -157,7 +165,7 @@ export default function OurJourney({
         <JourneyMapCanvas
           events={events}
           destination={destination}
-          onSelectEvent={(eventId) => setSelectedEventId(eventId)}
+          onSelectEvent={handleSelectEvent}
         />
 
         {/* ===================================================
@@ -200,7 +208,7 @@ export default function OurJourney({
       {selectedEvent && (
         <EventGalleryModal
           event={selectedEvent}
-          onClose={() => setSelectedEventId(null)}
+          onClose={handleCloseModal}
         />
       )}
     </div>

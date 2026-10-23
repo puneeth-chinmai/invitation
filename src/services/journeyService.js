@@ -5,6 +5,8 @@ import {
   MAX_IMAGE_SOURCE_SIZE_BYTES,
   MAX_DESTINATION_FILE_SIZE_BYTES,
 } from '../utils/imageCompression.js'
+import { generateVideoThumbnail } from '../utils/videoThumbnail.js'
+import { normalizeMediaList } from '../utils/mediaNormalizer.js'
 
 const STORAGE_BUCKET = 'journey-media'
 
@@ -82,21 +84,12 @@ export async function fetchPublishedEvents() {
     if (mediaData) {
       mediaData.forEach((item) => {
         if (mediaByEvent[item.event_id]) {
-          mediaByEvent[item.event_id].push({
-            id: item.id,
-            type: item.media_type,
-            url: item.url,
-            storagePath: item.storage_path,
-            thumbnailUrl: item.thumbnail_url,
-            caption: item.caption,
-            altText: item.alt_text,
-            order: item.sort_order,
-          })
+          mediaByEvent[item.event_id].push(item)
         }
       })
     }
 
-    // Assemble into the frontend JourneyEvent schema
+    // Assemble into the frontend JourneyEvent schema using canonical media normalization
     const events = eventsData.map((row) => ({
       id: row.id,
       title: row.title,
@@ -107,7 +100,7 @@ export async function fetchPublishedEvents() {
       description: row.description,
       coverMediaId: row.cover_media_id,
       published: row.published,
-      media: mediaByEvent[row.id] || [],
+      media: normalizeMediaList(mediaByEvent[row.id] || []),
     }))
 
     return { events, isLiveBackend: true }
@@ -196,16 +189,7 @@ export async function adminFetchAllEvents() {
 
   ;(mediaData || []).forEach((item) => {
     if (mediaByEvent[item.event_id]) {
-      mediaByEvent[item.event_id].push({
-        id: item.id,
-        type: item.media_type,
-        url: item.url,
-        storagePath: item.storage_path,
-        thumbnailUrl: item.thumbnail_url,
-        caption: item.caption,
-        altText: item.alt_text,
-        order: item.sort_order,
-      })
+      mediaByEvent[item.event_id].push(item)
     }
   })
 
@@ -221,7 +205,7 @@ export async function adminFetchAllEvents() {
     published: row.published,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    media: mediaByEvent[row.id] || [],
+    media: normalizeMediaList(mediaByEvent[row.id] || []),
   }))
 }
 
@@ -399,6 +383,33 @@ export async function adminUploadMedia(eventId, file, metadata = {}, onProgress 
   const fileExt = uploadFile.name.split('.').pop() || (mediaType === 'image' ? 'jpg' : 'mp4')
   const storagePath = `events/${eventId}/${mediaId}.${fileExt}`
 
+  // For videos: generate client-side poster thumbnail using deterministic path to avoid duplicates
+  let generatedThumbnailUrl = metadata.thumbnailUrl || null
+  if (!isImage && !generatedThumbnailUrl) {
+    onProgress?.('thumbnail', 'Generating thumbnail...')
+    try {
+      const thumbFile = await generateVideoThumbnail(file)
+      if (thumbFile) {
+        const thumbStoragePath = `events/${eventId}/thumbs/${mediaId}_thumb.jpg`
+        const { error: thumbUploadError } = await supabase.storage
+          .from(STORAGE_BUCKET)
+          .upload(thumbStoragePath, thumbFile, {
+            cacheControl: '86400',
+            upsert: true, // Replace if re-uploading
+            contentType: 'image/jpeg',
+          })
+        if (!thumbUploadError) {
+          const { data: thumbUrlData } = supabase.storage
+            .from(STORAGE_BUCKET)
+            .getPublicUrl(thumbStoragePath)
+          generatedThumbnailUrl = thumbUrlData?.publicUrl || null
+        }
+      }
+    } catch (thumbErr) {
+      console.warn('[journeyService] Video thumbnail generation skipped:', thumbErr.message)
+    }
+  }
+
   // 1. Upload to storage bucket
   onProgress?.('uploading', 'Uploading to storage...')
   const { error: uploadError } = await supabase.storage
@@ -436,7 +447,7 @@ export async function adminUploadMedia(eventId, file, metadata = {}, onProgress 
     media_type: mediaType,
     storage_path: storagePath,
     url: publicUrl,
-    thumbnail_url: metadata.thumbnailUrl || null,
+    thumbnail_url: generatedThumbnailUrl,
     caption: metadata.caption || null,
     alt_text: metadata.altText || `${file.name}`,
     sort_order: nextOrder,
@@ -589,4 +600,57 @@ export async function adminUpdateMediaMeta(mediaId, { caption, altText }) {
 
   if (error) throw error
   return data
+}
+
+/**
+ * Regenerate poster thumbnail for an existing video media record in Supabase.
+ * Avoids creating duplicate storage files by using a deterministic path:
+ * events/${eventId}/thumbs/${mediaId}_thumb.jpg with upsert: true.
+ *
+ * @param {string} eventId
+ * @param {string} mediaId
+ * @param {string} videoUrl
+ * @returns {Promise<string>} The generated public thumbnail URL
+ */
+export async function adminRegenerateVideoThumbnail(eventId, mediaId, videoUrl) {
+  if (!isSupabaseConfigured() || !supabase) {
+    throw new Error('Supabase is not configured.')
+  }
+  if (!videoUrl) {
+    throw new Error('Video URL is required to regenerate thumbnail.')
+  }
+
+  const thumbFile = await generateVideoThumbnail(videoUrl)
+  if (!thumbFile) {
+    throw new Error('Could not decode a valid, non-black video frame for this video.')
+  }
+
+  const thumbStoragePath = `events/${eventId}/thumbs/${mediaId}_thumb.jpg`
+  const { error: uploadError } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .upload(thumbStoragePath, thumbFile, {
+      cacheControl: '86400',
+      upsert: true,
+      contentType: 'image/jpeg',
+    })
+
+  if (uploadError) throw uploadError
+
+  const { data: thumbUrlData } = supabase.storage
+    .from(STORAGE_BUCKET)
+    .getPublicUrl(thumbStoragePath)
+
+  const publicUrl = thumbUrlData?.publicUrl || null
+  if (!publicUrl) {
+    throw new Error('Failed to resolve public URL for generated thumbnail.')
+  }
+
+  const { error: dbError } = await supabase
+    .from('journey_media')
+    .update({ thumbnail_url: publicUrl })
+    .eq('id', mediaId)
+
+  if (dbError) throw dbError
+
+  return publicUrl
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react'
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react'
 import EventMarkerNode from './EventMarkerNode'
 import DestinationMedallion from './DestinationMedallion'
 import { CompassRose, BotanicalSprig } from './JourneyOrnaments'
@@ -14,7 +14,7 @@ import { CompassRose, BotanicalSprig } from './JourneyOrnaments'
  *   - Responsive real-time anchor alignment on mobile and desktop
  *   - Prominent terminal destination medallion for 29 November 2026
  */
-export default function JourneyMapCanvas({
+export function JourneyMapCanvas({
   events = [],
   destination,
   onSelectEvent,
@@ -23,6 +23,9 @@ export default function JourneyMapCanvas({
   const waypointRefs = useRef([])
   const terminalRef = useRef(null)
   const startRef = useRef(null)
+  const prevDimRef = useRef({ width: 0, height: 0 })
+  const prevPathRef = useRef('')
+  const rafIdRef = useRef(null)
 
   const [routePathD, setRoutePathD] = useState('')
   const [dimensions, setDimensions] = useState({ width: 800, height: 1200 })
@@ -33,12 +36,19 @@ export default function JourneyMapCanvas({
     if (!containerRef.current) return
 
     const containerRect = containerRef.current.getBoundingClientRect()
-    const containerW = containerRect.width
-    const containerH = containerRect.height
+    const containerW = Math.round(containerRect.width)
+    const containerH = Math.round(containerRect.height)
 
     if (containerW <= 0 || containerH <= 0) return
 
-    setDimensions({ width: containerW, height: containerH })
+    // Avoid redundant state updates if dimensions have not significantly changed
+    if (
+      Math.abs(prevDimRef.current.width - containerW) >= 2 ||
+      Math.abs(prevDimRef.current.height - containerH) >= 2
+    ) {
+      prevDimRef.current = { width: containerW, height: containerH }
+      setDimensions({ width: containerW, height: containerH })
+    }
 
     const points = []
 
@@ -83,36 +93,47 @@ export default function JourneyMapCanvas({
     // Generate smooth continuous cubic Bézier path connecting all points
     if (points.length >= 2) {
       const pathD = buildSmoothContinuousSpline(points)
-      setRoutePathD(pathD)
+      if (pathD !== prevPathRef.current) {
+        prevPathRef.current = pathD
+        setRoutePathD(pathD)
+      }
     }
   }, [])
 
-  // Recompute on mount, event changes, and window resize
+  // Recompute on mount, event changes, and window resize with RAF debouncing
   useEffect(() => {
     updateRouteGeometry()
 
-    const handleResize = () => {
-      updateRouteGeometry()
+    const scheduleUpdate = () => {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+      rafIdRef.current = requestAnimationFrame(() => {
+        updateRouteGeometry()
+      })
     }
 
     const ro = new ResizeObserver(() => {
-      updateRouteGeometry()
+      scheduleUpdate()
     })
 
     if (containerRef.current) {
       ro.observe(containerRef.current)
     }
 
-    window.addEventListener('resize', handleResize)
-    // Small timeout to ensure font load and image render layout settle
+    window.addEventListener('resize', scheduleUpdate)
     const timer = setTimeout(updateRouteGeometry, 250)
 
     return () => {
-      window.removeEventListener('resize', handleResize)
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+      window.removeEventListener('resize', scheduleUpdate)
       ro.disconnect()
       clearTimeout(timer)
     }
   }, [events, updateRouteGeometry])
+
+  const contourCurves = useMemo(
+    () => renderContourCurves(dimensions.width, dimensions.height),
+    [dimensions.width, dimensions.height]
+  )
 
   return (
     <div className="journey-relationship-map" ref={containerRef}>
@@ -135,16 +156,10 @@ export default function JourneyMapCanvas({
             <stop offset="85%" stopColor="#b88628" />
             <stop offset="100%" stopColor="#6d1620" />
           </linearGradient>
-
-          {/* Route Glow Filter */}
-          <filter id="routeGlowFilter" x="-10%" y="-10%" width="120%" height="120%">
-            <feGaussianBlur stdDeviation="3.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
         </defs>
 
         {/* --- Subtle Cartographic Contour Lines (No fantasy landscape) --- */}
-        {renderContourCurves(dimensions.width, dimensions.height)}
+        {contourCurves}
 
         {/* --- Coordinate Meridian Lines --- */}
         <line
@@ -169,14 +184,13 @@ export default function JourneyMapCanvas({
         {/* --- The Continuous Winding Route --- */}
         {routePathD && (
           <>
-            {/* Layer 1: Ambient Route Glow */}
+            {/* Layer 1: Ambient Route Soft Glow (No expensive CPU feGaussianBlur) */}
             <path
               d={routePathD}
               fill="none"
-              stroke="rgba(223, 182, 109, 0.35)"
-              strokeWidth="10"
+              stroke="rgba(223, 182, 109, 0.3)"
+              strokeWidth="12"
               strokeLinecap="round"
-              filter="url(#routeGlowFilter)"
             />
 
             {/* Layer 2: Muted Darker Outline / Base Casing */}
@@ -304,6 +318,8 @@ export default function JourneyMapCanvas({
     </div>
   )
 }
+
+export default React.memo(JourneyMapCanvas)
 
 /**
  * Build a smooth cubic Bézier spline passing through all anchor points
