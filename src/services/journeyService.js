@@ -1,10 +1,17 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient'
-import { JOURNEY_EVENTS } from '../data/journeyEvents'
+import { supabase, isSupabaseConfigured } from './supabaseClient.js'
+import { JOURNEY_EVENTS } from '../data/journeyEvents.js'
+import {
+  compressImageIfNeeded,
+  MAX_IMAGE_SOURCE_SIZE_BYTES,
+  MAX_DESTINATION_FILE_SIZE_BYTES,
+} from '../utils/imageCompression.js'
 
 const STORAGE_BUCKET = 'journey-media'
 
 // Max file sizes
-export const MAX_IMAGE_SIZE_BYTES = 15 * 1024 * 1024 // 15MB
+export { MAX_IMAGE_SOURCE_SIZE_BYTES, MAX_DESTINATION_FILE_SIZE_BYTES }
+// Backward-compatible alias for existing imports
+export const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SOURCE_SIZE_BYTES
 export const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024 // 100MB
 
 export const ALLOWED_IMAGE_TYPES = [
@@ -319,23 +326,27 @@ export async function adminToggleEventPublish(eventId, published) {
 export function validateUploadFile(file) {
   if (!file) throw new Error('No file provided')
 
-  const isImage = ALLOWED_IMAGE_TYPES.includes(file.type)
-  const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type)
+  const isImage = ALLOWED_IMAGE_TYPES.includes(file.type) || (file.type && file.type.startsWith('image/'))
+  const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type) || (file.type && file.type.startsWith('video/'))
 
   if (!isImage && !isVideo) {
     throw new Error(
-      `Unsupported file type "${file.type}". Please upload JPEG, PNG, WEBP, AVIF images or MP4, WebM videos.`
+      `Unsupported file type "${file.type || 'unknown'}". Please upload JPEG, PNG, WEBP, AVIF images or MP4, WebM videos.`
     )
   }
 
-  if (isImage && file.size > MAX_IMAGE_SIZE_BYTES) {
-    const maxMb = Math.round(MAX_IMAGE_SIZE_BYTES / (1024 * 1024))
-    throw new Error(`Image is too large (${Math.round(file.size / 1024 / 1024)}MB). Maximum allowed is ${maxMb}MB.`)
+  if (isImage && file.size > MAX_IMAGE_SOURCE_SIZE_BYTES) {
+    const maxMb = Math.round(MAX_IMAGE_SOURCE_SIZE_BYTES / (1024 * 1024))
+    const fileMb = (file.size / (1024 * 1024)).toFixed(1)
+    throw new Error(
+      `Image source file is too large (${fileMb}MB). Maximum allowed size before compression is ${maxMb}MB.`
+    )
   }
 
   if (isVideo && file.size > MAX_VIDEO_SIZE_BYTES) {
     const maxMb = Math.round(MAX_VIDEO_SIZE_BYTES / (1024 * 1024))
-    throw new Error(`Video is too large (${Math.round(file.size / 1024 / 1024)}MB). Maximum allowed is ${maxMb}MB.`)
+    const fileMb = (file.size / (1024 * 1024)).toFixed(1)
+    throw new Error(`Video is too large (${fileMb}MB). Maximum allowed is ${maxMb}MB.`)
   }
 
   return { isImage, isVideo, mediaType: isImage ? 'image' : 'video' }
@@ -343,24 +354,59 @@ export function validateUploadFile(file) {
 
 /**
  * Upload a media file to Supabase Storage and register in journey_media.
+ * Automatically performs client-side compression on images before upload.
+ *
+ * @param {string} eventId - Milestone event ID
+ * @param {File} file - Browser File object
+ * @param {Object} [metadata] - Optional caption, alt text, thumbnailUrl
+ * @param {Function} [onProgress] - Optional status callback: (stage, detail) => void
  */
-export async function adminUploadMedia(eventId, file, metadata = {}) {
+export async function adminUploadMedia(eventId, file, metadata = {}, onProgress = null) {
   if (!isSupabaseConfigured() || !supabase) {
     throw new Error('Supabase is not configured.')
   }
 
-  const { mediaType } = validateUploadFile(file)
+  const { isImage, mediaType } = validateUploadFile(file)
+
+  let uploadFile = file
+  let wasCompressed = false
+
+  // Client-side compression for images
+  if (isImage) {
+    onProgress?.('compressing', 'Optimizing image...')
+    try {
+      const compressionResult = await compressImageIfNeeded(file, {
+        maxSourceSizeBytes: MAX_IMAGE_SOURCE_SIZE_BYTES,
+        maxDestinationSizeBytes: MAX_DESTINATION_FILE_SIZE_BYTES,
+      })
+      uploadFile = compressionResult.file
+      wasCompressed = compressionResult.wasCompressed
+    } catch (compressionErr) {
+      throw new Error(`Failed to optimize image: ${compressionErr.message}`)
+    }
+  }
+
+  // Double check final upload size limit against destination ceiling
+  if (uploadFile.size > MAX_DESTINATION_FILE_SIZE_BYTES) {
+    const maxMb = Math.round(MAX_DESTINATION_FILE_SIZE_BYTES / (1024 * 1024))
+    const actualMb = (uploadFile.size / (1024 * 1024)).toFixed(1)
+    throw new Error(
+      `File size (${actualMb}MB) exceeds the destination storage limit of ${maxMb}MB.`
+    )
+  }
 
   const mediaId = `m-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
-  const fileExt = file.name.split('.').pop() || (mediaType === 'image' ? 'jpg' : 'mp4')
+  const fileExt = uploadFile.name.split('.').pop() || (mediaType === 'image' ? 'jpg' : 'mp4')
   const storagePath = `events/${eventId}/${mediaId}.${fileExt}`
 
   // 1. Upload to storage bucket
+  onProgress?.('uploading', 'Uploading to storage...')
   const { error: uploadError } = await supabase.storage
     .from(STORAGE_BUCKET)
-    .upload(storagePath, file, {
+    .upload(storagePath, uploadFile, {
       cacheControl: '3600',
       upsert: false,
+      contentType: uploadFile.type,
     })
 
   if (uploadError) throw uploadError
@@ -373,6 +419,7 @@ export async function adminUploadMedia(eventId, file, metadata = {}) {
   const publicUrl = urlData.publicUrl
 
   // 3. Compute next sort order
+  onProgress?.('saving', 'Registering media...')
   const { data: existingMedia } = await supabase
     .from('journey_media')
     .select('sort_order')
@@ -432,6 +479,7 @@ export async function adminUploadMedia(eventId, file, metadata = {}) {
     caption: mediaRow.caption,
     altText: mediaRow.alt_text,
     order: mediaRow.sort_order,
+    wasCompressed,
   }
 }
 

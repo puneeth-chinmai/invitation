@@ -45,6 +45,7 @@ export default function AdminEventEditor({
   const [statusMsg, setStatusMsg] = useState(null)
   const [uploadProgress, setUploadProgress] = useState([])
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
 
   // Handle Form Input Changes
   const handleInputChange = (e) => {
@@ -80,50 +81,79 @@ export default function AdminEventEditor({
 
   // Multi-File Upload Handler
   const handleFileUpload = async (e) => {
+    if (isUploading) return
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
 
+    setIsUploading(true)
     setStatusMsg(null)
     const newProgressList = files.map((f, i) => ({
       name: f.name,
-      status: 'uploading',
-      id: `${f.name}-${i}`,
+      status: 'pending',
+      stage: 'Preparing...',
+      id: `${f.name}-${i}-${Date.now()}`,
     }))
     setUploadProgress(newProgressList)
 
     const newlyUploaded = []
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      try {
-        const item = await adminUploadMedia(formData.id, file)
-        newlyUploaded.push(item)
-
-        setUploadProgress((prev) =>
-          prev.map((p, idx) => (idx === i ? { ...p, status: 'success' } : p))
-        )
-      } catch (err) {
-        setUploadProgress((prev) =>
-          prev.map((p, idx) =>
-            idx === i ? { ...p, status: 'error', error: err.message } : p
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        try {
+          const item = await adminUploadMedia(
+            formData.id,
+            file,
+            {},
+            (stage, detail) => {
+              setUploadProgress((prev) =>
+                prev.map((p, idx) =>
+                  idx === i ? { ...p, status: stage, stage: detail } : p
+                )
+              )
+            }
           )
-        )
+          newlyUploaded.push(item)
+
+          setUploadProgress((prev) =>
+            prev.map((p, idx) =>
+              idx === i
+                ? {
+                    ...p,
+                    status: 'success',
+                    stage: item.wasCompressed ? 'Optimized & Uploaded' : 'Uploaded successfully',
+                  }
+                : p
+            )
+          )
+        } catch (err) {
+          setUploadProgress((prev) =>
+            prev.map((p, idx) =>
+              idx === i ? { ...p, status: 'error', error: err.message } : p
+            )
+          )
+        }
+      }
+
+      // Refresh local media list
+      if (newlyUploaded.length > 0) {
+        const updatedMedia = [...mediaList, ...newlyUploaded]
+        setMediaList(updatedMedia)
+
+        // Automatically set cover if none was set
+        if (!formData.coverMediaId) {
+          const firstImg = newlyUploaded.find((m) => m.type === 'image')
+          if (firstImg) {
+            setFormData((prev) => ({ ...prev, coverMediaId: firstImg.id }))
+          }
+        }
+      }
+    } finally {
+      setIsUploading(false)
+      if (e?.target) {
+        e.target.value = ''
       }
     }
-
-    // Refresh local media list
-    const updatedMedia = [...mediaList, ...newlyUploaded]
-    setMediaList(updatedMedia)
-
-    // Automatically set cover if none was set
-    if (!formData.coverMediaId && newlyUploaded.length > 0) {
-      const firstImg = newlyUploaded.find((m) => m.type === 'image')
-      if (firstImg) {
-        setFormData((prev) => ({ ...prev, coverMediaId: firstImg.id }))
-      }
-    }
-
-    e.target.value = ''
   }
 
   // Delete Media
@@ -212,6 +242,7 @@ export default function AdminEventEditor({
             type="button"
             className="admin-btn secondary"
             onClick={onCancel}
+            disabled={isUploading}
             style={{ marginBottom: '8px' }}
           >
             ← Back to All Events
@@ -234,9 +265,9 @@ export default function AdminEventEditor({
             type="button"
             className="admin-btn primary"
             onClick={handleSaveEvent}
-            disabled={saving}
+            disabled={saving || isUploading}
           >
-            {saving ? 'Saving...' : 'Save Event'}
+            {saving ? 'Saving...' : isUploading ? 'Uploading Media...' : 'Save Event'}
           </button>
         </div>
       </div>
@@ -407,11 +438,19 @@ export default function AdminEventEditor({
             </p>
           </div>
 
-          <label className="admin-btn primary" style={{ cursor: 'pointer' }}>
-            <span>+ Upload Media</span>
+          <label
+            className="admin-btn primary"
+            style={{
+              cursor: isUploading ? 'not-allowed' : 'pointer',
+              opacity: isUploading ? 0.65 : 1,
+              pointerEvents: isUploading ? 'none' : 'auto',
+            }}
+          >
+            <span>{isUploading ? 'Uploading...' : '+ Upload Media'}</span>
             <input
               type="file"
               multiple
+              disabled={isUploading}
               accept="image/*,video/*"
               onChange={handleFileUpload}
               style={{ display: 'none' }}
@@ -422,32 +461,69 @@ export default function AdminEventEditor({
         {/* Upload Progress List */}
         {uploadProgress.length > 0 && (
           <div style={{ marginBottom: '16px' }}>
-            {uploadProgress.map((p) => (
-              <div
-                key={p.id}
-                style={{
-                  fontSize: '12px',
-                  padding: '4px 8px',
-                  marginBottom: '4px',
-                  borderRadius: '4px',
-                  background:
-                    p.status === 'success'
+            {uploadProgress.map((p) => {
+              const isDone = p.status === 'success'
+              const isErr = p.status === 'error'
+              const isCompressing = p.status === 'compressing'
+              const isUploadingStage = p.status === 'uploading'
+              const isSaving = p.status === 'saving'
+
+              let label = p.stage || 'Processing...'
+              if (isDone) label = p.stage || 'Completed'
+              else if (isErr) label = 'Failed'
+              else if (isCompressing) label = p.stage || 'Optimizing image...'
+              else if (isUploadingStage) label = p.stage || 'Uploading to storage...'
+              else if (isSaving) label = p.stage || 'Registering media...'
+
+              return (
+                <div
+                  key={p.id}
+                  style={{
+                    fontSize: '12px',
+                    padding: '6px 10px',
+                    marginBottom: '6px',
+                    borderRadius: '4px',
+                    background: isDone
                       ? '#e6f4ea'
-                      : p.status === 'error'
+                      : isErr
                         ? '#fde8e8'
-                        : '#e8f0fe',
-                  color:
-                    p.status === 'success'
+                        : isCompressing
+                          ? '#fef3c7'
+                          : '#e8f0fe',
+                    color: isDone
                       ? '#137333'
-                      : p.status === 'error'
+                      : isErr
                         ? '#9b1c1c'
-                        : '#1a56db',
-                }}
-              >
-                {p.name}: {p.status === 'uploading' ? 'Uploading...' : p.status}
-                {p.error && ` (${p.error})`}
-              </div>
-            ))}
+                        : isCompressing
+                          ? '#92400e'
+                          : '#1a56db',
+                    border: `1px solid ${
+                      isDone
+                        ? '#b7e1cd'
+                        : isErr
+                          ? '#f8b4b4'
+                          : isCompressing
+                            ? '#fde68a'
+                            : '#bfdbfe'
+                    }`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '6px',
+                  }}
+                >
+                  <span style={{ fontWeight: 500 }}>
+                    {p.name}: <span style={{ fontWeight: 'normal' }}>{label}</span>
+                  </span>
+                  {p.error && (
+                    <span style={{ fontSize: '11px', color: '#9b1c1c' }}>
+                      ({p.error})
+                    </span>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
 
@@ -591,20 +667,33 @@ export default function AdminEventEditor({
         ) : (
           <div
             className="admin-dropzone"
-            onClick={() => document.getElementById('media-upload-input')?.click()}
+            onClick={() => {
+              if (!isUploading) {
+                document.getElementById('media-upload-input')?.click()
+              }
+            }}
+            style={{
+              cursor: isUploading ? 'not-allowed' : 'pointer',
+              opacity: isUploading ? 0.65 : 1,
+            }}
           >
             <input
               id="media-upload-input"
               type="file"
               multiple
+              disabled={isUploading}
               accept="image/*,video/*"
               onChange={handleFileUpload}
               style={{ display: 'none' }}
             />
             <div style={{ fontSize: '28px', marginBottom: '8px' }}>📷</div>
-            <strong style={{ color: '#6d1620' }}>No Media Uploaded Yet</strong>
+            <strong style={{ color: '#6d1620' }}>
+              {isUploading ? 'Processing & Uploading Media...' : 'No Media Uploaded Yet'}
+            </strong>
             <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#6a441e' }}>
-              Click here to select and upload photographs and videos for this event.
+              {isUploading
+                ? 'Please wait while photographs and videos are being optimized and uploaded.'
+                : 'Click here to select and upload photographs and videos for this event.'}
             </p>
           </div>
         )}

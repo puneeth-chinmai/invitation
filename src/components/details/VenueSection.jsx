@@ -48,7 +48,7 @@ export default function VenueSection() {
               <LocationPinLineIcon size={18} color="#6d1620" />
             </div>
             <h4 className="venue-grand-name">Gayathri Devi Kalyana Mantapa</h4>
-            <p className="venue-grand-locality">Chikkamagaluru, Karnataka, India</p>
+            <p className="venue-grand-locality">Chikkamagaluru</p>
             <div className="venue-details-accent-rule" />
           </div>
 
