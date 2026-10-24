@@ -212,14 +212,14 @@
   text-transform: uppercase;
 }
 
-/* Stream of Milestone Rows */
+/* Stream of Milestone Rows with Spacious Editorial Rhythm */
 .map-milestones-stream {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: clamp(48px, 7vw, 76px);
+  gap: clamp(96px, 13vw, 150px);
   z-index: 3;
-  padding: 8px 0 20px;
+  padding: 16px 0 36px;
 }
 
 /* Individual Milestone Row */
@@ -228,21 +228,23 @@
   display: flex;
   width: 100%;
   box-sizing: border-box;
+  contain: layout style;
 }
 
 .map-milestone-row.row-left {
   justify-content: flex-start;
-  padding-left: clamp(10px, 4vw, 80px);
+  padding-left: clamp(16px, 5vw, 90px);
 }
 
 .map-milestone-row.row-right {
   justify-content: flex-end;
-  padding-right: clamp(10px, 4vw, 80px);
+  padding-right: clamp(16px, 5vw, 90px);
 }
 
 .map-waypoint-anchor {
   position: relative;
   display: inline-flex;
+  max-width: 100%;
 }
 
 /* Midpoint Decorator */
@@ -324,7 +326,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  padding: 6px;
+  box-sizing: border-box;
+  overflow: hidden;
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
@@ -350,19 +354,21 @@
 .bezel-notch.e { right: -2.5px; top: calc(50% - 2.5px); }
 .bezel-notch.w { left: -2.5px; top: calc(50% - 2.5px); }
 
-/* Bezel Thumbnail Photo */
+/* Bezel Thumbnail Photo - Complete, uncropped client photograph */
 .marker-thumbnail-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   display: block;
-  filter: sepia(0.06);
+  border-radius: 2px;
+  filter: none;
   transition: transform 0.3s ease;
 }
 
 .map-event-marker:hover .marker-thumbnail-img {
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
 /* Bezel Empty Placeholder */
@@ -382,8 +388,11 @@
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  border-radius: 2px;
 }
 
 .marker-video-badge {
@@ -716,6 +725,11 @@
 ----------------------------------------------------- */
 
 @media (max-width: 767px) {
+  /* Eliminate fixed 760px radial gradient overdraw during mobile scrolling */
+  .journey-light-glow {
+    display: none;
+  }
+
   .journey-content-container {
     max-width: 100vw;
     padding-left: 8px;
@@ -723,39 +737,56 @@
   }
 
   .map-milestones-stream {
-    gap: 40px;
+    gap: clamp(56px, 10vw, 84px);
   }
 
-  .map-milestone-row.row-left {
-    padding-left: 6px;
-  }
-
+  .map-milestone-row.row-left,
   .map-milestone-row.row-right {
-    padding-right: 6px;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .map-event-marker {
     max-width: 290px;
     gap: 10px;
+    will-change: auto;
   }
 
+  /* Eliminate expensive backdrop-filter: blur(10px) across scrolling plaques on mobile GPU */
   .marker-plaque {
     padding: 6px 10px;
     min-width: 130px;
     max-width: 185px;
+    background: #FFFDF8;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 3px 10px rgba(45, 22, 6, 0.08);
   }
 
   .marker-plaque-title {
     font-size: 12px;
   }
+
+  .start-seal-inner {
+    background: #FFFCF5;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .marker-media-badge {
+    background: rgba(22, 10, 6, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 @media (max-width: 380px) {
-  .map-milestone-row.row-left {
-    padding-left: 2px;
-  }
+  .map-milestone-row.row-left,
   .map-milestone-row.row-right {
-    padding-right: 2px;
+    padding-left: 0;
+    padding-right: 0;
+    justify-content: center;
   }
   .map-event-marker {
     max-width: 260px;
@@ -772,6 +803,25 @@
   }
   .marker-plaque-title {
     font-size: 11px;
+  }
+}
+
+@media (hover: none) {
+  .map-event-marker:hover {
+    transform: none;
+  }
+  .map-event-marker:hover .marker-photo-bezel {
+    border-color: #b88628;
+    box-shadow:
+      0 0 0 3px rgba(255, 253, 248, 0.95),
+      0 0 0 4.5px rgba(184, 134, 40, 0.45),
+      0 6px 18px rgba(45, 22, 6, 0.16);
+  }
+  .map-event-marker:hover .marker-thumbnail-img {
+    transform: none;
+  }
+  .map-event-marker:hover .marker-bezel-glow {
+    opacity: 0;
   }
 }
 
@@ -964,12 +1014,19 @@
   border-radius: 4px;
   cursor: pointer;
   background: #f7f0e3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-sizing: border-box;
 }
 
 .gallery-photo-thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   display: block;
   transition: transform 0.3s ease;
 }

@@ -5,6 +5,9 @@ import WeddingAwaits from './components/details/WeddingAwaits'
 import OurJourney from './components/journey/OurJourney'
 import BlessingsWishes from './components/wishes/BlessingsWishes'
 import RoyalNav from './components/navigation/RoyalNav'
+import templeBgUrl from './assets/images/temple_interior_bg.jpg'
+import ganeshaSymbolUrl from './assets/images/ganesha_symbol.png'
+import royalLotusSealUrl from './assets/images/royal_lotus_seal.png'
 import {
   SECTIONS,
   DEFAULT_SECTION_ID,
@@ -16,6 +19,20 @@ import {
 // Lazily load AdminApp so public guests do not load admin bundle
 const AdminApp = lazy(() => import('./components/admin/AdminApp'))
 
+// Immediately kick off browser decoding for critical above-the-fold assets
+if (typeof window !== 'undefined') {
+  const gImg = new Image()
+  gImg.src = ganeshaSymbolUrl
+  if (gImg.decode) gImg.decode().catch(() => {})
+
+  const sImg = new Image()
+  sImg.src = royalLotusSealUrl
+  if (sImg.decode) sImg.decode().catch(() => {})
+
+  const tImg = new Image()
+  tImg.src = templeBgUrl
+  if (tImg.decode) tImg.decode().catch(() => {})
+}
 
 /**
  * App
@@ -79,12 +96,23 @@ export default function App() {
           ? DEFAULT_SECTION_ID
           : 'opening'
 
-
-
   const [activeSectionId, setActiveSectionId] = useState(initialSection)
   const [showOpening, setShowOpening] = useState(initialSection === 'opening')
   const [openingFadingOut, setOpeningFadingOut] = useState(false)
   const [invitationInitialState, setInvitationInitialState] = useState('closed')
+
+  // Ensure critical invitation background image is decoded and ready in cache
+  useEffect(() => {
+    const img = new Image()
+    img.src = templeBgUrl
+    if (img.complete && img.naturalWidth > 0) {
+      if (img.decode) img.decode().catch(() => {})
+    } else {
+      img.onload = () => {
+        if (img.decode) img.decode().catch(() => {})
+      }
+    }
+  }, [])
 
   // Handle completion of opening cinematic sequence
   const handleOpeningComplete = useCallback(() => {
@@ -92,7 +120,7 @@ export default function App() {
     setInvitationInitialState('closed')
     setOpeningFadingOut(true)
 
-    // Once crossfade finishes (900ms), cleanly unmount OpeningScene to free WebGL 3D resources
+    // Once crossfade finishes (950ms), cleanly unmount OpeningScene to free WebGL 3D resources
     setTimeout(() => {
       setShowOpening(false)
     }, 950)

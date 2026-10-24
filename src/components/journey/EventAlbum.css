@@ -104,6 +104,35 @@
   border-color: #dfb66d;
 }
 
+.royal-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.royal-top-fullscreen-btn {
+  background: rgba(109, 22, 32, 0.06);
+  border: 1px solid rgba(196, 150, 76, 0.45);
+  color: #6d1620;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-top-fullscreen-btn:hover {
+  background: #6d1620;
+  color: #FFF8E7;
+  border-color: #dfb66d;
+}
+
 .royal-album-close-btn {
   background: rgba(109, 22, 32, 0.06);
   border: 1px solid rgba(196, 150, 76, 0.45);
@@ -206,6 +235,679 @@
   line-height: 1.4;
 }
 
+/* Prototype Keepsake Header Blessing Seal */
+.keepsake-header-blessing {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Noto Serif Kannada', serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: #8c6527;
+  background: rgba(196, 150, 76, 0.12);
+  border: 1px solid rgba(196, 150, 76, 0.35);
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-bottom: 2px;
+}
+
+/* -----------------------------------------------------
+   3B. ROYAL INNER EVENT KEEPSAKE & IMMERSIVE ALBUM ENTRY
+   (Phase 2: Royal wedding chronicle layout with content-driven height)
+----------------------------------------------------- */
+
+.royal-album-window.is-editorial-keepsake {
+  position: relative;
+  width: 100%;
+  max-width: min(94vw, 680px);
+  height: auto;
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  background: radial-gradient(ellipse at 50% 6%, #FFFDF9 0%, #FAF3E6 52%, #F4E7CE 100%);
+  border: 2px solid #b88628;
+  border-radius: 12px;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.65),
+    0 6px 22px rgba(109, 22, 32, 0.22),
+    inset 0 1px 3px rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.royal-album-window.is-editorial-keepsake .royal-album-top-bar {
+  background: linear-gradient(180deg, #FFFDF9 0%, #FAF4E8 100%);
+  border-bottom: 1px solid rgba(196, 150, 76, 0.35);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.royal-album-window.is-editorial-keepsake .royal-album-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(109, 22, 32, 0.06);
+  border: 1px solid rgba(196, 150, 76, 0.5);
+  color: #6d1620;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-album-window.is-editorial-keepsake .royal-album-back-btn:hover {
+  background: #6d1620;
+  color: #FFF8E7;
+  border-color: #dfb66d;
+}
+
+.royal-album-window.is-editorial-keepsake .royal-album-back-btn:focus-visible {
+  outline: 2px solid #dfb66d;
+  outline-offset: 2px;
+}
+
+.inner-header-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #8c6527;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.inner-seal-gem {
+  color: #b88628;
+  font-size: 9px;
+  opacity: 0.85;
+}
+
+/* Body container hugs content with zero giant gap */
+.inner-editorial-keepsake-body {
+  height: auto;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(14px, 2.5vw, 22px) clamp(14px, 3vw, 26px) clamp(16px, 3vw, 26px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.45) transparent;
+}
+
+.inner-editorial-keepsake-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.inner-editorial-keepsake-body::-webkit-scrollbar-thumb {
+  background: rgba(196, 150, 76, 0.45);
+  border-radius: 4px;
+}
+
+/* Royal Wedding Chronicle Card Stack */
+.inner-chronicle-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* -----------------------------------------------------
+   SECTION 1: EVENT IDENTITY & METADATA
+----------------------------------------------------- */
+.inner-identity-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.inner-chronicle-title {
+  font-family: 'Playfair Display', 'Cinzel', serif;
+  font-size: clamp(22px, 3.8vw, 32px);
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.02em;
+  line-height: 1.22;
+  margin: 2px 0 0;
+}
+
+.inner-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.inner-meta-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #8c6527;
+}
+
+.inner-meta-date .meta-accent {
+  color: #b88628;
+  font-size: 10px;
+}
+
+.inner-meta-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #6a441e;
+}
+
+.inner-meta-location svg {
+  color: #b88628;
+}
+
+.inner-meta-category {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Cinzel', serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6d1620;
+  background: rgba(109, 22, 32, 0.06);
+  border: 1px solid rgba(109, 22, 32, 0.22);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.inner-identity-divider {
+  width: 60%;
+  max-width: 280px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(184, 134, 40, 0.6) 50%, transparent 100%);
+  margin: 4px 0 2px;
+}
+
+/* -----------------------------------------------------
+   SECTION 2: DEDICATED STORY PANEL (ABOVE COVER PHOTO)
+----------------------------------------------------- */
+.inner-story-panel {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(255, 252, 245, 0.95) 0%, rgba(250, 243, 230, 0.9) 100%);
+  border: 1px solid rgba(196, 150, 76, 0.42);
+  border-radius: 8px;
+  padding: clamp(12px, 2.2vw, 16px) clamp(14px, 2.8vw, 22px);
+  box-shadow:
+    0 2px 8px rgba(45, 22, 6, 0.04),
+    inset 0 1px 2px rgba(255, 255, 255, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.story-corner {
+  position: absolute;
+  font-size: 8px;
+  color: rgba(184, 134, 40, 0.45);
+  line-height: 1;
+  pointer-events: none;
+}
+.story-corner.tl { top: 4px; left: 5px; }
+.story-corner.tr { top: 4px; right: 5px; }
+.story-corner.bl { bottom: 4px; left: 5px; }
+.story-corner.br { bottom: 4px; right: 5px; }
+
+.story-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.story-flourish {
+  color: rgba(184, 134, 40, 0.65);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.story-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #8c6527;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.story-body {
+  text-align: center;
+  width: 100%;
+}
+
+.story-body p {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: clamp(15.5px, 1.8vw, 17.51px);
+  line-height: 1.62;
+  color: #3f2716;
+  margin: 0;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+/* -----------------------------------------------------
+   SECTION 3: ONE MAGNIFICENT FRAMED COVER PHOTOGRAPH
+----------------------------------------------------- */
+.inner-cover-showcase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+/* Exquisite Antique Gold Fine-Art Keepsake Frame (Adapts to Photo Aspect Ratio) */
+.inner-cover-frame {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: min(100%, 480px);
+  height: auto;
+  margin: 0 auto;
+  background: #FFFDF9;
+  border: 2px solid #b88628;
+  outline: 1px solid rgba(184, 134, 40, 0.38);
+  outline-offset: 3px;
+  border-radius: 6px;
+  padding: 6px;
+  box-sizing: border-box;
+  box-shadow:
+    0 14px 38px rgba(45, 22, 6, 0.16),
+    0 3px 10px rgba(109, 22, 32, 0.09);
+  outline: none;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.inner-cover-frame.is-interactive {
+  cursor: pointer;
+}
+
+.inner-cover-frame.is-interactive:hover {
+  transform: translateY(-2px);
+  border-color: #dfb66d;
+  box-shadow:
+    0 18px 46px rgba(45, 22, 6, 0.22),
+    0 5px 14px rgba(109, 22, 32, 0.14);
+}
+
+.inner-cover-frame.is-interactive:focus-visible {
+  outline: 2px solid #dfb66d;
+  outline-offset: 6px;
+}
+
+/* Warm ivory mat that closely fits the photo */
+.inner-cover-frame-matting {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  height: auto;
+  background: #FAF3E6;
+  border: 1px solid rgba(196, 150, 76, 0.35);
+  border-radius: 4px;
+  overflow: hidden;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+/* Photo displays at its natural aspect ratio without artificial height clamping or cropping */
+.inner-cover-photo-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(65vh, 520px);
+  object-fit: contain;
+  border-radius: 2px;
+  user-select: none;
+}
+
+/* Corner filigree brackets on inner single cover */
+.inner-filigree {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #b88628;
+  pointer-events: none;
+  z-index: 4;
+}
+.inner-filigree.tl { top: 3px; left: 3px; border-right: none; border-bottom: none; }
+.inner-filigree.tr { top: 3px; right: 3px; border-left: none; border-bottom: none; }
+.inner-filigree.bl { bottom: 3px; left: 3px; border-right: none; border-top: none; }
+.inner-filigree.br { bottom: 3px; right: 3px; border-left: none; border-top: none; }
+
+/* Empty state matting */
+.inner-cover-empty-matting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  color: #8c6527;
+  text-align: center;
+  min-width: min(280px, 80vw);
+  min-height: 180px;
+  box-sizing: border-box;
+}
+
+.inner-empty-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6d1620;
+  letter-spacing: 0.05em;
+}
+
+.inner-empty-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #6a441e;
+}
+
+/* Subtle Video Pill on Inner Cover */
+.inner-video-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(22, 10, 6, 0.9);
+  border: 1px solid #c4964c;
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* -----------------------------------------------------
+   SECTION 4: SIGNATURE ALBUM INVITATION
+   (Shown only when event has multi-media items)
+----------------------------------------------------- */
+.inner-album-invitation-wrapper {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  justify-content: center;
+}
+
+.inner-view-album-affordance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(255, 253, 249, 0.98) 0%, rgba(250, 243, 230, 0.96) 100%);
+  border: 1.5px solid #b88628;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 14px rgba(45, 22, 6, 0.07),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.inner-view-album-affordance:hover {
+  background: linear-gradient(135deg, #FFFDF9 0%, #FAF0DF 100%);
+  border-color: #dfb66d;
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(109, 22, 32, 0.16),
+    0 2px 6px rgba(45, 22, 6, 0.08);
+}
+
+.inner-view-album-affordance:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(45, 22, 6, 0.1);
+}
+
+.inner-view-album-affordance:focus-visible {
+  outline: 2px solid #dfb66d;
+  outline-offset: 3px;
+}
+
+/* Illustrated Keepsake Book Motif */
+.affordance-book-motif {
+  position: relative;
+  width: 28px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.book-binding {
+  position: absolute;
+  width: 2px;
+  height: 18px;
+  background: #6d1620;
+  border-radius: 1px;
+  z-index: 3;
+}
+
+.book-leaf-left,
+.book-leaf-right {
+  position: absolute;
+  top: 3px;
+  width: 12px;
+  height: 17px;
+  border: 1.5px solid #b88628;
+  background: #FAF3E6;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(45, 22, 6, 0.12);
+  transition: transform 0.25s ease;
+}
+
+.book-leaf-left {
+  left: 1px;
+  transform-origin: right center;
+  transform: rotate(-6deg);
+}
+
+.book-leaf-right {
+  right: 1px;
+  transform-origin: left center;
+  transform: rotate(6deg);
+}
+
+.book-sparkle {
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  font-size: 9px;
+  color: #dfb66d;
+  line-height: 1;
+  animation: sparkleTwinkle 2.4s ease-in-out infinite;
+}
+
+@keyframes sparkleTwinkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.inner-view-album-affordance:hover .book-leaf-left {
+  transform: rotate(-12deg) scale(1.05);
+}
+
+.inner-view-album-affordance:hover .book-leaf-right {
+  transform: rotate(12deg) scale(1.05);
+}
+
+.affordance-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.affordance-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6d1620;
+  text-transform: uppercase;
+  line-height: 1.25;
+}
+
+.affordance-count {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 500;
+  color: #8c6527;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.affordance-arrow {
+  color: #b88628;
+  font-size: 15px;
+  transition: transform 0.2s ease, color 0.2s ease;
+  line-height: 1;
+}
+
+.inner-view-album-affordance:hover .affordance-arrow {
+  transform: translateX(3px);
+  color: #6d1620;
+}
+
+/* -----------------------------------------------------
+   RESPONSIVE BREAKPOINTS (Mobile-First Polish)
+----------------------------------------------------- */
+@media (max-width: 600px) {
+  .royal-album-window.is-editorial-keepsake {
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+    border-radius: 10px;
+  }
+
+  .inner-editorial-keepsake-body {
+    padding: 12px 12px 16px;
+  }
+
+  .inner-chronicle-title {
+    font-size: clamp(20px, 5.8vw, 26px);
+  }
+
+  .inner-story-panel {
+    padding: 10px 12px;
+    margin: 4px 0 8px;
+  }
+
+  .story-body p {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .inner-cover-frame {
+    width: fit-content;
+    max-width: 100%;
+    height: auto;
+    padding: 5px;
+  }
+
+  .inner-cover-frame-matting {
+    padding: 3px;
+  }
+
+  .inner-cover-photo-img {
+    max-height: min(65vh, 460px);
+  }
+}
+
+@media (max-width: 360px) {
+  .inner-editorial-keepsake-body {
+    padding: 8px 8px 14px;
+  }
+
+  .inner-cover-frame {
+    padding: 4px;
+  }
+
+  .inner-cover-photo-img {
+    max-height: min(65vh, 380px);
+  }
+
+  .inner-meta-row {
+    gap: 6px 10px;
+  }
+
+  .inner-meta-date,
+  .inner-meta-location {
+    font-size: 10px;
+  }
+
+  .affordance-label {
+    font-size: 10.5px;
+  }
+
+  .affordance-count {
+    font-size: 12px;
+  }
+}
+
 /* -----------------------------------------------------
    4. SINGLE MAIN CAROUSEL VIEWER
 ----------------------------------------------------- */
@@ -295,16 +997,102 @@
   justify-content: center;
 }
 
-/* Photo Viewer Container */
+/* Floating Antique-Gold Viewer Control Toolbar */
+.royal-viewer-toolbar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(22, 10, 6, 0.85);
+  border: 1.5px solid rgba(223, 182, 109, 0.65);
+  border-radius: 20px;
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  z-index: 30;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.royal-viewer-tool-btn {
+  background: transparent;
+  border: none;
+  color: #FFF8E7;
+  font-size: 16px;
+  font-weight: 700;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-viewer-tool-btn:hover:not(:disabled) {
+  background: #6d1620;
+  color: #dfb66d;
+  transform: scale(1.08);
+}
+
+.royal-viewer-tool-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.royal-zoom-level-pill {
+  background: rgba(109, 22, 32, 0.35);
+  border: 1px solid rgba(196, 150, 76, 0.45);
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.royal-zoom-level-pill:hover,
+.royal-zoom-level-pill.is-active {
+  background: #6d1620;
+  border-color: #dfb66d;
+  box-shadow: 0 0 8px rgba(109, 22, 32, 0.5);
+}
+
+.royal-zoom-level-pill .reset-glyph {
+  font-size: 11px;
+  color: #dfb66d;
+}
+
+/* Photo Viewer Container & Non-Destructive Transform Layer */
 .royal-carousel-photo-container {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: zoom-in;
   position: relative;
   background: #FAF4E8;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+}
+
+.royal-zoom-transform-layer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
 }
 
 .royal-carousel-photo {
@@ -314,36 +1102,15 @@
   height: auto;
   object-fit: contain;
   display: block;
-  transition: transform 0.25s ease;
-}
-
-.royal-carousel-photo-container:hover .royal-carousel-photo {
-  transform: scale(1.015);
-}
-
-.royal-carousel-zoom-pill {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  background: rgba(18, 8, 4, 0.75);
-  border: 1px solid rgba(223, 182, 109, 0.6);
-  color: #FFF8E7;
-  font-family: 'Cinzel', serif;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  padding: 3px 8px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
   pointer-events: none;
-  opacity: 0.9;
-  transition: opacity 0.2s ease, background 0.2s ease;
 }
 
-.royal-carousel-photo-container:hover .royal-carousel-zoom-pill {
-  opacity: 1;
-  background: rgba(109, 22, 32, 0.88);
+.royal-carousel-photo-container.is-zoomed {
+  touch-action: none;
+}
+
+.royal-carousel-photo-container.is-dragging {
+  cursor: grabbing !important;
 }
 
 /* Video Viewer Container */
@@ -410,21 +1177,22 @@
   margin-left: 4px;
 }
 
-.royal-enlarge-text-btn {
-  background: transparent;
-  border: 1px solid rgba(196, 150, 76, 0.4);
+.royal-reset-zoom-text-btn {
+  background: rgba(109, 22, 32, 0.08);
+  border: 1px solid rgba(196, 150, 76, 0.45);
   color: #6d1620;
   font-family: 'Cinzel', serif;
   font-size: 10px;
   font-weight: 600;
+  letter-spacing: 0.04em;
   padding: 2px 8px;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-.royal-enlarge-text-btn:hover {
+.royal-reset-zoom-text-btn:hover {
   background: #6d1620;
   color: #FFF8E7;
   border-color: #dfb66d;
@@ -483,7 +1251,11 @@
   overflow: hidden;
   background: #FAF4E8;
   cursor: pointer;
-  padding: 0;
+  padding: 2px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   transition: all 0.2s ease;
   outline: none;
@@ -504,9 +1276,11 @@
 }
 
 .royal-thumb-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   display: block;
 }
 
@@ -618,17 +1392,117 @@
   color: rgba(255, 248, 231, 0.75);
 }
 
-.album-lightbox-close-btn {
+.album-lightbox-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lightbox-tool-btn.fullscreen-btn {
   background: rgba(22, 10, 6, 0.7);
   border: 1px solid rgba(196, 150, 76, 0.5);
   color: #FFF8E7;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox-tool-btn.fullscreen-btn:hover {
+  background: #6d1620;
+  border-color: #dfb66d;
+  color: #dfb66d;
+}
+
+.album-lightbox-photo-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 80vh;
+  max-height: 80dvh;
+  overflow: hidden;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.album-lightbox-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.album-lightbox-spinner {
+  width: 34px;
+  height: 34px;
+  border: 2.5px solid rgba(196, 150, 76, 0.25);
+  border-top-color: #dfb66d;
+  border-radius: 50%;
+  animation: albumSpin 0.75s linear infinite;
+}
+
+@keyframes albumSpin {
+  to { transform: rotate(360deg); }
+}
+
+.album-lightbox-error-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 30px 24px;
+  background: rgba(22, 10, 6, 0.75);
+  border: 1.5px solid rgba(196, 150, 76, 0.45);
+  border-radius: 8px;
+  text-align: center;
+  color: #FAF4E8;
+  max-width: 320px;
+}
+
+.album-lightbox-error-fallback .error-gem {
+  color: #dfb66d;
   font-size: 16px;
+}
+
+.album-lightbox-error-fallback .error-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #dfb66d;
+  margin: 0;
+}
+
+.album-lightbox-error-fallback .error-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13.5px;
+  font-style: italic;
+  color: rgba(250, 244, 232, 0.75);
+  margin: 0;
+}
+
+.album-lightbox-close-btn {
+  background: rgba(22, 10, 6, 0.7);
+  border: 1px solid rgba(196, 150, 76, 0.5);
+  color: #FFF8E7;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
@@ -637,6 +1511,7 @@
 .album-lightbox-close-btn:hover {
   background: #6d1620;
   border-color: #dfb66d;
+  color: #dfb66d;
   transform: rotate(90deg);
 }
 
@@ -673,6 +1548,15 @@
   border-radius: 4px;
   border: 1.5px solid rgba(196, 150, 76, 0.4);
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.85);
+  transition: opacity 0.18s ease;
+}
+
+.album-lightbox-image.is-loading {
+  opacity: 0.88;
+}
+
+.album-lightbox-image.is-loaded {
+  opacity: 1;
 }
 
 .album-lightbox-video-wrap {
@@ -715,39 +1599,169 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(22, 10, 6, 0.75);
+  background: rgba(22, 10, 6, 0.82);
   border: 1.5px solid rgba(196, 150, 76, 0.55);
   color: #FFF8E7;
   width: 44px;
   height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 20;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 30;
   -webkit-tap-highlight-color: transparent;
+  padding: 0;
 }
 
 .album-lightbox-arrow:hover {
   background: #6d1620;
   border-color: #dfb66d;
+  color: #dfb66d;
   transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 4px 16px rgba(109, 22, 32, 0.5);
 }
 
-.album-lightbox-arrow.prev { left: 8px; }
-.album-lightbox-arrow.next { right: 8px; }
+.album-lightbox-arrow:active {
+  transform: translateY(-50%) scale(0.96);
+}
 
-@media (max-width: 600px) {
+.album-lightbox-arrow.prev { left: 16px; }
+.album-lightbox-arrow.next { right: 16px; }
+
+/* Mobile Navigation Row (Option 1: Below Photograph, Above Thumbnails)
+   Hidden on desktop by default; active on mobile viewports */
+.album-lightbox-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* 1. Completely remove overlapping side chevrons from on top of the photograph */
   .album-lightbox-arrow {
-    width: 38px;
-    height: 38px;
-    font-size: 20px;
+    display: none !important;
   }
-  .album-lightbox-arrow.prev { left: 4px; }
-  .album-lightbox-arrow.next { right: 4px; }
+
+  /* 2. Compact, elegant navigation row immediately below the photograph and above thumbnails */
+  .album-lightbox-mobile-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 260px;
+    margin: 6px auto 4px;
+    flex-shrink: 0;
+    z-index: 25;
+    user-select: none;
+  }
+
+  .album-lightbox-mobile-nav-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 50%;
+    background: rgba(22, 10, 6, 0.78);
+    border: 1.5px solid rgba(196, 150, 76, 0.5);
+    color: #FAF4E8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .album-lightbox-mobile-nav-btn:hover {
+    background: #6d1620;
+    border-color: #dfb66d;
+    color: #dfb66d;
+  }
+
+  .album-lightbox-mobile-nav-btn:active {
+    background: #6d1620;
+    transform: scale(0.92);
+    border-color: #dfb66d;
+  }
+
+  .album-lightbox-mobile-counter {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #dfb66d;
+    min-width: 52px;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  }
+
+  /* 3. Stage & photo viewport fit optimization */
+  .album-lightbox-overlay {
+    padding: max(8px, env(safe-area-inset-top, 8px))
+      max(8px, env(safe-area-inset-right, 8px))
+      max(8px, env(safe-area-inset-bottom, 8px))
+      max(8px, env(safe-area-inset-left, 8px));
+  }
+
+  .album-lightbox-stage {
+    padding: 2px 0;
+    min-height: 0;
+    flex: 1 1 auto;
+  }
+
+  .album-lightbox-img-frame {
+    max-height: calc(100dvh - 190px);
+  }
+
+  .album-lightbox-image {
+    max-height: calc(100dvh - 190px);
+  }
+
+  .album-lightbox-video-wrap {
+    max-height: calc(100dvh - 190px);
+  }
+
+  .album-lightbox-thumbs-bar {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .album-lightbox-thumb-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 360px) {
+  .album-lightbox-mobile-nav {
+    gap: 12px;
+    margin: 4px auto 2px;
+  }
+
+  .album-lightbox-mobile-nav-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .album-lightbox-mobile-counter {
+    font-size: 11px;
+  }
+
+  .album-lightbox-thumb-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
 }
 
 .album-lightbox-footer {
@@ -768,17 +1782,198 @@
   line-height: 1.4;
 }
 
+/* Lightbox Thumbnails Bar */
+.album-lightbox-thumbs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: min(94vw, 780px);
+  padding: 6px 12px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(196, 150, 76, 0.5) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.album-lightbox-thumb-btn {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  background: #110805;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.album-lightbox-thumb-btn.is-active {
+  border-color: #dfb66d;
+  border-width: 2px;
+  outline: 1.5px solid rgba(223, 182, 109, 0.5);
+  outline-offset: 1px;
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+}
+
+.album-lightbox-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.album-lightbox-thumb-video-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #FFF8E7;
+  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
 /* -----------------------------------------------------
-   8. ACCESSIBILITY & PREFERS-REDUCED-MOTION
+   8. FULLSCREEN MODE (NATIVE & EXPANDED)
+----------------------------------------------------- */
+
+.royal-album-window.is-fullscreen,
+.royal-album-window:fullscreen {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  max-height: 100vh !important;
+  height: 100vh !important;
+  max-height: 100dvh !important;
+  height: 100dvh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+}
+
+.royal-album-window.is-fullscreen .royal-carousel-viewer-frame,
+.royal-album-window:fullscreen .royal-carousel-viewer-frame {
+  height: clamp(340px, 72vh, 86vh);
+}
+
+.royal-album-overlay.is-fullscreen-overlay {
+  padding: 0 !important;
+}
+
+/* -----------------------------------------------------
+   9. MOBILE & TABLET RESPONSIVE RULES
+----------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .royal-album-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(14, 6, 3, 0.96);
+    padding: 0;
+  }
+
+  .royal-album-window {
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+  }
+
+  .royal-album-top-bar {
+    padding: 8px 12px;
+  }
+
+  .royal-album-compact-header {
+    padding: 6px 12px 2px;
+    gap: 2px;
+  }
+
+  .royal-album-compact-title {
+    font-size: 16px;
+  }
+
+  .royal-album-compact-desc {
+    display: none; /* Hide lengthy story on mobile viewer to give maximum central space to photos/videos */
+  }
+
+  .royal-carousel-section {
+    padding: 4px 8px 8px;
+    gap: 4px;
+  }
+
+  .royal-carousel-viewer-frame {
+    height: clamp(260px, 54vh, 420px);
+  }
+
+  .royal-carousel-nav-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .royal-viewer-toolbar {
+    top: 6px;
+    right: 6px;
+    padding: 2px 4px;
+    gap: 2px;
+  }
+
+  .royal-viewer-tool-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+  }
+
+  .royal-thumb-item {
+    flex: 0 0 48px;
+    height: 38px;
+    transition: border-color 0.15s ease;
+  }
+}
+
+@media (hover: none) {
+  .royal-thumb-item:hover {
+    transform: none;
+  }
+
+  .royal-viewer-tool-btn:hover {
+    transform: none;
+  }
+}
+
+/* -----------------------------------------------------
+   10. ACCESSIBILITY & PREFERS-REDUCED-MOTION
 ----------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .royal-album-window,
   .royal-carousel-photo,
+  .royal-zoom-transform-layer,
   .royal-thumb-item,
   .royal-carousel-nav-btn,
   .royal-album-back-btn,
   .royal-album-close-btn,
+  .royal-viewer-tool-btn,
+  .royal-top-fullscreen-btn,
   .album-lightbox-arrow,
   .album-lightbox-close-btn {
     transition: none !important;

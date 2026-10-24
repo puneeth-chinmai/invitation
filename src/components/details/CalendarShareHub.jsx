@@ -83,15 +83,80 @@ export default function CalendarShareHub() {
     }
   }
 
-  // Handle Copy Link
+  // Handle Copy Link — resilient on mobile (iOS Safari, Android Chrome, in-app WebViews, HTTP & HTTPS)
   const handleCopyLink = async () => {
-    const url = getCanonicalUrl()
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+    const url = getCanonicalUrl() || (typeof window !== 'undefined' ? window.location.href : '')
+    if (!url) return
+
+    let copied = false
+
+    // 1. Try modern Async Clipboard API first (works on HTTPS with user gesture)
+    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
       try {
         await navigator.clipboard.writeText(url)
-        setCopySuccess(true)
-        if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
-        copyTimerRef.current = setTimeout(() => setCopySuccess(false), 2500)
+        copied = true
+      } catch {
+        copied = false
+      }
+    }
+
+    // 2. Fallback to document.execCommand('copy') for mobile HTTP, iOS Safari WKWebView, and in-app browsers
+    if (!copied && typeof document !== 'undefined') {
+      try {
+        const textArea = document.createElement('textarea')
+        textArea.value = url
+        // Position offscreen without hiding to avoid breaking execCommand
+        textArea.style.position = 'fixed'
+        textArea.style.top = '0'
+        textArea.style.left = '0'
+        textArea.style.width = '2em'
+        textArea.style.height = '2em'
+        textArea.style.padding = '0'
+        textArea.style.border = 'none'
+        textArea.style.outline = 'none'
+        textArea.style.boxShadow = 'none'
+        textArea.style.background = 'transparent'
+        textArea.style.fontSize = '16px' // Prevent iOS Safari auto-zoom
+        textArea.setAttribute('readonly', '') // Prevent mobile virtual keyboard from opening
+
+        document.body.appendChild(textArea)
+
+        // iOS Safari selection range handling
+        const isIOS = typeof navigator !== 'undefined' && /ipad|iphone|ipod/i.test(navigator.userAgent)
+        if (isIOS) {
+          const range = document.createRange()
+          range.selectNodeContents(textArea)
+          const selection = window.getSelection()
+          if (selection) {
+            selection.removeAllRanges()
+            selection.addRange(range)
+          }
+          textArea.setSelectionRange(0, 999999)
+        } else {
+          textArea.focus({ preventScroll: true })
+          textArea.select()
+        }
+
+        copied = document.execCommand('copy')
+        document.body.removeChild(textArea)
+      } catch {
+        copied = false
+      }
+    }
+
+    if (copied) {
+      setCopySuccess(true)
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+      copyTimerRef.current = setTimeout(() => setCopySuccess(false), 2500)
+    } else {
+      // 3. Fallback prompt for ultra-restricted mobile sandboxes
+      try {
+        if (typeof window !== 'undefined' && window.prompt) {
+          window.prompt('Copy invitation link:', url)
+          setCopySuccess(true)
+          if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+          copyTimerRef.current = setTimeout(() => setCopySuccess(false), 2500)
+        }
       } catch {
         setCopySuccess(false)
       }

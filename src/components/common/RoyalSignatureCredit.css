@@ -1,0 +1,273 @@
+/* ==========================================================================
+   ROYAL SIGNATURE CREDIT
+   A distinctive, animated creator signature for Shreyas G Shetty
+   Rendered directly against footer backgrounds — strictly NO boxed containers
+   ========================================================================== */
+
+/* Main Container: Two-line vertical hierarchy with reserved layout space */
+.royal-signature-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 12px auto 6px;
+  padding: 4px 8px;
+  min-height: 72px; /* Reserves layout space to guarantee zero vertical jump */
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 100%;
+  position: relative;
+}
+
+/* Line 1: Understated, elegant credit wording on a single line */
+.royal-sig-credit-line {
+  display: block;
+  font-family: 'Cinzel', 'Cormorant Garamond', serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8c6527;
+  margin: 0 0 6px 0;
+  padding: 0;
+  line-height: 1.25;
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+/* Line 2: Cohesive, animated signature link directly underneath */
+.royal-sig-brand-link {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  padding: 2px 6px;
+  margin: 0;
+  border-radius: 4px;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  white-space: nowrap;
+  min-height: 52px; /* Stable anchor height */
+  transition: opacity 0.25s ease;
+}
+
+/* Fixed-dimension wrapper holding the authentic S artwork */
+.royal-sig-s-wrapper {
+  display: inline-flex;
+  align-items: flex-end;
+  flex-shrink: 0;
+  width: 78px;
+  height: 52px;
+  position: relative;
+}
+
+/* SVG rendering the authentic gold S image with matched stroke reveal mask */
+.royal-sig-s-svg {
+  width: 78px;
+  height: 52px;
+  display: block;
+  flex-shrink: 0;
+  pointer-events: none;
+  overflow: visible;
+  filter: drop-shadow(0 1px 1px rgba(138, 88, 20, 0.18));
+}
+
+/* SVG Mask Path A: Main body and loops (length ~1850) */
+.royal-sig-mask-path-a {
+  stroke-dasharray: 1850;
+  stroke-dashoffset: 1850;
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 92px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* SVG Mask Path B: Baseline flourish extending to domain (length ~650) */
+.royal-sig-mask-path-b {
+  stroke-dasharray: 650;
+  stroke-dashoffset: 650;
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 72px;
+  stroke-linecap: round;
+}
+
+/* Viewport-triggered real handwritten animation cycle */
+.is-in-view .royal-sig-mask-path-a {
+  animation: royalSigPathACycle 8.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.is-in-view .royal-sig-mask-path-b {
+  animation: royalSigPathBCycle 8.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.is-in-view .royal-sig-domain-track {
+  animation: royalSigDomainCycle 8.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Phase 1A: Body of S draws progressively from entry through lower loop */
+@keyframes royalSigPathACycle {
+  0%, 4% {
+    stroke-dashoffset: 1850;
+  }
+  20%, 88% {
+    stroke-dashoffset: 0;
+  }
+  96%, 100% {
+    stroke-dashoffset: 1850;
+  }
+}
+
+/* Phase 1B: Flourish sweeps out from lower junction to baseline tip */
+@keyframes royalSigPathBCycle {
+  0%, 18% {
+    stroke-dashoffset: 650;
+  }
+  26%, 86% {
+    stroke-dashoffset: 0;
+  }
+  92%, 100% {
+    stroke-dashoffset: 650;
+  }
+}
+
+/* Domain Track: Fixed layout width, smooth directional writing reveal left-to-right */
+.royal-sig-domain-track {
+  display: inline-flex;
+  align-items: baseline;
+  position: relative;
+  margin-left: -30px; /* Moved closer so S flourish extends underneath as an elegant underline */
+  padding-bottom: 9.5px; /* Baseline sits naturally ~2.5px above flourish with zero letter collision */
+  clip-path: inset(0 100% 0 0); /* Reserved layout width, visually hidden until pen reaches domain */
+  white-space: nowrap;
+  vertical-align: baseline;
+  will-change: clip-path;
+}
+
+/* Phase 2: Domain continues writing left-to-right, holds complete, then retracts right-to-left */
+@keyframes royalSigDomainCycle {
+  0%, 26% {
+    clip-path: inset(0 100% 0 0);
+  }
+  42%, 74% {
+    clip-path: inset(0 0% 0 0);
+  }
+  84%, 100% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+/* Domain Text: Cormorant Garamond italic in deep royal burgundy, strictly NO underline */
+.royal-sig-domain-text {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  color: #8c5d1e; /* Deep royal burgundy matching wedding palette */
+  line-height: 1;
+  white-space: nowrap;
+  transition: color 0.25s ease;
+}
+
+/* ==========================================================================
+   HOVER & FOCUS STATES (Pointer fine)
+   Holds expanded state on hover or focus for seamless user interaction
+   ========================================================================== */
+@media (hover: hover) and (pointer: fine) {
+  .royal-sig-brand-link:hover .royal-sig-mask-path-a,
+  .royal-sig-brand-link:focus-visible .royal-sig-mask-path-a,
+  .royal-sig-brand-link:hover .royal-sig-mask-path-b,
+  .royal-sig-brand-link:focus-visible .royal-sig-mask-path-b {
+    stroke-dashoffset: 0 !important;
+    transition: stroke-dashoffset 0.3s ease;
+  }
+
+  .royal-sig-brand-link:hover .royal-sig-domain-track,
+  .royal-sig-brand-link:focus-visible .royal-sig-domain-track {
+    clip-path: inset(0 0% 0 0) !important;
+    transition: clip-path 0.3s ease;
+  }
+
+  .royal-sig-brand-link:hover .royal-sig-s-svg,
+  .royal-sig-brand-link:focus-visible .royal-sig-s-svg {
+    filter: drop-shadow(0 0 5px rgba(229, 197, 123, 0.65));
+  }
+
+  .royal-sig-brand-link:hover .royal-sig-domain-text,
+  .royal-sig-brand-link:focus-visible .royal-sig-domain-text {
+    color: #7a0505ff;
+  }
+
+  .royal-sig-brand-link:hover .royal-sig-credit-line {
+    color: #b88628;
+  }
+}
+
+.royal-sig-brand-link:focus-visible {
+  outline: 1.5px solid rgba(184, 134, 40, 0.75);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS (Guarantees zero overflow on 320px, 375px, 430px)
+   ========================================================================== */
+@media (max-width: 380px) {
+  .royal-signature-area {
+    min-height: 64px;
+    margin: 8px auto 4px;
+  }
+
+  .royal-sig-credit-line {
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    margin-bottom: 4px;
+  }
+
+  .royal-sig-s-wrapper {
+    width: 66px;
+    height: 44px;
+  }
+
+  .royal-sig-s-svg {
+    width: 66px;
+    height: 44px;
+  }
+
+  .royal-sig-domain-track {
+    margin-left: -25px; /* Proportional mobile connection underneath initial h */
+    padding-bottom: 8px; /* Maintains clean vertical clearance above flourish */
+  }
+
+  .royal-sig-domain-text {
+    font-size: 19px;
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY: PREFERS-REDUCED-MOTION
+   Shows the completed signature statically without repeated animation
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .royal-sig-mask-path-a {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .royal-sig-mask-path-b {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .royal-sig-domain-track {
+    animation: none !important;
+    clip-path: inset(0 0% 0 0) !important;
+  }
+}

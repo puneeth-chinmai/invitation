@@ -46,20 +46,6 @@ export default function WeddingDestinationNode({ destination }) {
       <p className="destination-quote">
         “{destination.subtitle}”
       </p>
-
-      <p
-        style={{
-          fontFamily: 'Cinzel, serif',
-          fontSize: '11px',
-          letterSpacing: '0.14em',
-          color: '#8c6527',
-          marginTop: '12px',
-          textTransform: 'uppercase',
-          opacity: 0.85,
-        }}
-      >
-        Chikkamagaluru, Karnataka
-      </p>
     </div>
   )
 }

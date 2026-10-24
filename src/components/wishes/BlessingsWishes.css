@@ -7,8 +7,9 @@
 .wishes-viewport {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  height: 100%;
   height: 100dvh;
   background: radial-gradient(ellipse at 50% 20%, #FFFDF9 0%, #FAF4E6 45%, #F4EAD6 100%);
   overflow-y: auto;
@@ -45,7 +46,7 @@
 
 .wishes-filigree-frame {
   position: fixed;
-  inset: 8px;
+  inset: clamp(8px, 2.5vw, 14px);
   border: 1px solid rgba(196, 150, 76, 0.35);
   pointer-events: none;
   z-index: 2;
@@ -54,7 +55,6 @@
 
 @media (min-width: 600px) {
   .wishes-filigree-frame {
-    inset: 14px;
     border-width: 1.5px;
   }
 }
@@ -66,7 +66,7 @@
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
-  padding: max(88px, calc(env(safe-area-inset-top, 16px) + 74px)) 16px max(50px, env(safe-area-inset-bottom, 36px));
+  padding: max(84px, calc(env(safe-area-inset-top, 16px) + 70px)) clamp(14px, 4vw, 24px) max(100px, calc(env(safe-area-inset-bottom, 24px) + 76px));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -75,13 +75,16 @@
   justify-content: flex-start;
 }
 
-/* Safe vertical centering in Unopened/Sealed states via auto margins */
-.wishes-state-unopened .wishes-letter-card,
-.wishes-state-sealed .wishes-sealed-stationery,
-.wishes-state-sealed .wishes-sealed-flow,
-.wishes-state-sealed .wishes-sealed-card {
+/* Safe vertical centering in Unopened ceremonial card state */
+.wishes-state-unopened .wishes-letter-card {
   margin-top: auto;
   margin-bottom: auto;
+}
+
+/* In sealed state: allow natural vertical flow without flex auto-margin clipping */
+.wishes-state-sealed .wishes-sealed-stationery {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /* Section Header */
@@ -299,7 +302,8 @@
 .wishes-desk-topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
   margin-bottom: 14px;
   padding-bottom: 10px;
   border-bottom: 1px dashed rgba(196, 150, 76, 0.35);
@@ -345,13 +349,14 @@
 
 .wishes-desk-title {
   font-family: 'Cinzel', serif;
+  text-align: center;
   font-size: clamp(19px, 4.2vw, 24px);
   font-weight: 700;
   color: #6d1620;
   letter-spacing: 0.08em;
   margin: 0 0 4px;
+  width: 100%;
 }
-
 .wishes-desk-subtitle {
   margin: 0;
   font-family: 'Cormorant Garamond', serif;
@@ -529,11 +534,11 @@
 .wishes-sealed-stationery {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: clamp(10px, 2.5vw, 16px);
   margin: 0 auto;
   box-sizing: border-box;
   animation: stationerySectionFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -542,8 +547,8 @@
 /* In opened/opening state, anchor comfortably from top to ensure full visibility & prevent flex centering clip */
 .wishes-sealed-stationery.is-opened,
 .wishes-sealed-stationery.is-opening {
-  margin-top: 8px !important;
-  margin-bottom: 24px !important;
+  margin-top: 4px !important;
+  margin-bottom: 20px !important;
 }
 
 @keyframes stationerySectionFadeIn {
@@ -579,32 +584,35 @@
 }
 
 /* 2. Unified Composition Container:
-   - Predictable dimensions with clear stacking context
+   - Proportional responsive envelope geometry (420 : 230 ratio)
    - Envelope body is anchored at bottom: 0
    - Letter layer emerges into generous space above envelope
    - No transforms on parent that move envelope and letter together */
 .stationery-composition {
   position: relative;
-  width: 100%;
-  max-width: 440px;
+  --env-w: min(calc(100vw - clamp(28px, 7vw, 48px)), 420px);
+  --env-h: calc(var(--env-w) * (230 / 420));
+  width: var(--env-w);
+  max-width: 100%;
   margin: 0 auto;
   perspective: 1200px;
+  box-sizing: border-box;
   transition: height 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* When closed: container height matches the closed envelope */
 .stationery-composition.is-closed {
-  height: 240px;
+  height: var(--env-h);
 }
 
 /* When opening or opened: container smoothly expands to accommodate letter above envelope */
 .stationery-composition.is-opening,
 .stationery-composition.is-opened {
-  height: 600px;
+  height: clamp(520px, calc(var(--env-h) + 380px), 610px);
 }
 
 .stationery-composition.is-closing {
-  height: 240px;
+  height: var(--env-h);
 }
 
 .envelope-svg-defs {
@@ -645,7 +653,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 230px;
+  height: var(--env-h);
   border-radius: 8px;
   overflow: hidden;
   background: #FAF3E3;
@@ -657,15 +665,15 @@
 }
 
 /* Layer 2: Top Flap with 3D Hinge
-   - Positioned at top hinge of envelope (bottom: 92px)
+   - Positioned at top hinge of envelope (proportional to 420x230 geometry)
    - When closed: z-index: 25, transform: rotateX(0deg)
    - When opened: z-index: 2, transform: rotateX(180deg) */
 .envelope-layer-topflap {
   position: absolute;
-  bottom: 92px;
+  bottom: calc(var(--env-h) * (92 / 230));
   left: 0;
   width: 100%;
-  height: 138px;
+  height: calc(var(--env-h) * (138 / 230));
   transform-origin: top center;
   transform-style: preserve-3d;
   transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
@@ -714,69 +722,109 @@
   border-radius: 8px 8px 0 0;
 }
 
-/* Dimensional Deep-Maroon Wax Seal on flap tip */
+/* ==========================================================================
+   ROYAL BURGUNDY & ANTIQUE-GOLD WAX SEAL
+   Realistic, sophisticated physical wedding seal with dimensional bevel & intaglio
+   ========================================================================== */
+
 .topflap-wax-seal {
   position: absolute;
-  bottom: -24px;
+  bottom: -23px;
   left: 50%;
   transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   z-index: 30;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 4px 10px rgba(58, 8, 14, 0.42))
+          drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.25));
+}
+
+@media (min-width: 480px) {
+  .topflap-wax-seal {
+    width: 52px;
+    height: 52px;
+    bottom: -25px;
+  }
 }
 
 .envelope-layer-topflap.is-closed:hover .topflap-wax-seal {
-  transform: translateX(-50%) scale(1.06);
+  transform: translateX(-50%) scale(1.05);
 }
 
 .wax-seal-body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #962231 0%, #701621 60%, #460910 100%);
-  border: 2px solid #dfb66d;
+  /* Deep wine/burgundy central surface with natural radial depth */
+  background: radial-gradient(circle at 34% 30%, #851926 0%, #63121C 48%, #420A11 82%, #2C050B 100%);
+  /* Refined antique-gold outer rim with subtle dimensional depth */
+  border: 2px solid #C4964C;
   box-shadow:
-    0 5px 16px rgba(70, 9, 16, 0.55),
-    0 2px 6px rgba(0, 0, 0, 0.35),
-    inset 0 2px 4px rgba(255, 255, 255, 0.35),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.6);
+    inset 0 1.5px 2px rgba(255, 238, 190, 0.52),   /* Top gold rim highlight */
+    inset 0 -2px 3px rgba(20, 3, 5, 0.8),          /* Bottom bevel shadow */
+    inset 0 0 0 1px rgba(78, 12, 20, 0.9),         /* Inner wax ridge */
+    0 1px 2px rgba(255, 230, 175, 0.2);            /* Subtle rim glow */
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  box-sizing: border-box;
 }
 
+/* Delicate inner embossed ring / fine ornamental border */
 .wax-seal-rim {
-  width: 36px;
-  height: 36px;
+  width: 72%;
+  height: 72%;
   border-radius: 50%;
-  border: 1px dashed rgba(223, 182, 109, 0.7);
+  border: 1px solid rgba(220, 180, 105, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  background: radial-gradient(circle at 35% 32%, rgba(138, 26, 40, 0.35) 0%, rgba(45, 6, 12, 0.6) 100%);
+  box-shadow:
+    inset 0 1.5px 2.5px rgba(15, 2, 4, 0.72),       /* Debossed intaglio central well */
+    0 1px 1px rgba(255, 235, 185, 0.28);           /* Raised ridge counter-highlight */
+  position: relative;
 }
 
+/* Elegant, clearly legible gold P&C initials, centered precisely */
 .wax-seal-text {
   font-family: 'Cinzel', serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: #dfb66d;
-  letter-spacing: 0.05em;
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.75),
-    0 -1px 0 rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.08em;
+  color: #F7E5B5;
+  background: linear-gradient(180deg, #FFF4D0 0%, #DFC07D 52%, #B88B38 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 1.5px rgba(20, 2, 5, 0.95))
+          drop-shadow(0 -0.5px 0.5px rgba(255, 245, 215, 0.35));
   user-select: none;
+  display: inline-block;
+  transform: translateY(-0.5px);
+  line-height: 1;
 }
 
+@media (min-width: 480px) {
+  .wax-seal-text {
+    font-size: 14px;
+  }
+}
+
+/* Restrained wax-like texture / soft sheen */
 .wax-seal-gleam {
   position: absolute;
-  inset: -2px;
+  top: 3px;
+  left: 5px;
+  width: 40%;
+  height: 25%;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.65) 0%, transparent 60%);
-  opacity: 0.6;
+  background: radial-gradient(ellipse at 40% 40%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 240, 200, 0.08) 55%, transparent 80%);
+  transform: rotate(-25deg);
   pointer-events: none;
+  opacity: 0.85;
 }
 
 .envelope-layer-topflap.is-opening .wax-seal-gleam {
@@ -795,11 +843,11 @@
    - Anchored relative to bottom of composition container */
 .stationery-letter-sheet {
   position: absolute;
-  bottom: 120px;
+  bottom: calc(var(--env-h) * (110 / 230));
   left: 50%;
   transform: translateX(-50%) translateY(0);
-  width: calc(100% - 24px);
-  max-width: 410px;
+  width: calc(100% - 20px);
+  max-width: 400px;
   background: radial-gradient(ellipse at 50% 25%, #FFFDF9 0%, #FAF3E3 60%, #F5EBD7 100%);
   border: 1.5px solid #b88628;
   border-radius: 8px;
@@ -807,13 +855,13 @@
     0 16px 48px rgba(45, 22, 6, 0.18),
     0 3px 12px rgba(109, 22, 32, 0.1),
     inset 0 1px 2px rgba(255, 255, 255, 0.95);
-  padding: 24px 20px 20px;
+  padding: clamp(16px, 3.5vw, 24px) clamp(12px, 3vw, 20px) clamp(16px, 3.5vw, 20px);
   box-sizing: border-box;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   z-index: 15;
   transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
 }
@@ -827,7 +875,7 @@
 
 /* Stage B — Letter Emergence: Letter rises smoothly upward */
 .stationery-letter-sheet.is-opening {
-  transform: translateX(-50%) translateY(-140px);
+  transform: translateX(-50%) translateY(calc(-1 * clamp(110px, 26vw, 135px)));
   opacity: 1;
   pointer-events: auto;
   transition-delay: 0.45s; /* Starts rising after top flap has opened */
@@ -835,7 +883,7 @@
 
 /* Opened state: letter rests securely above the envelope */
 .stationery-letter-sheet.is-opened {
-  transform: translateX(-50%) translateY(-140px);
+  transform: translateX(-50%) translateY(calc(-1 * clamp(110px, 26vw, 135px)));
   opacity: 1;
   pointer-events: auto;
 }
@@ -873,7 +921,7 @@
 
 .stationery-letter-title {
   font-family: 'Cinzel', 'Noto Serif Kannada', serif;
-  font-size: clamp(18px, 4.4vw, 24px);
+  font-size: clamp(17px, 4.2vw, 23px);
   font-weight: 700;
   color: #6d1620;
   letter-spacing: 0.06em;
@@ -888,20 +936,20 @@
 
 .stationery-letter-text--english {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(15px, 3.6vw, 17.5px);
-  line-height: 1.6;
+  font-size: clamp(14.5px, 3.5vw, 17px);
+  line-height: 1.55;
   color: #3b2210;
   font-style: italic;
-  margin: 6px 0;
+  margin: 4px 0;
   text-align: center;
 }
 
 .stationery-letter-text--kannada {
   font-family: 'Noto Serif Kannada', serif;
-  font-size: clamp(13.5px, 3.2vw, 15px);
-  line-height: 1.8;
+  font-size: clamp(13px, 3.1vw, 14.5px);
+  line-height: 1.75;
   color: #3b2210;
-  margin: 6px 0;
+  margin: 4px 0;
   text-align: center;
   letter-spacing: 0.01em;
 }
@@ -911,7 +959,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   margin-top: 2px;
 }
 
@@ -924,7 +972,7 @@
 
 .stationery-couple-names {
   font-family: 'Cinzel', 'Noto Serif Kannada', serif;
-  font-size: clamp(16px, 3.6vw, 19px);
+  font-size: clamp(15.5px, 3.5vw, 18.5px);
   font-weight: 700;
   color: #6d1620;
   letter-spacing: 0.08em;
@@ -943,9 +991,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 6px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stationery-letter-actions .wishes-btn-secondary,
+.stationery-letter-actions .wishes-btn-primary {
+  flex: 1 1 135px;
+  max-width: 100%;
+  padding: 8px 12px;
+  font-size: clamp(10.5px, 2.6vw, 12px);
+  white-space: normal;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 /* Layer 4: Envelope Front Pocket
@@ -956,7 +1017,7 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 230px;
+  height: var(--env-h);
   z-index: 20;
   filter: drop-shadow(0 -3px 8px rgba(45, 22, 6, 0.09));
   outline: none;
@@ -977,9 +1038,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: clamp(8px, 2vw, 12px);
   margin-top: 8px;
   text-align: center;
+  box-sizing: border-box;
   animation: metaFadeIn 0.35s ease-out forwards;
 }
 
@@ -990,30 +1052,36 @@
 
 .stationery-instruction {
   font-family: 'Cormorant Garamond', 'Noto Serif Kannada', serif;
-  font-size: clamp(15px, 3.6vw, 17.5px);
+  font-size: clamp(14px, 3.5vw, 17px);
   font-style: italic;
   color: #5c3d26;
-  line-height: 1.45;
+  line-height: 1.4;
   margin: 0;
+  padding: 0 8px;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .stationery-tap-pill {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: rgba(109, 22, 32, 0.07);
   border: 1.5px solid #b88628;
   color: #6d1620;
   font-family: 'Cinzel', 'Noto Serif Kannada', serif;
-  font-size: clamp(11px, 2.6vw, 12.5px);
+  font-size: clamp(10.5px, 2.6vw, 12px);
   font-weight: 600;
   letter-spacing: 0.08em;
-  padding: 8px 20px;
+  padding: 8px clamp(14px, 3.5vw, 20px);
   border-radius: 24px;
   box-shadow: 0 4px 12px rgba(45, 22, 6, 0.08);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   user-select: none;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .stationery-tap-pill:hover {
@@ -1042,17 +1110,20 @@
 .stationery-sealed-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   background: rgba(19, 115, 51, 0.08);
   border: 1px solid rgba(19, 115, 51, 0.3);
   color: #137333;
   font-family: 'Cinzel', 'Noto Serif Kannada', serif;
-  font-size: clamp(10.5px, 2.5vw, 11.5px);
+  font-size: clamp(10px, 2.4vw, 11px);
   font-weight: 600;
   letter-spacing: 0.08em;
-  padding: 5px 14px;
+  padding: 5px clamp(10px, 2.8vw, 14px);
   border-radius: 20px;
   text-transform: uppercase;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .sealed-badge-check {
@@ -1060,21 +1131,39 @@
   font-weight: 700;
 }
 
+/* ==========================================================================
+   GRATITUDE LETTER PAGE FOOTER & CREDIT
+   Reused AntiqueDivider + RoyalSignatureCredit at page bottom
+   ========================================================================== */
+
+.wishes-sealed-footer {
+  width: 100%;
+  text-align: center;
+  margin-top: clamp(16px, 3.5vw, 24px);
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  opacity: 0.92;
+}
+
 /* Mobile Responsiveness & Fallback */
 @media (max-width: 600px) {
   .stationery-composition.is-opening,
   .stationery-composition.is-opened {
-    height: 570px;
+    height: clamp(520px, calc(var(--env-h) + 380px), 590px);
   }
 
   .stationery-letter-sheet {
-    padding: 20px 14px 16px;
-    bottom: 100px;
+    padding: clamp(14px, 3.5vw, 18px) clamp(10px, 3vw, 14px) clamp(14px, 3.5vw, 16px);
+    bottom: calc(var(--env-h) * (100 / 230));
   }
 
   .stationery-letter-sheet.is-opening,
   .stationery-letter-sheet.is-opened {
-    transform: translateX(-50%) translateY(-120px);
+    transform: translateX(-50%) translateY(calc(-1 * clamp(105px, 25vw, 125px)));
   }
 
   /* Graceful mobile presentation: open envelope remains softly underneath */
@@ -1087,11 +1176,11 @@
 @media (max-width: 380px) {
   .stationery-composition.is-opening,
   .stationery-composition.is-opened {
-    height: 590px;
+    height: clamp(540px, calc(var(--env-h) + 400px), 610px);
   }
 
   .stationery-letter-sheet {
-    padding: 18px 12px 14px;
+    padding: 14px 10px 12px;
   }
 }
 

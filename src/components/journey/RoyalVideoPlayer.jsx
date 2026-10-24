@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { Maximize2, Minimize2 } from 'lucide-react'
 import { VideoPlayIcon } from './JourneyOrnaments'
 import './RoyalVideoPlayer.css'
 
@@ -42,6 +43,7 @@ export default function RoyalVideoPlayer({
   caption,
   title,
   className = '',
+  preload = 'none',
 }) {
   const videoRef = useRef(null)
   const containerRef = useRef(null)
@@ -220,21 +222,83 @@ export default function RoyalVideoPlayer({
   }
 
   // Fullscreen Toggle
-  const toggleFullscreen = () => {
-    if (!containerRef.current) return
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen?.().then(() => setIsFullscreen(true)).catch(() => {})
+  const toggleFullscreen = useCallback(() => {
+    const container = containerRef.current
+    const video = videoRef.current
+    if (!container) return
+
+    const isFs = Boolean(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement ||
+      video?.webkitDisplayingFullscreen
+    )
+
+    if (!isFs) {
+      if (container.requestFullscreen) {
+        container.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {
+          if (video?.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen()
+          }
+        })
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen()
+      } else if (container.mozRequestFullScreen) {
+        container.mozRequestFullScreen()
+      } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen()
+      } else if (video?.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen()
+      }
     } else {
-      document.exitFullscreen?.().then(() => setIsFullscreen(false)).catch(() => {})
+      if (document.exitFullscreen) {
+        document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {})
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen()
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen()
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen()
+      }
     }
-  }
+  }, [])
 
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(Boolean(document.fullscreenElement))
+      const isFs = Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      )
+      setIsFullscreen(isFs)
     }
+
+    const video = videoRef.current
+    const handleWebkitBegin = () => setIsFullscreen(true)
+    const handleWebkitEnd = () => setIsFullscreen(false)
+
     document.addEventListener('fullscreenchange', handleFsChange)
-    return () => document.removeEventListener('fullscreenchange', handleFsChange)
+    document.addEventListener('webkitfullscreenchange', handleFsChange)
+    document.addEventListener('mozfullscreenchange', handleFsChange)
+    document.addEventListener('MSFullscreenChange', handleFsChange)
+
+    if (video) {
+      video.addEventListener('webkitbeginfullscreen', handleWebkitBegin)
+      video.addEventListener('webkitendfullscreen', handleWebkitEnd)
+    }
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange)
+      document.removeEventListener('webkitfullscreenchange', handleFsChange)
+      document.removeEventListener('mozfullscreenchange', handleFsChange)
+      document.removeEventListener('MSFullscreenChange', handleFsChange)
+      if (video) {
+        video.removeEventListener('webkitbeginfullscreen', handleWebkitBegin)
+        video.removeEventListener('webkitendfullscreen', handleWebkitEnd)
+      }
+    }
   }, [])
 
   // Clean unmount — pause audio/video immediately and release media decoders
@@ -275,7 +339,7 @@ export default function RoyalVideoPlayer({
         src={src}
         poster={poster}
         playsInline
-        preload="metadata"
+        preload={preload}
         className="royal-video-screen"
         onClick={togglePlay}
         onTimeUpdate={() => {
@@ -495,20 +559,12 @@ export default function RoyalVideoPlayer({
             {/* Fullscreen Button */}
             <button
               type="button"
-              className="royal-ctrl-btn"
+              className="royal-ctrl-btn royal-ctrl-fullscreen"
               onClick={toggleFullscreen}
               aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-              title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+              title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             >
-              {isFullscreen ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-                </svg>
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 3h6v6m-1 1L14 4M9 21H3v-6m1-1l6 6M21 9v6h-6m1 1l-6-6M3 15v-6h6m-1-1l6 6" />
-                </svg>
-              )}
+              {isFullscreen ? <Minimize2 size={16} strokeWidth={2.2} /> : <Maximize2 size={16} strokeWidth={2.2} />}
             </button>
           </div>
         </div>

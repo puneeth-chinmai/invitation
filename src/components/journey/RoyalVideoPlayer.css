@@ -228,13 +228,24 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.royal-controls-left,
+.royal-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .royal-controls-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 /* Button Base */
@@ -255,6 +266,23 @@
 .royal-ctrl-btn:hover {
   color: #dfb66d;
   background: rgba(255, 255, 255, 0.1);
+}
+
+.royal-ctrl-fullscreen {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border-radius: 4px;
+  color: #FAF4E8;
+  transition: all 0.18s ease;
+}
+
+.royal-ctrl-fullscreen:hover {
+  color: #dfb66d;
+  background: rgba(223, 182, 109, 0.15);
 }
 
 /* Skip Buttons (-10s, +10s) */
@@ -367,8 +395,14 @@
 
 /* Mobile Optimizations */
 @media (max-width: 480px) {
+  .royal-video-controls-bar {
+    padding: 12px 8px 8px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
+    padding-right: max(8px, env(safe-area-inset-right, 8px));
+    padding-left: max(8px, env(safe-area-inset-left, 8px));
+  }
   .royal-volume-slider {
-    width: 38px;
+    display: none; /* Hide slider on mobile phones so button row never wraps or clips */
   }
   .royal-controls-left,
   .royal-controls-right {
@@ -379,6 +413,29 @@
     height: 48px;
   }
   .royal-time-display {
-    font-size: 12px;
+    font-size: 11.5px;
+    margin-left: 2px;
+  }
+  .royal-ctrl-btn {
+    padding: 4px 5px;
+  }
+  .royal-ctrl-fullscreen {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 380px) {
+  .skip-btn {
+    display: none; /* Hide 10s skips on narrow phones (320px - 375px) so essential controls have ample room */
+  }
+  .royal-time-display {
+    font-size: 11px;
+  }
+  .speed-btn {
+    padding: 2px 4px;
+    font-size: 9px;
   }
 }

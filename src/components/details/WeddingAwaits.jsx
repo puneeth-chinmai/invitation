@@ -6,6 +6,7 @@ import VenueSection from './VenueSection'
 import CalendarShareHub from './CalendarShareHub'
 import SectionTransitionCard from '../navigation/SectionTransitionCard'
 import { DelicateDivider } from './DetailsIcons'
+import RoyalSignatureCredit from '../common/RoyalSignatureCredit'
 import './WeddingAwaits.css'
 
 /**
@@ -106,9 +107,7 @@ export default function WeddingAwaits({ onNavigateToJourney }) {
         ========================================= */}
         <footer className="details-page-footer">
           <DelicateDivider />
-          <p className="footer-blessing-text">
-            Puneeth Weds Chinmai
-          </p>
+          <RoyalSignatureCredit />
         </footer>
       </div>
     </div>

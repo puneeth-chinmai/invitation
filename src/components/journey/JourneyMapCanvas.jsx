@@ -29,9 +29,8 @@ export function JourneyMapCanvas({
 
   const [routePathD, setRoutePathD] = useState('')
   const [dimensions, setDimensions] = useState({ width: 800, height: 1200 })
-  const [waypoints, setWaypoints] = useState([])
 
-  // Recalculate route path by measuring exact waypoint positions
+  // Recalculate route path by measuring exact card positions
   const updateRouteGeometry = useCallback(() => {
     if (!containerRef.current) return
 
@@ -57,34 +56,53 @@ export function JourneyMapCanvas({
       const startRect = startRef.current.getBoundingClientRect()
       points.push({
         x: startRect.left + startRect.width / 2 - containerRect.left,
-        y: startRect.top + startRect.height / 2 - containerRect.top,
+        y: startRect.bottom - containerRect.top + 6,
       })
     } else {
-      points.push({ x: containerW / 2, y: 35 })
+      points.push({ x: containerW / 2, y: 40 })
     }
 
-    // 2. Event Milestone Waypoints
-    const measuredWaypoints = []
+    // 2. Event Milestone Milestones (measuring card inner edges)
+    const isMobile = containerW < 768
+
     waypointRefs.current.forEach((el, idx) => {
       if (el) {
-        const rect = el.getBoundingClientRect()
-        const pt = {
-          x: rect.left + rect.width / 2 - containerRect.left,
-          y: rect.top + rect.height / 2 - containerRect.top,
-          index: idx,
+        const cardEl = el.querySelector?.('.keepsake-album-card') || el
+        const rect = cardEl.getBoundingClientRect()
+        const cardLeft = rect.left - containerRect.left
+        const cardRight = rect.right - containerRect.left
+        const cardWidth = rect.width
+        const cardTop = rect.top - containerRect.top
+        const cardHeight = rect.height
+
+        const isLeftAligned = idx % 2 === 0
+        let ptX = 0
+        const ptY = cardTop + cardHeight * 0.42
+
+        if (!isMobile) {
+          // Desktop: route tucks 14px beneath the card's inner edge (facing center of timeline)
+          ptX = isLeftAligned ? cardRight - 14 : cardLeft + 14
+        } else {
+          // Mobile: route weaves gently behind the cards
+          ptX = isLeftAligned
+            ? cardLeft + cardWidth * 0.28
+            : cardLeft + cardWidth * 0.72
         }
-        points.push(pt)
-        measuredWaypoints.push(pt)
+
+        points.push({
+          x: ptX,
+          y: ptY,
+          index: idx,
+        })
       }
     })
-    setWaypoints(measuredWaypoints)
 
     // 3. Destination Terminal
     if (terminalRef.current) {
       const termRect = terminalRef.current.getBoundingClientRect()
       points.push({
         x: termRect.left + termRect.width / 2 - containerRect.left,
-        y: termRect.top + 28 - containerRect.top,
+        y: termRect.top + 26 - containerRect.top,
       })
     } else {
       points.push({ x: containerW / 2, y: containerH - 60 })
@@ -183,13 +201,13 @@ export function JourneyMapCanvas({
 
         {/* --- The Continuous Winding Route --- */}
         {routePathD && (
-          <>
-            {/* Layer 1: Ambient Route Soft Glow (No expensive CPU feGaussianBlur) */}
+          <g className="map-continuous-route">
+            {/* Layer 1: Ambient Route Soft Glow (thinner, more restrained) */}
             <path
               d={routePathD}
               fill="none"
-              stroke="rgba(223, 182, 109, 0.3)"
-              strokeWidth="12"
+              stroke="rgba(223, 182, 109, 0.22)"
+              strokeWidth="6"
               strokeLinecap="round"
             />
 
@@ -197,67 +215,34 @@ export function JourneyMapCanvas({
             <path
               d={routePathD}
               fill="none"
-              stroke="#5a3818"
-              strokeWidth="7"
+              stroke="#6b461f"
+              strokeWidth="2.8"
               strokeLinecap="round"
               strokeLinejoin="round"
-              opacity="0.8"
+              opacity="0.85"
             />
 
-            {/* Layer 3: Antique-Gold Outer Line */}
-            <path
-              d={routePathD}
-              fill="none"
-              stroke="#8c6527"
-              strokeWidth="5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {/* Layer 4: Luminous Inner Gold Ribbon */}
+            {/* Layer 3: Radiant Antique-Gold Editorial Ribbon */}
             <path
               d={routePathD}
               fill="none"
               stroke="url(#mapGoldStroke)"
-              strokeWidth="3.2"
+              strokeWidth="2.0"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
 
-            {/* Layer 5: Fine Delicate Center Dotted Guide */}
+            {/* Layer 4: Fine Delicate Center Dotted Guide */}
             <path
               d={routePathD}
               fill="none"
-              stroke="#FFF8E7"
-              strokeWidth="1.2"
-              strokeDasharray="4 5"
+              stroke="#FFFDF9"
+              strokeWidth="0.9"
+              strokeDasharray="3 4"
               strokeLinecap="round"
-              opacity="0.85"
+              opacity="0.9"
             />
-
-            {/* Decorative Studs / Leaf Waypoints along Route */}
-            {waypoints.map((pt) => (
-              <g key={`waypoint-node-${pt.index}`}>
-                <circle
-                  cx={pt.x}
-                  cy={pt.y}
-                  r="20"
-                  fill="rgba(255, 253, 248, 0.95)"
-                  stroke="#b88628"
-                  strokeWidth="1.8"
-                />
-                <circle
-                  cx={pt.x}
-                  cy={pt.y}
-                  r="15"
-                  fill="none"
-                  stroke="rgba(196, 150, 76, 0.5)"
-                  strokeWidth="1"
-                  strokeDasharray="2 2"
-                />
-              </g>
-            ))}
-          </>
+          </g>
         )}
       </svg>
 
@@ -327,14 +312,14 @@ export default React.memo(JourneyMapCanvas)
 function buildSmoothContinuousSpline(points) {
   if (points.length < 2) return ''
 
-  let d = `M ${points[0].x},${points[0].y}`
+  let d = `M ${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`
 
   for (let i = 0; i < points.length - 1; i++) {
     const p0 = points[i]
     const p1 = points[i + 1]
 
     const dy = p1.y - p0.y
-    const cpYOffset = dy * 0.55
+    const cpYOffset = dy * 0.52
 
     // Smooth vertical S-curve tangents
     const cp1x = p0.x
@@ -343,7 +328,7 @@ function buildSmoothContinuousSpline(points) {
     const cp2x = p1.x
     const cp2y = p1.y - cpYOffset
 
-    d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p1.x},${p1.y}`
+    d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`
   }
 
   return d

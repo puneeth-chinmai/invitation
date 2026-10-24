@@ -9,6 +9,7 @@ import JourneyMapCanvas from './JourneyMapCanvas'
 import EventGalleryModal from './EventGalleryModal'
 import SectionTransitionCard from '../navigation/SectionTransitionCard'
 import { CompassRose, AntiqueDivider } from './JourneyOrnaments'
+import RoyalSignatureCredit from '../common/RoyalSignatureCredit'
 import './OurJourney.css'
 
 /**
@@ -188,17 +189,7 @@ export default function OurJourney({
         =================================================== */}
         <footer style={{ textAlign: 'center', marginTop: '24px', opacity: 0.85 }}>
           <AntiqueDivider />
-          <p
-            style={{
-              fontFamily: 'Cormorant Garamond, serif',
-              fontSize: '14px',
-              fontStyle: 'italic',
-              color: '#6a441e',
-              margin: '4px 0',
-            }}
-          >
-            Puneeth Weds Chinmai
-          </p>
+          <RoyalSignatureCredit />
         </footer>
       </div>
 

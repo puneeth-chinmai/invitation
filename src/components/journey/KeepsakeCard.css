@@ -1,0 +1,798 @@
+/* ==========================================================================
+   KEEPSAKE SCRAPBOOK EVENT CARD — EDITORIAL OUTER CARD
+   Phase 1.2: Premium Editorial Timeline Refinement
+   Royal Indian Wedding Aesthetic, Luxury Editorial, and Adaptive Scrapbook Collage.
+   ========================================================================== */
+
+/* -----------------------------------------------------
+   1. TIMELINE WRAPPER
+----------------------------------------------------- */
+
+.keepsake-card-wrapper {
+  position: relative;
+  display: flex;
+  max-width: min(92vw, 520px);
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  z-index: 5;
+}
+
+.keepsake-card-wrapper.align-left {
+  justify-content: flex-start;
+}
+
+.keepsake-card-wrapper.align-right {
+  justify-content: flex-end;
+}
+
+/* -----------------------------------------------------
+   2. LAYERED SCRAPBOOK ALBUM CARD (THE MILESTONE ITSELF)
+----------------------------------------------------- */
+
+.keepsake-album-card {
+  position: relative;
+  width: 100%;
+  background: radial-gradient(ellipse at 50% 15%, #FFFDF9 0%, #FAF5EA 60%, #F5ECDD 100%);
+  border: 1.5px solid rgba(196, 150, 76, 0.52);
+  border-radius: 12px;
+  padding: clamp(16px, 2.6vw, 22px);
+  box-shadow:
+    0 16px 42px rgba(45, 22, 6, 0.11),
+    0 4px 14px rgba(109, 22, 32, 0.07),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8vw, 15px);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+.keepsake-album-card:hover {
+  transform: translateY(-3px);
+  border-color: #b88628;
+  box-shadow:
+    0 22px 52px rgba(45, 22, 6, 0.16),
+    0 6px 18px rgba(109, 22, 32, 0.14),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+}
+
+.keepsake-album-card:focus-visible {
+  outline: 2px solid #b88628;
+  outline-offset: 4px;
+}
+
+/* Card Decorative Corner Motifs */
+.keepsake-card-corner {
+  position: absolute;
+  color: rgba(184, 134, 40, 0.45);
+  font-size: 11px;
+  pointer-events: none;
+  line-height: 1;
+}
+.keepsake-card-corner.tl { top: 8px; left: 8px; }
+.keepsake-card-corner.tr { top: 8px; right: 8px; }
+.keepsake-card-corner.bl { bottom: 8px; left: 8px; }
+.keepsake-card-corner.br { bottom: 8px; right: 8px; }
+
+/* -----------------------------------------------------
+   3. ADAPTIVE SCRAPBOOK PHOTO COLLAGE
+----------------------------------------------------- */
+
+.keepsake-album-cover-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(215px, 30vw, 265px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0 0;
+}
+
+/* --- Primary Main Photo Frame --- */
+.keepsake-frame-primary {
+  position: relative;
+  width: clamp(165px, 25vw, 215px);
+  height: clamp(185px, 28vw, 235px);
+  background: #FFFDF9;
+  border: 2px solid #b88628;
+  border-radius: 6px;
+  padding: 6px;
+  box-sizing: border-box;
+  box-shadow:
+    0 12px 30px rgba(45, 22, 6, 0.18),
+    0 3px 8px rgba(109, 22, 32, 0.09);
+  transform: rotate(-1.2deg);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+}
+
+.keepsake-album-card:hover .keepsake-frame-primary {
+  transform: rotate(-0.4deg) scale(1.02);
+  box-shadow:
+    0 16px 38px rgba(45, 22, 6, 0.23),
+    0 4px 12px rgba(109, 22, 32, 0.13);
+}
+
+.keepsake-frame-primary:focus-visible {
+  outline: 2px solid #b88628;
+  outline-offset: 3px;
+}
+
+.keepsake-primary-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #FAF3E6;
+  border: 1px solid rgba(196, 150, 76, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Secondary Photo Frame (Right, Behind with Washi Tape) --- */
+.keepsake-frame-secondary {
+  position: absolute;
+  right: clamp(10px, 4vw, 30px);
+  top: clamp(8px, 1.8vw, 16px);
+  width: clamp(120px, 19vw, 160px);
+  height: clamp(150px, 23vw, 195px);
+  background: #FFFDF9;
+  border: 1.5px solid rgba(196, 150, 76, 0.45);
+  border-radius: 4px;
+  padding: 6px 6px 12px 6px;
+  box-sizing: border-box;
+  box-shadow:
+    0 10px 24px rgba(45, 22, 6, 0.15),
+    0 2px 6px rgba(109, 22, 32, 0.07);
+  transform: rotate(4.5deg);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  z-index: 2;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.keepsake-album-card:hover .keepsake-frame-secondary {
+  transform: rotate(6.2deg) scale(1.02);
+  box-shadow: 0 14px 30px rgba(45, 22, 6, 0.2);
+}
+
+.keepsake-secondary-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #FAF3E6;
+  border: 1px solid rgba(196, 150, 76, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Decorative Washi Tape at Top of Secondary Frame */
+.keepsake-washi-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1deg);
+  width: clamp(40px, 6.5vw, 54px);
+  height: 14px;
+  background: rgba(223, 182, 109, 0.72);
+  border: 1px dashed rgba(184, 134, 40, 0.55);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* --- Tertiary Photo / Film Frame (Left, In Front with Pill Badge) --- */
+.keepsake-frame-tertiary {
+  position: absolute;
+  left: clamp(10px, 4vw, 30px);
+  bottom: clamp(10px, 2.2vw, 20px);
+  width: clamp(120px, 19vw, 165px);
+  height: clamp(138px, 21vw, 185px);
+  background: #FFFDF9;
+  border: 1.5px solid rgba(196, 150, 76, 0.48);
+  border-radius: 4px;
+  padding: 6px 6px 12px 6px;
+  box-sizing: border-box;
+  box-shadow:
+    0 12px 30px rgba(45, 22, 6, 0.19),
+    0 3px 10px rgba(109, 22, 32, 0.1);
+  transform: rotate(-4.5deg);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  z-index: 2;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.keepsake-album-card:hover .keepsake-frame-tertiary {
+  transform: rotate(-6deg) scale(1.02);
+  box-shadow:
+    0 16px 36px rgba(45, 22, 6, 0.25),
+    0 5px 12px rgba(109, 22, 32, 0.14);
+}
+
+.keepsake-tertiary-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #FAF3E6;
+  border: 1px solid rgba(196, 150, 76, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Restrained Film/Moment Pill Badge on Tertiary Frame */
+.keepsake-film-badge {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(22, 10, 6, 0.92);
+  border: 1px solid #c4964c;
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+/* --- Specific Variations for 2-Photo Duet Layout --- */
+.layout-two-photos .two-photo-main {
+  position: absolute;
+  left: calc(50% - clamp(48px, 8vw, 70px));
+  transform: rotate(-1.8deg);
+  z-index: 3;
+}
+
+.layout-two-photos .two-photo-secondary {
+  position: absolute;
+  left: calc(50% - clamp(4px, 1vw, 12px));
+  right: auto;
+  top: clamp(8px, 1.8vw, 16px);
+  transform: rotate(4.5deg);
+  z-index: 2;
+}
+
+.keepsake-album-card:hover .layout-two-photos .two-photo-main {
+  transform: rotate(-0.6deg) scale(1.02);
+}
+
+.keepsake-album-card:hover .layout-two-photos .two-photo-secondary {
+  transform: rotate(6deg) scale(1.02);
+}
+
+/* --- Specific Variations for 1-Photo Single Layout --- */
+.layout-one-photo .one-photo-single {
+  position: relative;
+  margin: 0 auto;
+  transform: rotate(-0.8deg);
+  width: clamp(170px, 26vw, 225px);
+  height: clamp(190px, 29vw, 245px);
+}
+
+.keepsake-album-card:hover .layout-one-photo .one-photo-single {
+  transform: rotate(0deg) scale(1.02);
+}
+
+/* --- Specific Fallback Frame for 0-Photo Empty Layout --- */
+.layout-empty .keepsake-frame-fallback {
+  position: relative;
+  width: clamp(175px, 27vw, 235px);
+  height: clamp(165px, 26vw, 220px);
+  background: #FFFDF9;
+  border: 1.5px dashed rgba(184, 134, 40, 0.65);
+  border-radius: 6px;
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(45, 22, 6, 0.09);
+  transform: rotate(-0.8deg);
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.keepsake-album-card:hover .layout-empty .keepsake-frame-fallback {
+  transform: rotate(0deg) scale(1.02);
+  border-color: #b88628;
+}
+
+.keepsake-fallback-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 5px;
+  color: #8c6527;
+}
+
+.keepsake-fallback-gem {
+  font-size: 14px;
+  color: #b88628;
+  line-height: 1;
+}
+
+.keepsake-fallback-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6d1620;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.keepsake-fallback-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #7a5433;
+}
+
+/* Unaltered Original Photos: Natural aspect ratio without cropping */
+.keepsake-photo-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Corner filigree notches on main photo */
+.keepsake-filigree {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid #b88628;
+  pointer-events: none;
+  z-index: 4;
+}
+.keepsake-filigree.tl { top: 2px; left: 2px; border-right: none; border-bottom: none; }
+.keepsake-filigree.tr { top: 2px; right: 2px; border-left: none; border-bottom: none; }
+.keepsake-filigree.bl { bottom: 2px; left: 2px; border-right: none; border-top: none; }
+.keepsake-filigree.br { bottom: 2px; right: 2px; border-left: none; border-top: none; }
+
+/* Video overlay pill on keepsake cover */
+.keepsake-video-overlay-pill {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(22, 10, 6, 0.88);
+  border: 1px solid #c4964c;
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Restrained Moments Count Badge on Outer Collage (Lower-Right) */
+.keepsake-moments-badge {
+  position: absolute;
+  bottom: 10px;
+  right: clamp(12px, 4vw, 30px);
+  background: rgba(22, 10, 6, 0.92);
+  border: 1.5px solid #c4964c;
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.keepsake-moments-badge:hover {
+  background: #6d1620;
+  border-color: #dfb66d;
+  color: #FFFDF9;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 5px 16px rgba(109, 22, 32, 0.42);
+}
+
+.keepsake-moments-badge:focus-visible {
+  outline: 2px solid #dfb66d;
+  outline-offset: 2px;
+}
+
+/* -----------------------------------------------------
+   4. ZONE A — EVENT METADATA (Date & Location)
+----------------------------------------------------- */
+
+.keepsake-zone-metadata {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(8px, 2vw, 14px);
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* Elegant Burgundy Seal for Date */
+.keepsake-date-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 3px 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(109, 22, 32, 0.28);
+  border: 1px solid rgba(255, 235, 170, 0.45);
+  text-transform: uppercase;
+}
+
+.seal-motif {
+  font-size: 8px;
+  color: #dfb66d;
+}
+
+.keepsake-location-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 600;
+  color: #6a441e;
+  letter-spacing: 0.02em;
+}
+
+/* -----------------------------------------------------
+   5. ZONE B — EVENT TITLE
+----------------------------------------------------- */
+
+.keepsake-zone-title {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.keepsake-event-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 3.2vw, 23px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #6d1620;
+  margin: 0;
+  line-height: 1.32;
+  word-break: normal;
+  overflow-wrap: break-word;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+/* Delicate Ornamental Hairline Divider between Zone B and Zone C */
+.keepsake-zone-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196, 150, 76, 0.4) 0%, rgba(196, 150, 76, 0.1) 80%, transparent 100%);
+  margin: 1px 0;
+}
+
+/* -----------------------------------------------------
+   6. ZONE C — ACTION & MEDIA SUMMARY FOOTER
+----------------------------------------------------- */
+
+.keepsake-zone-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.keepsake-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #6d1620 0%, #871f2c 100%);
+  color: #FFF8E7;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 9px 20px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(223, 182, 109, 0.65);
+  box-shadow: 0 4px 14px rgba(109, 22, 32, 0.32);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  min-height: 42px; /* Accessible mobile touch target */
+}
+
+.keepsake-open-btn:hover {
+  background: linear-gradient(135deg, #871f2c 0%, #9e2534 100%);
+  border-color: #dfb66d;
+  box-shadow: 0 6px 18px rgba(109, 22, 32, 0.42);
+  transform: translateY(-1px);
+}
+
+.keepsake-open-btn .btn-arrow {
+  transition: transform 0.2s ease;
+}
+
+.keepsake-open-btn:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+.keepsake-media-summary {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #8c6527;
+  text-transform: uppercase;
+}
+
+/* -----------------------------------------------------
+   7. RESPONSIVE BEHAVIOR (MOBILE-FIRST)
+----------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .keepsake-card-wrapper {
+    max-width: min(96vw, 480px);
+    margin: 0 auto;
+    justify-content: center;
+  }
+
+  .keepsake-album-card {
+    padding: 14px 15px;
+    gap: 11px;
+  }
+
+  .keepsake-album-cover-stage {
+    height: 215px;
+  }
+
+  .keepsake-frame-primary {
+    width: 158px;
+    height: 175px;
+  }
+
+  .keepsake-frame-secondary {
+    width: 110px;
+    height: 140px;
+    right: 4px;
+    top: 4px;
+  }
+
+  .keepsake-frame-tertiary {
+    width: 112px;
+    height: 135px;
+    left: 4px;
+    bottom: 6px;
+  }
+
+  .layout-two-photos .two-photo-main {
+    left: calc(50% - 48px);
+    width: 145px;
+    height: 165px;
+  }
+
+  .layout-two-photos .two-photo-secondary {
+    left: calc(50% - 10px);
+    width: 118px;
+    height: 145px;
+  }
+
+  .layout-one-photo .one-photo-single {
+    width: 160px;
+    height: 180px;
+  }
+
+  .layout-empty .keepsake-frame-fallback {
+    width: 165px;
+    height: 155px;
+  }
+
+  .keepsake-moments-badge {
+    right: 6px;
+    bottom: 6px;
+    font-size: 8.5px;
+    padding: 3px 8px;
+  }
+
+  .keepsake-zone-metadata {
+    gap: 8px;
+  }
+
+  .keepsake-date-seal {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+
+  .keepsake-location-tag {
+    font-size: 13px;
+  }
+
+  .keepsake-event-title {
+    font-size: 18px;
+    line-height: 1.28;
+  }
+
+  .keepsake-zone-footer {
+    gap: 10px;
+  }
+
+  .keepsake-open-btn {
+    padding: 8px 16px;
+    font-size: 10px;
+    min-height: 40px;
+  }
+
+  .keepsake-media-summary {
+    font-size: 9.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .keepsake-album-card {
+    padding: 12px 13px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .keepsake-album-cover-stage {
+    height: 195px;
+  }
+
+  .keepsake-frame-primary {
+    width: 135px;
+    height: 155px;
+  }
+
+  .keepsake-frame-secondary {
+    width: 95px;
+    height: 125px;
+    right: 2px;
+    top: 2px;
+  }
+
+  .keepsake-frame-tertiary {
+    width: 100px;
+    height: 120px;
+    left: 2px;
+    bottom: 4px;
+  }
+
+  .layout-two-photos .two-photo-main {
+    left: calc(50% - 45px);
+    width: 130px;
+    height: 150px;
+  }
+
+  .layout-two-photos .two-photo-secondary {
+    left: calc(50% - 8px);
+    width: 105px;
+    height: 130px;
+  }
+
+  .layout-one-photo .one-photo-single {
+    width: 145px;
+    height: 165px;
+  }
+
+  .layout-empty .keepsake-frame-fallback {
+    width: 150px;
+    height: 140px;
+  }
+
+  .keepsake-moments-badge {
+    right: 4px;
+    bottom: 2px;
+    font-size: 8px;
+    padding: 2px 7px;
+  }
+
+  .keepsake-event-title {
+    font-size: 16.5px;
+  }
+}
+
+/* -----------------------------------------------------
+   8. ACCESSIBILITY & PREFERS-REDUCED-MOTION
+----------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .keepsake-album-card,
+  .keepsake-frame-primary,
+  .keepsake-frame-secondary,
+  .keepsake-frame-tertiary,
+  .keepsake-frame-fallback,
+  .keepsake-moments-badge,
+  .keepsake-open-btn {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+@media (hover: none) {
+  .keepsake-album-card:hover {
+    transform: none;
+  }
+  .keepsake-frame-primary:hover,
+  .keepsake-album-card:hover .keepsake-frame-primary {
+    transform: rotate(-1.2deg);
+  }
+  .keepsake-frame-secondary:hover,
+  .keepsake-album-card:hover .keepsake-frame-secondary {
+    transform: rotate(4.5deg);
+  }
+  .keepsake-frame-tertiary:hover,
+  .keepsake-album-card:hover .keepsake-frame-tertiary {
+    transform: rotate(-4.5deg);
+  }
+  .layout-two-photos .two-photo-main:hover,
+  .keepsake-album-card:hover .layout-two-photos .two-photo-main {
+    transform: rotate(-1.8deg);
+  }
+  .layout-two-photos .two-photo-secondary:hover,
+  .keepsake-album-card:hover .layout-two-photos .two-photo-secondary {
+    transform: rotate(4.5deg);
+  }
+  .layout-one-photo .one-photo-single:hover,
+  .keepsake-album-card:hover .layout-one-photo .one-photo-single {
+    transform: rotate(-0.8deg);
+  }
+  .layout-empty .keepsake-frame-fallback:hover,
+  .keepsake-album-card:hover .layout-empty .keepsake-frame-fallback {
+    transform: rotate(-0.8deg);
+  }
+}

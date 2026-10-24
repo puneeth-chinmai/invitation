@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import * as THREE from 'three'
 import ganeshaSymbolUrl from '../../assets/images/ganesha_symbol.png'
+import royalLotusSealUrl from '../../assets/images/royal_lotus_seal.png'
 
 /* =====================================================
    FLOATING PETALS & LIGHT PARTICLES (LIGHTWEIGHT CANVAS)
@@ -114,10 +115,56 @@ const cornerMotifStyles = {
 ===================================================== */
 
 export default function OpeningScene({ onComplete }) {
+  const [isReady, setIsReady] = useState(false)
   // Starts directly at the approved Ganesha reveal milestone (offset by 4.4s)
   const [sinceStart, setSinceStart] = useState(4.4)
   const startTimeRef = useRef(null)
   const completedCalledRef = useRef(false)
+
+  // Preload and decode assets (Ganesha & Royal Lotus Seal) and ensure essential typography is ready
+  useEffect(() => {
+    let cancelled = false
+    const gImg = new Image()
+    gImg.src = ganeshaSymbolUrl
+
+    const sImg = new Image()
+    sImg.src = royalLotusSealUrl
+
+    const fontPromise =
+      typeof document !== 'undefined' && document.fonts
+        ? document.fonts.ready
+        : Promise.resolve()
+
+    const decodeImg = (img) =>
+      new Promise((resolve) => {
+        if (img.complete && img.naturalWidth > 0) {
+          if (img.decode) {
+            img.decode().then(resolve).catch(resolve)
+          } else {
+            resolve()
+          }
+        } else {
+          img.onload = () => {
+            if (img.decode) {
+              img.decode().then(resolve).catch(resolve)
+            } else {
+              resolve()
+            }
+          }
+          img.onerror = resolve
+        }
+      })
+
+    Promise.all([fontPromise, decodeImg(gImg), decodeImg(sImg)]).then(() => {
+      if (!cancelled) {
+        setIsReady(true)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleProceed = useCallback(() => {
     if (completedCalledRef.current) return
@@ -128,6 +175,7 @@ export default function OpeningScene({ onComplete }) {
   }, [onComplete])
 
   useEffect(() => {
+    if (!isReady) return
     let animId
     const start = performance.now() / 1000
     startTimeRef.current = start
@@ -153,22 +201,22 @@ export default function OpeningScene({ onComplete }) {
 
     animId = requestAnimationFrame(update)
     return () => cancelAnimationFrame(animId)
-  }, [onComplete])
+  }, [isReady, onComplete])
 
   /* ---------------------------------------------------
      STAGE D: GANESHA SYMBOL (4.4s to 9.7s)
      Fade in 1.4s, hold 2.5s, fade out 1.4s
   --------------------------------------------------- */
   let ganeshaOpacity = 0
-  let ganeshaTransform = 'scale(0.95) translateY(6px)'
-  const showGanesha = sinceStart >= 4.4 && sinceStart < 9.7
+  let ganeshaTransform = 'scale(0.97) translateY(4px)'
+  const showGanesha = isReady && sinceStart >= 4.4 && sinceStart < 9.7
   if (showGanesha) {
     if (sinceStart < 5.8) {
       // Fade in 1.4s (4.4 to 5.8)
       const p = (sinceStart - 4.4) / 1.4
       const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2
       ganeshaOpacity = eased
-      ganeshaTransform = `scale(${0.95 + eased * 0.05}) translateY(${(1 - eased) * 6}px)`
+      ganeshaTransform = `scale(${0.97 + eased * 0.03}) translateY(${(1 - eased) * 4}px)`
     } else if (sinceStart < 8.3) {
       // Hold fully visible 2.5s (5.8 to 8.3)
       ganeshaOpacity = 1
@@ -178,7 +226,7 @@ export default function OpeningScene({ onComplete }) {
       const p = (sinceStart - 8.3) / 1.4
       const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2
       ganeshaOpacity = 1 - eased
-      ganeshaTransform = `scale(${1 + eased * 0.03}) translateY(${-eased * 6}px)`
+      ganeshaTransform = `scale(${1 + eased * 0.02}) translateY(${-eased * 4}px)`
     }
   }
 
@@ -188,15 +236,15 @@ export default function OpeningScene({ onComplete }) {
      Fade in + rise 1.0s, hold 2.5s, fade out 1.0s
   --------------------------------------------------- */
   let blessingOpacity = 0
-  let blessingTransform = 'translateY(12px)'
-  const showBlessing = sinceStart >= 10.0 && sinceStart < 14.5
+  let blessingTransform = 'translateY(10px)'
+  const showBlessing = isReady && sinceStart >= 10.0 && sinceStart < 14.5
   if (showBlessing) {
     if (sinceStart < 11.0) {
       // Fade in + subtle rise 1.0s (10.0 to 11.0)
       const p = (sinceStart - 10.0) / 1.0
       const eased = 1 - Math.pow(1 - p, 3)
       blessingOpacity = eased
-      blessingTransform = `translateY(${(1 - eased) * 12}px)`
+      blessingTransform = `translateY(${(1 - eased) * 10}px)`
     } else if (sinceStart < 13.5) {
       // Hold fully visible 2.5s (11.0 to 13.5)
       blessingOpacity = 1
@@ -206,7 +254,7 @@ export default function OpeningScene({ onComplete }) {
       const p = (sinceStart - 13.5) / 1.0
       const eased = p * p
       blessingOpacity = 1 - eased
-      blessingTransform = `translateY(${-eased * 8}px)`
+      blessingTransform = `translateY(${-eased * 6}px)`
     }
   }
 
@@ -214,7 +262,7 @@ export default function OpeningScene({ onComplete }) {
      STAGES F, G, H, I: COUPLE'S NAMES & ARE GETTING MARRIED
      Sequential entrance, then holds indefinitely
   --------------------------------------------------- */
-  const showNames = sinceStart >= 14.9
+  const showNames = isReady && sinceStart >= 14.9
 
   // F: Puneeth (14.9s to 15.8s, 0.9s)
   const puneethP = THREE.MathUtils.clamp((sinceStart - 14.9) / 0.9, 0, 1)
@@ -242,8 +290,13 @@ export default function OpeningScene({ onComplete }) {
         bottom: 0,
         width: '100vw',
         height: '100vh',
-        height: '100dvh',
-        background: 'radial-gradient(ellipse at 50% 40%, #FFFDF9 0%, #FAF4E8 48%, #F5ECDD 100%)',
+        minHeight: '100dvh',
+        backgroundColor: '#FAF5E8',
+        backgroundImage: `
+          radial-gradient(ellipse 90% 75% at 50% 38%, #FFFDF8 0%, #FAF4E6 42%, #F3E7D0 78%, #E8D7BA 100%),
+          repeating-linear-gradient(115deg, transparent 0px, transparent 32px, rgba(184, 134, 40, 0.015) 32.5px, transparent 33px, transparent 64px),
+          repeating-linear-gradient(25deg, transparent 0px, transparent 40px, rgba(184, 134, 40, 0.012) 40.5px, transparent 41px, transparent 80px)
+        `,
         overflow: 'hidden',
         zIndex: 10,
         display: 'flex',
@@ -283,7 +336,7 @@ export default function OpeningScene({ onComplete }) {
         Skip &rarr;
       </button>
 
-      {/* 1. Subtle central radial light glow */}
+      {/* 1. Subtle warm ambient light bloom */}
       <div
         style={{
           position: 'absolute',
@@ -292,7 +345,7 @@ export default function OpeningScene({ onComplete }) {
           transform: 'translate(-50%, -50%)',
           width: 'min(92vw, 560px)',
           height: 'min(92vw, 560px)',
-          background: 'radial-gradient(circle, rgba(255, 238, 204, 0.5) 0%, rgba(255, 238, 204, 0) 65%)',
+          background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(245, 222, 179, 0.25) 0%, rgba(245, 222, 179, 0) 70%)',
           pointerEvents: 'none',
           zIndex: 1,
         }}
@@ -303,7 +356,8 @@ export default function OpeningScene({ onComplete }) {
         style={{
           position: 'absolute',
           inset: 'clamp(12px, 3vw, 24px)',
-          border: '1px solid rgba(196, 150, 76, 0.2)',
+          border: '1px solid rgba(184, 134, 40, 0.28)',
+          boxShadow: 'inset 0 0 0 3px rgba(255, 253, 248, 0.6), inset 0 0 0 4px rgba(184, 134, 40, 0.12)',
           borderRadius: '6px',
           pointerEvents: 'none',
           zIndex: 1,
@@ -314,48 +368,31 @@ export default function OpeningScene({ onComplete }) {
       <div style={cornerMotifStyles.bl}>❖</div>
       <div style={cornerMotifStyles.br}>❖</div>
 
-      {/* 3. Subtle Lotus Mandala Watermark Outline */}
+      {/* 3. Approved Royal Lotus Seal */}
       <svg
-        viewBox="0 0 200 200"
+        viewBox="0 0 953 1024"
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'clamp(280px, 75vw, 420px)',
-          height: 'clamp(280px, 75vw, 420px)',
+          width: 'clamp(325px, 88vw, 545px)',
+          height: 'clamp(350px, 94.5vw, 585px)',
+          maxWidth: '92vw',
+          maxHeight: '86vh',
           pointerEvents: 'none',
-          opacity: 0.12,
+          opacity: 0.85,
           zIndex: 1,
         }}
       >
-        <circle cx="100" cy="100" r="92" fill="none" stroke="#b88628" strokeWidth="0.8" strokeDasharray="3 3" />
-        <circle cx="100" cy="100" r="84" fill="none" stroke="#c4964c" strokeWidth="1" />
-        <circle cx="100" cy="100" r="66" fill="none" stroke="#c4964c" strokeWidth="0.8" />
-        {Array.from({ length: 8 }).map((_, i) => {
-          const angle = (i * 45 * Math.PI) / 180
-          const x = 100 + Math.cos(angle) * 48
-          const y = 100 + Math.sin(angle) * 48
-          return (
-            <ellipse
-              key={i}
-              cx={x}
-              cy={y}
-              rx="22"
-              ry="10"
-              transform={`rotate(${i * 45 + 90} ${x} ${y})`}
-              fill="none"
-              stroke="#b88628"
-              strokeWidth="0.9"
-            />
-          )
-        })}
-        {Array.from({ length: 8 }).map((_, i) => {
-          const angle = ((i * 45 + 22.5) * Math.PI) / 180
-          const x = 100 + Math.cos(angle) * 32
-          const y = 100 + Math.sin(angle) * 32
-          return <circle key={`dot-${i}`} cx={x} cy={y} r="1.8" fill="#b88628" />
-        })}
+        <image
+          href={royalLotusSealUrl}
+          x="0"
+          y="0"
+          width="953"
+          height="1024"
+          preserveAspectRatio="xMidYMid meet"
+        />
       </svg>
 
       {/* 4. Softly drifting petals & gold motes */}
@@ -377,16 +414,19 @@ export default function OpeningScene({ onComplete }) {
             opacity: ganeshaOpacity,
             transform: ganeshaTransform,
             willChange: 'opacity, transform',
-            filter:
-              'drop-shadow(0 0 18px rgba(214, 160, 68, 0.38)) drop-shadow(0 4px 12px rgba(138, 94, 36, 0.16))',
+            filter: 'drop-shadow(0 2px 10px rgba(138, 94, 36, 0.22))',
           }}
         >
           <img
             src={ganeshaSymbolUrl}
-            alt="Lord Ganesha Blessing"
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
             style={{
               width: 'clamp(210px, 56vw, 290px)',
               height: 'auto',
+              aspectRatio: '1024 / 1002',
               maxHeight: '48vh',
               objectFit: 'contain',
               display: 'block',

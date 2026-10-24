@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { MapPinIcon, CameraPlaceholderIcon, VideoPlayIcon } from './JourneyOrnaments'
-import RoyalVideoPlayer from './RoyalVideoPlayer'
 import AlbumLightbox from './AlbumLightbox'
 import { normalizeMediaList } from '../../utils/mediaNormalizer'
 import './EventAlbum.css'
@@ -9,17 +8,23 @@ import './EventAlbum.css'
 /**
  * EventGalleryModal
  *
- * Compact, responsive guest-facing media carousel for Puneeth & Chinmai's wedding website.
+ * Premium Editorial Wedding Keepsake View for Puneeth & Chinmai's Journey.
+ *
  * Features:
- *   - Stacking context fixed via React Portal to document.body (unobstructed by global navbar)
- *   - Safe-area insets respected on mobile
- *   - Single media carousel: cover photo is initial item (NO duplicated cover or stacked grids)
- *   - Responsive main viewer: 1 item at a time with contain aspect ratio
- *   - Left and right chevrons, desktop arrow keys, and mobile touch swipe
- *   - Interactive Royal Video Player with timeline scrubbing (click & drag)
- *   - Full-screen photo lightbox with keyboard and swipe navigation
- *   - Horizontally scrollable thumbnail strip with auto-scrolling active indicator
- *   - Compact, vertical space-saving event header
+ *   1. Quiet Header: Subtle "← Return to Timeline" action and circular close button.
+ *   2. Single Framed Cover Photo: Exactly one cover photo in an antique-gold & ivory
+ *      keepsake frame, preserving 100% of the original photo aspect ratio (no crop).
+ *   3. Bespoke Album-Opening Affordance: Illustrated keepsake book motif with opening pages,
+ *      "View Full Album" title, and media breakdown subtitle (shown only when total > 1).
+ *   4. Clear Metadata Hierarchy:
+ *        - Date: Elegant ruby/gold seal treatment with decorative diamond accent.
+ *        - Location: Direct value (e.g., "Chikkamagaluru") with MapPinIcon (NO field label).
+ *        - Category: Milestone tag (rendered only if genuinely present).
+ *        - Title: Prominent burgundy editorial serif heading.
+ *        - Story / Description: Complete unabridged text styled as an intimate editorial passage.
+ *        - Album Summary: Accurate photo & film count.
+ *   5. Immersive Album Entry: Seamlessly opens the full AlbumLightbox viewer with zoom,
+ *      pan, fullscreen, thumbnail strip, and video player.
  */
 export default function EventGalleryModal({
   event,
@@ -27,13 +32,19 @@ export default function EventGalleryModal({
 }) {
   const modalWindowRef = useRef(null)
   const backBtnRef = useRef(null)
-  const thumbStripRef = useRef(null)
-  const activeThumbRef = useRef(null)
-  const touchStartX = useRef(null)
-  const touchEndX = useRef(null)
+
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [prevEventId, setPrevEventId] = useState(event?.id)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Lock body scroll while modal is active
   useEffect(() => {
+    if (typeof document === 'undefined') return
     const originalOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
@@ -41,7 +52,7 @@ export default function EventGalleryModal({
     }
   }, [])
 
-  // Auto-focus the back button for accessibility
+  // Auto-focus back button on mount for accessibility
   useEffect(() => {
     backBtnRef.current?.focus()
   }, [])
@@ -65,19 +76,23 @@ export default function EventGalleryModal({
     return 0
   }, [sortedMedia, coverMediaId])
 
-  const [currentIndex, setCurrentIndex] = useState(initialIndex)
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
-  const [prevEventId, setPrevEventId] = useState(event?.id)
-  const [thumbErrors, setThumbErrors] = useState({})
-
-  // Synchronize index if event changes during render
+  // Synchronize index if event changes
   if (event?.id !== prevEventId) {
     setPrevEventId(event?.id)
     setCurrentIndex(initialIndex)
+    setIsLightboxOpen(false)
   }
 
+  const primaryCoverItem = useMemo(() => {
+    if (sortedMedia.length === 0) return null
+    if (coverMediaId) {
+      const found = sortedMedia.find((m) => m.id === coverMediaId)
+      if (found) return found
+    }
+    return sortedMedia[0]
+  }, [sortedMedia, coverMediaId])
+
   const total = sortedMedia.length
-  const currentItem = sortedMedia[currentIndex] || null
 
   // Count photos & videos
   const photoCount = useMemo(() => {
@@ -88,361 +103,243 @@ export default function EventGalleryModal({
     return sortedMedia.filter((m) => m.type === 'video').length
   }, [sortedMedia])
 
-  // Media count text for header
-  const mediaCountText = useMemo(() => {
-    if (total === 0) return 'No media uploaded'
+
+  // Subtitle text for bespoke "View Full Album" affordance
+  const mediaSummaryDetail = useMemo(() => {
+    if (total === 0) return ''
     const parts = []
-    if (photoCount > 0) parts.push(`${photoCount} ${photoCount === 1 ? 'photo' : 'photos'}`)
-    if (videoCount > 0) parts.push(`${videoCount} ${videoCount === 1 ? 'video' : 'videos'}`)
+    if (photoCount > 0) parts.push(`${photoCount} ${photoCount === 1 ? 'photograph' : 'photographs'}`)
+    if (videoCount > 0) parts.push(`${videoCount} ${videoCount === 1 ? 'film' : 'films'}`)
     return parts.join(' · ')
   }, [total, photoCount, videoCount])
 
-  // Navigation handlers
-  const handlePrev = useCallback(() => {
-    if (total <= 1) return
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : total - 1))
-  }, [total])
-
-  const handleNext = useCallback(() => {
-    if (total <= 1) return
-    setCurrentIndex((prev) => (prev < total - 1 ? prev + 1 : 0))
-  }, [total])
-
-  const handleSelectIndex = useCallback((idx) => {
-    if (idx >= 0 && idx < total) {
-      setCurrentIndex(idx)
+  // Exit fullscreen cleanly and invoke onClose
+  const handleCloseModal = useCallback(() => {
+    if (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    ) {
+      try {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {})
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen()
+        }
+      } catch {
+        // ignore
+      }
     }
-  }, [total])
+    onClose()
+  }, [onClose])
 
-  // Automatically scroll the active thumbnail into view
-  useEffect(() => {
-    if (activeThumbRef.current && thumbStripRef.current) {
-      activeThumbRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center',
-      })
-    }
-  }, [currentIndex])
-
-  // Keyboard navigation
+  // Escape key handler (only active when Lightbox is NOT open)
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Do not intercept arrow keys if an input or slider control has focus
-      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.getAttribute?.('role') === 'slider')) {
-        return
-      }
+      if (isLightboxOpen) return
       if (e.key === 'Escape') {
-        if (isLightboxOpen) {
-          setIsLightboxOpen(false)
-        } else {
-          onClose()
-        }
-      } else if (!isLightboxOpen) {
-        if (e.key === 'ArrowLeft') {
-          handlePrev()
-        } else if (e.key === 'ArrowRight') {
-          handleNext()
-        }
+        handleCloseModal()
       }
     }
-
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isLightboxOpen, onClose, handlePrev, handleNext])
-
-  // Touch swipe support on main viewer
-  const handleTouchStart = (e) => {
-    if (e.touches && e.touches[0]) {
-      touchStartX.current = e.touches[0].clientX
-      touchEndX.current = e.touches[0].clientX
-    }
-  }
-
-  const handleTouchMove = (e) => {
-    if (e.touches && e.touches[0]) {
-      touchEndX.current = e.touches[0].clientX
-    }
-  }
-
-  const handleTouchEnd = () => {
-    if (touchStartX.current === null || touchEndX.current === null) return
-    const diff = touchStartX.current - touchEndX.current
-    const swipeThreshold = 45
-
-    if (diff > swipeThreshold) {
-      handleNext()
-    } else if (diff < -swipeThreshold) {
-      handlePrev()
-    }
-
-    touchStartX.current = null
-    touchEndX.current = null
-  }
-
-  const isCoverItem = currentItem && currentItem.id === (event?.coverMediaId || sortedMedia[0]?.id)
+  }, [isLightboxOpen, handleCloseModal])
 
   const modalContent = (
     <div
       className="royal-album-overlay"
       onClick={(e) => {
-        if (e.target === e.currentTarget && !isLightboxOpen) {
-          onClose()
+        if (e.target === e.currentTarget) {
+          handleCloseModal()
         }
       }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="royal-album-title"
     >
-      <div className="royal-album-window" ref={modalWindowRef}>
+      <div className="royal-album-window is-editorial-keepsake" ref={modalWindowRef}>
         {/* ===================================================
-            1. COMPACT TOP HEADER & NAVIGATION
+            1. SINGLE COMPACT NAVIGATION HEADER
         =================================================== */}
-        <div className="royal-album-top-bar">
+        <header className="royal-album-top-bar">
+
+          <div className="inner-header-seal" aria-hidden="true">
+            <span className="inner-seal-text">Wedding Chronicle</span>
+          </div>
+
           <button
             type="button"
             ref={backBtnRef}
             className="royal-album-back-btn"
-            onClick={onClose}
-            aria-label="Return to relationship map"
+            onClick={handleCloseModal}
+            aria-label="Return"
           >
-            <span aria-hidden="true">←</span>
-            <span>Return to Map</span>
+            <span className="back-arrow" aria-hidden="true">←</span>
+            <span>Return</span>
           </button>
 
-          <button
-            type="button"
-            className="royal-album-close-btn"
-            onClick={onClose}
-            aria-label="Close event album (Esc)"
-            title="Close (Esc)"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* ===================================================
-            2. COMPACT EVENT DETAILS HEADER
-        =================================================== */}
-        <header className="royal-album-compact-header">
-          <div className="royal-album-kicker">
-            <span className="royal-kicker-date">{event?.date}</span>
-            {event?.location && (
-              <span className="royal-kicker-location">
-                <MapPinIcon size={12} />
-                <span>{event.location}</span>
-              </span>
-            )}
-            <span className="royal-kicker-pill">{mediaCountText}</span>
-          </div>
-
-          <h1 id="royal-album-title" className="royal-album-compact-title">
-            {event?.title}
-          </h1>
-
-          {/* Compact Story / Description (Omitted cleanly if empty) */}
-          {event?.description && event.description.trim().length > 0 && (
-            <div className="royal-album-compact-desc">
-              <p>{event.description}</p>
-            </div>
-          )}
+          
         </header>
 
         {/* ===================================================
-            3. SINGLE MAIN CAROUSEL VIEWER
+            2. ROYAL WEDDING CHRONICLE BODY (CONTENT-DRIVEN HEIGHT)
         =================================================== */}
-        {total > 0 && currentItem ? (
-          <div className="royal-carousel-section">
-            <div
-              className="royal-carousel-stage"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
-              {/* Left Chevron Button */}
-              {total > 1 && (
-                <button
-                  type="button"
-                  className="royal-carousel-nav-btn prev"
-                  onClick={handlePrev}
-                  aria-label="Previous media item (Arrow Left)"
-                  title="Previous (←)"
-                >
-                  ‹
-                </button>
-              )}
+        <div className="inner-editorial-keepsake-body">
+          <article className="inner-chronicle-card">
+            {/* -------------------------------------------------
+                A. EVENT IDENTITY & METADATA (PRIMARY FOCUS)
+            ------------------------------------------------- */}
+            <div className="inner-identity-section">
+              <h1 id="royal-album-title" className="inner-chronicle-title">
+                {event?.title}
+              </h1>
 
-              {/* Central Media Viewer Frame */}
-              <div className="royal-carousel-viewer-frame">
-                {/* Photo Viewer */}
-                {currentItem.type === 'image' && (
-                  <div
-                    className="royal-carousel-photo-container"
-                    onClick={() => setIsLightboxOpen(true)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setIsLightboxOpen(true)
-                      }
-                    }}
-                    aria-label={`View full-size photo ${currentIndex + 1}: ${currentItem.caption || event?.title}`}
-                  >
-                    <img
-                      src={currentItem.url}
-                      alt={currentItem.altText || currentItem.caption || `${event?.title} media ${currentIndex + 1}`}
-                      className="royal-carousel-photo"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <div className="royal-carousel-zoom-pill">
-                      <span aria-hidden="true">🔍</span>
-                      <span>Enlarge</span>
-                    </div>
-                  </div>
+              <div className="inner-meta-row">
+                {event?.date && (
+                  <span className="inner-meta-date">
+                    <span className="meta-accent" aria-hidden="true">❖</span>
+                    <span>{event.date}</span>
+                  </span>
                 )}
 
-                {/* Video Viewer (Keyed by ID/URL to stop previous video on navigation) */}
-                {currentItem.type === 'video' && (
-                  <div className="royal-carousel-video-container">
-                    <RoyalVideoPlayer
-                      key={currentItem.id || currentItem.url || `video-${currentIndex}`}
-                      src={currentItem.url}
-                      poster={currentItem.thumbnailUrl || undefined}
-                      caption={currentItem.caption}
-                      title={`${event?.title} video ${currentIndex + 1}`}
-                    />
-                    <button
-                      type="button"
-                      className="royal-carousel-zoom-pill video-expand"
-                      onClick={() => setIsLightboxOpen(true)}
-                      aria-label={`Open video ${currentIndex + 1} in fullscreen`}
-                      title="View Fullscreen"
-                    >
-                      <span aria-hidden="true">⤢</span>
-                      <span>Fullscreen</span>
-                    </button>
-                  </div>
+                {event?.location && (
+                  <span className="inner-meta-location">
+                    <MapPinIcon size={12} />
+                    <span>{event.location}</span>
+                  </span>
                 )}
-              </div>
 
-              {/* Right Chevron Button */}
-              {total > 1 && (
-                <button
-                  type="button"
-                  className="royal-carousel-nav-btn next"
-                  onClick={handleNext}
-                  aria-label="Next media item (Arrow Right)"
-                  title="Next (→)"
-                >
-                  ›
-                </button>
-              )}
+                
+              </div>
+              {event?.category && event.category.trim().length > 0 && (
+                  <span className="inner-meta-category">
+                    <span>{event.category}</span>
+                  </span>
+                )}
+
+              <div className="inner-identity-divider" aria-hidden="true" />
             </div>
 
-            {/* Media Meta Info & Counter */}
-            <div className="royal-carousel-meta-bar">
-              <div className="royal-carousel-counter-badge">
-                <span className="counter-current">{currentIndex + 1}</span>
-                <span className="counter-sep">/</span>
-                <span className="counter-total">{total}</span>
-                {isCoverItem && <span className="counter-cover-tag">★ Cover</span>}
-              </div>
+            {/* -------------------------------------------------
+                B. DEDICATED STORY PANEL (DIRECTLY ABOVE COVER)
+            ------------------------------------------------- */}
+            {event?.description && event.description.trim().length > 0 && (
+              <section className="inner-story-panel" aria-label="Event story">
+                <span className="story-corner tl" aria-hidden="true">❖</span>
+                <span className="story-corner tr" aria-hidden="true">❖</span>
+                <span className="story-corner bl" aria-hidden="true">❖</span>
+                <span className="story-corner br" aria-hidden="true">❖</span>
 
-              {currentItem.type === 'image' && (
-                <button
-                  type="button"
-                  className="royal-enlarge-text-btn"
-                  onClick={() => setIsLightboxOpen(true)}
-                  aria-label="Open full-screen photo viewer"
-                >
-                  <span>Full View</span>
-                </button>
-              )}
-            </div>
+                <div className="story-panel-header">
+                  <h2 className="story-heading">The Story</h2>
+                </div>
 
-            {/* Caption Display (if present) */}
-            {currentItem.caption && (
-              <div className="royal-carousel-caption-box">
-                <p>{currentItem.caption}</p>
-              </div>
+                <div className="story-body">
+                  <p>{event.description}</p>
+                </div>
+              </section>
             )}
 
-            {/* ===================================================
-                4. COMPACT HORIZONTAL THUMBNAIL STRIP
-            =================================================== */}
-            {total > 1 && (
+            {/* -------------------------------------------------
+                C. ONE MAGNIFICENT FRAMED COVER PHOTOGRAPH
+            ------------------------------------------------- */}
+            <div className="inner-cover-showcase">
               <div
-                className="royal-thumb-strip-wrapper"
-                ref={thumbStripRef}
-                role="tablist"
-                aria-label="Album media thumbnails"
+                className={`inner-cover-frame ${total >= 1 ? 'is-interactive' : ''}`}
+                onClick={() => {
+                  if (total >= 1) {
+                    setCurrentIndex(initialIndex)
+                    setIsLightboxOpen(true)
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (total >= 1 && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault()
+                    setCurrentIndex(initialIndex)
+                    setIsLightboxOpen(true)
+                  }
+                }}
+                role={total >= 1 ? 'button' : undefined}
+                tabIndex={total >= 1 ? 0 : -1}
+                aria-label={
+                  total > 1
+                    ? `Open ${event?.title} full album (${total} moments)`
+                    : `View ${event?.title} photograph in full view`
+                }
               >
-                {sortedMedia.map((item, idx) => {
-                  const isActive = idx === currentIndex
-                  return (
-                    <button
-                      key={item.id || idx}
-                      ref={isActive ? activeThumbRef : null}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      className={`royal-thumb-item ${isActive ? 'is-active' : ''} ${item.type === 'video' ? 'is-video' : ''}`}
-                      onClick={() => handleSelectIndex(idx)}
-                      aria-label={`${item.type === 'video' ? 'Video' : 'Photograph'} ${idx + 1}`}
-                      title={`${item.type === 'video' ? 'Video' : 'Photograph'} ${idx + 1}`}
-                    >
-                      {item.type === 'video' ? (
-                        item.thumbnailUrl && !thumbErrors[item.id] ? (
-                          <>
-                            <img
-                              src={item.thumbnailUrl}
-                              alt=""
-                              className="royal-thumb-img"
-                              loading="lazy"
-                              decoding="async"
-                              onError={() => setThumbErrors((prev) => ({ ...prev, [item.id]: true }))}
-                            />
-                            <div className="royal-thumb-video-icon">
-                              <VideoPlayIcon size={12} />
-                            </div>
-                          </>
-                        ) : (
-                          /* No thumbnail or failed load: render a styled placeholder with a play icon */
-                          <div className="royal-thumb-video-placeholder" aria-hidden="true">
-                            <VideoPlayIcon size={14} />
-                          </div>
-                        )
-                      ) : (
-                        <img
-                          src={item.url}
-                          alt=""
-                          className="royal-thumb-img"
-                          loading="lazy"
-                          decoding="async"
-                        />
+                {/* Antique Gold Corner Filigree Accents */}
+                <span className="inner-filigree tl" aria-hidden="true" />
+                <span className="inner-filigree tr" aria-hidden="true" />
+                <span className="inner-filigree bl" aria-hidden="true" />
+                <span className="inner-filigree br" aria-hidden="true" />
+
+                <div className="inner-cover-frame-matting">
+                  {primaryCoverItem ? (
+                    <>
+                      <img
+                        src={
+                          primaryCoverItem.type === 'video'
+                            ? primaryCoverItem.thumbnailUrl || primaryCoverItem.url
+                            : primaryCoverItem.url
+                        }
+                        alt={primaryCoverItem.altText || primaryCoverItem.caption || event?.title}
+                        className="inner-cover-photo-img"
+                        loading="eager"
+                        decoding="async"
+                      />
+                      {primaryCoverItem.type === 'video' && (
+                        <span className="inner-video-badge">
+                          <VideoPlayIcon size={10} />
+                          <span>Film</span>
+                        </span>
                       )}
-                    </button>
-                  )
-                })}
+                    </>
+                  ) : (
+                    <div className="inner-cover-empty-matting">
+                      <CameraPlaceholderIcon size={36} />
+                      <span className="inner-empty-title">Moments to be cherished</span>
+                      <span className="inner-empty-sub">Photographs will be added soon</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        ) : (
-          /* Graceful Empty State for Milestone without Media */
-          <div className="royal-album-empty-state">
-            <CameraPlaceholderIcon size={40} />
-            <span className="royal-empty-title">No Media Uploaded Yet</span>
-            <p className="royal-empty-text">
-              Real photographs and videos assigned to this milestone will be presented here once published.
-            </p>
-          </div>
-        )}
+
+              {/* -------------------------------------------------
+                  D. SIGNATURE ALBUM INVITATION (SHOWN ONLY WHEN total > 1)
+              ------------------------------------------------- */}
+              {total > 1 && (
+                <div className="inner-album-invitation-wrapper">
+                  <button
+                    type="button"
+                    className="inner-view-album-affordance"
+                    onClick={() => {
+                      setCurrentIndex(initialIndex)
+                      setIsLightboxOpen(true)
+                    }}
+                    aria-label={`View full album containing ${total} moments`}
+                  >
+                    <div className="affordance-book-motif" aria-hidden="true">
+                      <span className="book-leaf-left" />
+                      <span className="book-binding" />
+                      <span className="book-leaf-right" />
+                      <span className="book-sparkle">✦</span>
+                    </div>
+                    <div className="affordance-content">
+                      <span className="affordance-label">View Full Album</span>
+                      <span className="affordance-count">{mediaSummaryDetail}</span>
+                    </div>
+                    <span className="affordance-arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </article>
+        </div>
       </div>
 
       {/* ===================================================
-          5. UNIFIED FULL-SCREEN VIEWER FOR BOTH PHOTOS AND VIDEOS
+          3. IMMERSIVE ALBUM VIEWER (ENLARGED FULL LIGHTBOX)
       =================================================== */}
       {isLightboxOpen && (
         <AlbumLightbox
@@ -456,8 +353,8 @@ export default function EventGalleryModal({
     </div>
   )
 
-  // Use createPortal to mount outside parent z-index and transform contexts
-  if (typeof document !== 'undefined') {
+  // Mount outside parent stacking and transform contexts
+  if (mounted && typeof document !== 'undefined') {
     return createPortal(modalContent, document.body)
   }
 

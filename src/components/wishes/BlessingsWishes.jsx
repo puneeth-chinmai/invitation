@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { submitGuestWish } from '../../services/wishesService'
 import { AntiqueDivider } from '../journey/JourneyOrnaments'
+import RoyalSignatureCredit from '../common/RoyalSignatureCredit'
 import './BlessingsWishes.css'
 
 /**
@@ -12,9 +13,26 @@ import './BlessingsWishes.css'
  * Privacy Rule:
  * Strictly private. No public feed, wall, or message count is exposed.
  */
-export default function BlessingsWishes() {
+export default function BlessingsWishes({
+  initialUiState = 'unopened',
+  initialEnvelopePhase = 'closed',
+} = {}) {
+  const getStartingUiState = () => {
+    if (typeof window !== 'undefined' && (window.location.search.includes('sealed') || window.location.hash.includes('sealed'))) {
+      return 'sealed'
+    }
+    return initialUiState
+  }
+
+  const getStartingEnvelopePhase = () => {
+    if (typeof window !== 'undefined' && (window.location.search.includes('opened') || window.location.hash.includes('opened'))) {
+      return 'opened'
+    }
+    return initialEnvelopePhase
+  }
+
   // UI States: 'unopened' (State A) | 'writing' (State B) | 'sealed' (State C)
-  const [uiState, setUiState] = useState('unopened')
+  const [uiState, setUiState] = useState(getStartingUiState)
 
   // Form State — English is default language
   const [guestName, setGuestName] = useState('')
@@ -22,7 +40,7 @@ export default function BlessingsWishes() {
   const [message, setMessage] = useState('')
 
   // Realistic post-submission envelope phase: 'closed' | 'opening' | 'opened' | 'closing'
-  const [envelopePhase, setEnvelopePhase] = useState('closed')
+  const [envelopePhase, setEnvelopePhase] = useState(getStartingEnvelopePhase)
   const [submittedLanguage, setSubmittedLanguage] = useState('english')
   const openTimerRef = useRef(null)
   const closeTimerRef = useRef(null)
@@ -267,32 +285,16 @@ export default function BlessingsWishes() {
         =================================================== */}
         {uiState === 'writing' && (
           <div className="wishes-writing-desk">
-            <span className="letter-corner tl" aria-hidden="true">❖</span>
-            <span className="letter-corner tr" aria-hidden="true">❖</span>
-            <span className="letter-corner bl" aria-hidden="true">❖</span>
-            <span className="letter-corner br" aria-hidden="true">❖</span>
-
+            
             {/* Topbar with Back button and private status badge */}
             <div className="wishes-desk-topbar">
-              <button
-                type="button"
-                className="wishes-desk-back-btn"
-                onClick={handleCancelWriting}
-                disabled={isSubmitting}
-                aria-label={language === 'kannada' ? 'ಹಿಂದಿರುಗಿ' : 'Go back'}
-              >
-                <span aria-hidden="true">←</span>
-                <span>{language === 'kannada' ? 'ಹಿಂದೆ' : 'Back'}</span>
-              </button>
-              <span className="wishes-desk-badge">
-                {language === 'kannada' ? 'ಖಾಸಗಿ ಹಾರೈಕೆ' : 'Private Blessing'}
-              </span>
+              <h2 className="wishes-desk-title">
+                {language === 'kannada' ? 'ಹಾರೈಕೆ ಬರೆಯಿರಿ' : 'Pen Your Blessing'}
+              </h2>    
             </div>
 
             <div className="wishes-desk-header">
-              <h2 className="wishes-desk-title">
-                {language === 'kannada' ? 'ಹಾರೈಕೆ ಬರೆಯಿರಿ' : 'Pen Your Blessing'}
-              </h2>
+              
               <p className="wishes-desk-subtitle">
                 {language === 'kannada'
                   ? 'ದಂಪತಿಗಳಿಗೆ ನಿಮ್ಮ ಹೃತ್ಪೂರ್ವಕ ಆಶೀರ್ವಾದವನ್ನು ತಿಳಿಸಿ'
@@ -343,8 +345,8 @@ export default function BlessingsWishes() {
                   onChange={(e) => setGuestName(e.target.value)}
                   placeholder={
                     language === 'kannada'
-                      ? 'ಉದಾ: ರಮೇಶ್ ಮತ್ತು ಶೈಲಜಾ'
-                      : 'E.g., Ramesh & Shylaja'
+                      ? 'ಉದಾ: ರಮೇಶ್'
+                      : 'E.g., Ramesh'
                   }
                   maxLength={100}
                   disabled={isSubmitting}
@@ -568,10 +570,7 @@ export default function BlessingsWishes() {
                     : 'Thank you letter from Puneeth and Chinmai'
                 }
               >
-                <span className="letter-corner tl" aria-hidden="true">❖</span>
-                <span className="letter-corner tr" aria-hidden="true">❖</span>
-                <span className="letter-corner bl" aria-hidden="true">❖</span>
-                <span className="letter-corner br" aria-hidden="true">❖</span>
+                
 
                 <header className="stationery-letter-header">
                   <span className="stationery-letter-kicker">
@@ -602,9 +601,7 @@ export default function BlessingsWishes() {
                     <span className="stationery-couple-names">
                       {submittedLanguage === 'kannada' ? 'ಪುನೀತ್ ಮತ್ತು ಚಿನ್ಮಯಿ' : 'Puneeth & Chinmai'}
                     </span>
-                    <span className="stationery-wedding-date">
-                      28–29 November 2026 · Chikkamagaluru
-                    </span>
+                    
                   </div>
 
                   <div className="stationery-letter-actions">
@@ -694,11 +691,11 @@ export default function BlessingsWishes() {
                 </div>
 
                 {/* Secondary Option: Write another blessing */}
-                <div style={{ marginTop: '8px' }}>
+                <div style={{ marginTop: '6px', maxWidth: '100%', boxSizing: 'border-box' }}>
                   <button
                     type="button"
                     className="wishes-btn-secondary"
-                    style={{ fontSize: '11px', padding: '6px 16px' }}
+                    style={{ fontSize: '11px', padding: '7px 18px', maxWidth: '100%' }}
                     onClick={handleResetForAnother}
                   >
                     <span>{submittedLanguage === 'kannada' ? 'ಮತ್ತೊಂದು ಹಾರೈಕೆ ಬರೆಯಿರಿ' : 'Write Another Blessing'}</span>
@@ -706,6 +703,12 @@ export default function BlessingsWishes() {
                 </div>
               </div>
             )}
+
+            {/* Separator and Developer Signature Credit Footer */}
+            <footer className="wishes-sealed-footer" role="contentinfo" aria-label="Creator Credit">
+              <AntiqueDivider />
+              <RoyalSignatureCredit />
+            </footer>
 
           </div>
         )}
